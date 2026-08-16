@@ -1,0 +1,7 @@
+{
+  "display_name": "Ms. Agenica S (EA to Abhi Sethi)",
+  "description": "Executive Assistant AI Agent managing Google Calendar scheduling, Gmail triage, and Google Chat HITL workflows for Abhi Sethi.",
+  "adk_version": "2.3.0",
+  "entrypoint_module": "agent.agent",
+  "root_agent_name": "root_agent"
+}

@@ -1,0 +1,12 @@
+{
+  "project_id": "ag-test-1310",
+  "project_number": "537097709161",
+  "deployment_target": "agent_runtime",
+  "remote_agent_runtime_id": "projects/537097709161/locations/us-central1/reasoningEngines/1598524430286323712",
+  "agent_directory": "agent",
+  "display_name": "Ms. Agenica S (EA to Abhi Sethi)",
+  "gemini_enterprise_app_id": "projects/537097709161/locations/global/collections/default_collection/engines/trader_1786790787392",
+  "gemini_enterprise_agent_name": "projects/537097709161/locations/global/collections/default_collection/engines/trader_1786790787392/assistants/default_assistant/agents/6094606222104832667",
+  "vertex_ai_console_url": "https://console.cloud.google.com/vertex-ai/agents/agent-engines/locations/us-central1/agent-engines/1598524430286323712/playground?project=537097709161",
+  "gemini_enterprise_console_url": "https://console.cloud.google.com/gemini-enterprise/locations/global/engines/trader_1786790787392/overview/dashboard?project=ag-test-1310"
+}

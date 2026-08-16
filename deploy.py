@@ -60,7 +60,8 @@ def main():
         "--project", args.project,
         "--region", args.region,
         "--display_name", args.display_name,
-        "--description", "Executive Assistant AI Agent managing Google Calendar, Gmail, and Google Chat HITL workflows."
+        "--description", "Executive Assistant AI Agent managing Google Calendar, Gmail, and Google Chat HITL workflows.",
+        "agent"
     ]
     out = run_command(deploy_cmd)
     if not out:

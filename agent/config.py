@@ -22,8 +22,8 @@ Executive Assistant to {PRINCIPAL_NAME}
 Google Workspace Executive Assistant Agent
 {AGENT_EMAIL}"""
 
-# Default Model
-DEFAULT_MODEL = os.environ.get("ADK_MODEL", "gemini-2.5-flash")
+# Default Model (gemini-3.7-flash, gemini-3.6-flash, or gemini-2.5-flash)
+DEFAULT_MODEL = os.environ.get("ADK_MODEL", "gemini-3.7-flash")
 
 # Google Cloud Settings
 GCP_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "ag-test-1310")

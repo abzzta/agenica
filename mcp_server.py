@@ -9,6 +9,7 @@ import json
 import os
 
 from agent.tools import (
+    get_current_datetime,
     classify_contact,
     get_contact_directory_info,
     check_calendar_availability,
@@ -24,6 +25,16 @@ from agent.tools import (
 )
 
 TOOLS_METADATA = [
+    {
+        "name": "get_current_datetime",
+        "description": "Get current real-world date, time, day of the week, timezone, and computed relative dates (today, tomorrow, next weekdays). Call this first for all relative date queries.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "timezone_name": {"type": "string", "default": "America/Los_Angeles"}
+            }
+        }
+    },
     {
         "name": "classify_contact",
         "description": "Classify if contact is Internal Googler (HITL) or External Partner (Draft-Delegate).",
@@ -123,6 +134,7 @@ def handle_request(req: dict) -> dict:
         args = params.get("arguments", {})
 
         func_map = {
+            "get_current_datetime": get_current_datetime,
             "classify_contact": classify_contact,
             "check_calendar_availability": check_calendar_availability,
             "find_next_free_slot": find_next_free_slot,

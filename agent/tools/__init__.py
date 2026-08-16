@@ -4,6 +4,7 @@ Tools package for Ms. Agenica S ADK Agent.
 
 from .contact_tools import classify_contact, get_contact_directory_info
 from .calendar_tools import (
+    get_current_datetime,
     check_calendar_availability,
     find_next_free_slot,
     create_calendar_event,
@@ -21,6 +22,7 @@ from .chat_tools import (
 )
 
 __all__ = [
+    "get_current_datetime",
     "classify_contact",
     "get_contact_directory_info",
     "check_calendar_availability",

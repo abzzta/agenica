@@ -15,6 +15,7 @@ try:
     from .prompt import AGENT_INSTRUCTIONS
     from .config import DEFAULT_MODEL, AGENT_NAME, AGENT_DISPLAY_NAME
     from .tools import (
+        get_current_datetime,
         classify_contact,
         get_contact_directory_info,
         check_calendar_availability,
@@ -32,6 +33,7 @@ except (ImportError, ValueError):
     from prompt import AGENT_INSTRUCTIONS
     from config import DEFAULT_MODEL, AGENT_NAME, AGENT_DISPLAY_NAME
     from tools import (
+        get_current_datetime,
         classify_contact,
         get_contact_directory_info,
         check_calendar_availability,
@@ -59,6 +61,7 @@ try:
         description="Executive Assistant AI Agent managing Google Calendar scheduling, Gmail triage, and Google Chat HITL workflows for Abhi Sethi.",
         instruction=AGENT_INSTRUCTIONS,
         tools=[
+            get_current_datetime,
             classify_contact,
             get_contact_directory_info,
             check_calendar_availability,

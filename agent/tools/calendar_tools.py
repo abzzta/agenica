@@ -32,6 +32,48 @@ def _run_gcal_command(args: List[str]) -> Dict[str, Any]:
     return {"simulated": True}
 
 
+def get_current_datetime(timezone_name: str = "America/Los_Angeles") -> str:
+    """
+    Get the exact current date, time, day of the week, timezone, and computed relative dates
+    (today, tomorrow, day after tomorrow, upcoming days of the week).
+    CRITICAL: ALWAYS call this tool first whenever a query or email refers to relative dates
+    such as 'today', 'tomorrow', 'next Tuesday', 'this Friday', or 'in 3 days'.
+
+    Args:
+        timezone_name: Timezone name (e.g. 'America/Los_Angeles', 'Australia/Brisbane', 'Asia/Singapore', 'UTC').
+    """
+    try:
+        import zoneinfo
+        tz = zoneinfo.ZoneInfo(timezone_name)
+    except Exception:
+        tz = timezone.utc
+
+    now = datetime.now(tz)
+    
+    # Calculate upcoming weekdays for unambiguous relative scheduling
+    day_names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    upcoming_days = {}
+    for i in range(1, 8):
+        future_date = now + timedelta(days=i)
+        name = day_names[future_date.weekday()]
+        upcoming_days[f"upcoming_{name.lower()}"] = future_date.strftime("%Y-%m-%d")
+
+    data = {
+        "current_iso": now.isoformat(),
+        "current_date": now.strftime("%Y-%m-%d"),
+        "current_time": now.strftime("%I:%M:%S %p %Z"),
+        "day_of_week": now.strftime("%A"),
+        "timezone": str(tz),
+        "relative_dates": {
+            "today": now.strftime("%Y-%m-%d"),
+            "tomorrow": (now + timedelta(days=1)).strftime("%Y-%m-%d"),
+            "day_after_tomorrow": (now + timedelta(days=2)).strftime("%Y-%m-%d"),
+            **upcoming_days
+        }
+    }
+    return json.dumps(data, indent=2)
+
+
 def check_calendar_availability(
     start_time: str,
     end_time: str,

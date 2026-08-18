@@ -3,6 +3,7 @@ Configuration settings for Ms. Agenica S - Executive Assistant Agent.
 """
 
 import os
+import shutil
 from dataclasses import dataclass
 
 # Principal Identity
@@ -30,6 +31,15 @@ DEFAULT_MODEL = os.environ.get("ADK_MODEL", "gemini-3.7-flash")
 # Google Cloud Settings
 GCP_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "ag-test-1310")
 GCP_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "global")
+
+
+def is_corp_cloudtop_environment() -> bool:
+    """Check if running on an internal Google Cloudtop workstation with LOAS."""
+    gcert = shutil.which("gcertstatus") or "/usr/bin/gcertstatus"
+    return os.path.exists("/google/bin/releases") or os.path.exists(gcert)
+
+
+EXECUTION_MODE = "CORP_CLOUDTOP" if is_corp_cloudtop_environment() else "CLOUD_SANDBOX"
 
 
 @dataclass(frozen=True)

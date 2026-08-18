@@ -8,7 +8,7 @@ from dataclasses import dataclass
 # Principal Identity
 PRINCIPAL_NAME = os.environ.get("PRINCIPAL_NAME", "Abhi Sethi")
 PRINCIPAL_EMAIL = os.environ.get("PRINCIPAL_EMAIL", "aset@google.com")
-DEFAULT_TIMEZONE = os.environ.get("USER_TIMEZONE", "Asia/Singapore")
+DEFAULT_TIMEZONE = os.environ.get("USER_TIMEZONE", "Australia/Adelaide")
 
 # Agent Identity & Branding
 AGENT_NAME = "Ms. Agenica S"

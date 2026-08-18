@@ -27,7 +27,7 @@ def run_command(cmd, cwd=None):
 
 def main():
     parser = argparse.ArgumentParser(description="Deploy Ms. Agenica S ADK Agent to Vertex AI & Gemini Enterprise")
-    parser.add_argument("--project", default=os.environ.get("GOOGLE_CLOUD_PROJECT", "ag-test-1310"), help="GCP Project ID")
+    parser.add_argument("--project", default=os.environ.get("GOOGLE_CLOUD_PROJECT", "cowork-aset-6tnf0w"), help="GCP Project ID")
     parser.add_argument("--region", default=os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1"), help="GCP Location / Region")
     parser.add_argument("--display-name", default="Ms. Agenica S (EA to Abhi Sethi)", help="Agent Display Name")
     parser.add_argument("--gemini-enterprise-app-id", default=os.environ.get("GEMINI_ENTERPRISE_APP_ID"), help="Gemini Enterprise App Full Resource Name")

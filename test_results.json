@@ -1,0 +1,68 @@
+{
+  "timestamp": "2026-08-18T14:11:49.248681",
+  "principal": "Abhi Sethi (aset@google.com)",
+  "project": "cowork-aset-6tnf0w",
+  "tests": [
+    {
+      "test_name": "Auth & Preflight Probe",
+      "status": "PASS",
+      "details": {
+        "account": "aset@google.com",
+        "project": "cowork-aset-6tnf0w",
+        "model": "gemini-3.7-flash",
+        "vertex_ai_response": "System operational"
+      }
+    },
+    {
+      "test_name": "Real-World Date/Time Grounding",
+      "status": "PASS",
+      "details": {
+        "current_date": "2026-08-18",
+        "day_of_week": "Tuesday",
+        "timezone": "Asia/Singapore",
+        "relative_tomorrow": "2026-08-19"
+      }
+    },
+    {
+      "test_name": "Calendar Clash & Pre-Booking Proposal",
+      "status": "PASS",
+      "details": {
+        "clash_detected": true,
+        "conflicting_event": "DICT GE Ramp Cadence ",
+        "proposal_status": "PROPOSAL_READY",
+        "calendar_link": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Partnership+Review%3A+DICT+%26+Google+Cloud&dates=20260819T140000%2F20260819T143000&details=Agenda%3A%0A1.+Walkthrough+of+DICT+technical+architecture+assessment+proposal%0A2.+Clarify+security%2C+sovereignty%2C+and+compliance+prerequisites%0A3.+Confirm+pilot+evaluation+milestones+and+formal+sign-off+schedule&location=Google+Meet+%2F+Video+Conference+%28Hybrid%29&ctz=Australia%2FAdelaide&add=lead%40dict.gov%2Caset%40google.com"
+      }
+    },
+    {
+      "test_name": "Gmail 4-Tier Triage & Draft-Delegate",
+      "status": "PASS",
+      "details": {
+        "total_scanned": 5,
+        "needs_action_count": 5,
+        "draft_protocol": "DRAFT_DELEGATE_PROTOCOL",
+        "draft_url": "https://mail.google.com/mail/u/0/#drafts/r-1787062323"
+      }
+    },
+    {
+      "test_name": "Executive Presentation & Briefing Creation",
+      "status": "PASS",
+      "details": {
+        "slide_count": 5,
+        "speaker_notes_verified": true,
+        "slides_url": "https://docs.google.com/presentation/u/0/create",
+        "doc_title": "Executive Decision Memo: Public Sector GTM",
+        "doc_sections": 6
+      }
+    },
+    {
+      "test_name": "ADK Root Agent & Multi-Agent Dispatch",
+      "status": "PASS",
+      "details": {
+        "agent_name": "agenica_agent",
+        "model": "gemini-3.7-flash",
+        "registered_tools_count": 20,
+        "app_name": "agenica"
+      }
+    }
+  ]
+}

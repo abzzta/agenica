@@ -1,6 +1,12 @@
 {
   "builtin": "schedule",
-  "args": ["*/15 * * * *", "python3", "/usr/local/google/home/aset/agenica/sidecars/agenica-ea/triage_daemon.py"],
+  "args": [
+    "*/15 * * * *",
+    "agentapi",
+    "new-conversation",
+    "Run Ms. Agenica S (EA to Abhi Sethi) workflow:\n1. Internal Googlers (@google.com): Process scheduling/requests, check calendar, and request HITL approval in Chat to send direct email replies (via agenica@google.com) and create calendar invites.\n2. External Partners (Flinders, DICT, RCH, etc.): Run Draft-Delegate Protocol—check calendar, generate pending Gmail drafts in aset@google.com signed as 'Ms. Agenica S', and send Chat notifications with 1-click links to send."
+  ],
   "restart_policy": "always",
-  "description": "Ms. Agenica S Personal EA Background Daemon: Performs 4-tier inbox triage and schedule clash detection every 15 minutes."
+  "display_name": "Ms. Agenica S - EA Automation",
+  "description": "Handles internal autonomous execution (HITL) and external Draft-Delegate email workflows for Ms. Agenica S."
 }

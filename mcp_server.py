@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Model Context Protocol (MCP) Server for Ms. Agenica S Tools.
-Exposes calendar, email, and notification tools via JSON-RPC 2.0 stdio.
+Exposes calendar, clash detection, 4-tier inbox triage, 16:9 Google Slides deck generation,
+Google Docs briefing creation, and notification tools via JSON-RPC 2.0 stdio.
 """
 
 import sys
@@ -16,12 +17,19 @@ from agent.tools import (
     find_next_free_slot,
     create_calendar_event,
     list_upcoming_events,
+    check_calendar_clash,
+    suggest_meeting_agenda,
+    generate_prebooking_proposal,
+    scan_inbox_triage,
     search_emails,
     read_email_thread,
     create_gmail_draft,
     send_email_response,
     send_chat_approval_request,
     send_chat_notification,
+    create_presentation_deck,
+    create_executive_briefing_doc,
+    search_drive_files,
 )
 
 TOOLS_METADATA = [
@@ -31,7 +39,7 @@ TOOLS_METADATA = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "timezone_name": {"type": "string", "default": "America/Los_Angeles"}
+                "timezone_name": {"type": "string", "default": "Australia/Adelaide"}
             }
         }
     },
@@ -48,7 +56,7 @@ TOOLS_METADATA = [
     },
     {
         "name": "check_calendar_availability",
-        "description": "Check free/busy status for Abhi Sethi.",
+        "description": "Check free/busy status for Abhi Sethi across a specified range.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -57,6 +65,57 @@ TOOLS_METADATA = [
                 "email": {"type": "string", "default": "aset@google.com"}
             },
             "required": ["start_time", "end_time"]
+        }
+    },
+    {
+        "name": "check_calendar_clash",
+        "description": "Check if a proposed meeting slot clashes with existing calendar bookings.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "target_date": {"type": "string", "description": "YYYY-MM-DD"},
+                "target_time": {"type": "string", "description": "Time string e.g. 14:30"}
+            },
+            "required": ["target_date", "target_time"]
+        }
+    },
+    {
+        "name": "suggest_meeting_agenda",
+        "description": "Suggest a strategic 3-to-4 point executive meeting agenda based on topic and attendees.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "topic": {"type": "string", "description": "Meeting subject or context"}
+            },
+            "required": ["topic"]
+        }
+    },
+    {
+        "name": "generate_prebooking_proposal",
+        "description": "Create a complete Pre-Booking Proposal with clash detection, suggested agenda, and 1-click Google Calendar links.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "title": {"type": "string"},
+                "date_str": {"type": "string"},
+                "start_time": {"type": "string"},
+                "end_time": {"type": "string"},
+                "attendees": {"type": "array", "items": {"type": "string"}},
+                "location": {"type": "string", "default": "Google Meet / Video Conference (Hybrid)"},
+                "details": {"type": "string"}
+            },
+            "required": ["title", "date_str", "start_time", "end_time", "attendees"]
+        }
+    },
+    {
+        "name": "scan_inbox_triage",
+        "description": "Perform a 4-tier executive triage scan of inbox (Needs action, Meeting invites, Waiting response, FYI) with privacy gating.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "max_results": {"type": "integer", "default": 10},
+                "include_confidential": {"type": "boolean", "default": False}
+            }
         }
     },
     {
@@ -102,6 +161,48 @@ TOOLS_METADATA = [
         }
     },
     {
+        "name": "create_presentation_deck",
+        "description": "Generate an executive 16:9 presentation deck in Google Slides with bespoke speaker notes on every slide.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "topic": {"type": "string", "description": "Strategic subject or presentation title"},
+                "subtitle": {"type": "string", "default": "Executive Strategy & Action Plan"},
+                "slide_count": {"type": "integer", "default": 5}
+            },
+            "required": ["topic"]
+        }
+    },
+    {
+        "name": "create_executive_briefing_doc",
+        "description": "Create a structured executive briefing document in Google Docs with strategic sections, groundings, and human review tags.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "title": {"type": "string"},
+                "topic": {"type": "string"},
+                "attendees": {"type": "array", "items": {"type": "string"}},
+                "executive_summary": {"type": "string"},
+                "key_points": {"type": "array", "items": {"type": "string"}},
+                "assumptions": {"type": "array", "items": {"type": "string"}},
+                "gaps": {"type": "array", "items": {"type": "string"}},
+                "recommended_actions": {"type": "array", "items": {"type": "string"}}
+            },
+            "required": ["title", "topic"]
+        }
+    },
+    {
+        "name": "search_drive_files",
+        "description": "Search for documents, sheets, presentations, and folders in Google Drive.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "query": {"type": "string", "description": "Search query"}
+            },
+            "required": ["query"]
+        }
+    },
+    {
         "name": "send_chat_approval_request",
         "description": "Send HITL approval card or draft review link to Abhi Sethi in Google Chat.",
         "inputSchema": {
@@ -137,9 +238,16 @@ def handle_request(req: dict) -> dict:
             "get_current_datetime": get_current_datetime,
             "classify_contact": classify_contact,
             "check_calendar_availability": check_calendar_availability,
+            "check_calendar_clash": check_calendar_clash,
+            "suggest_meeting_agenda": suggest_meeting_agenda,
+            "generate_prebooking_proposal": generate_prebooking_proposal,
+            "scan_inbox_triage": scan_inbox_triage,
             "find_next_free_slot": find_next_free_slot,
             "create_calendar_event": create_calendar_event,
             "create_gmail_draft": create_gmail_draft,
+            "create_presentation_deck": create_presentation_deck,
+            "create_executive_briefing_doc": create_executive_briefing_doc,
+            "search_drive_files": search_drive_files,
             "send_chat_approval_request": send_chat_approval_request,
         }
 

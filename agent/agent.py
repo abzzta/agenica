@@ -22,12 +22,23 @@ try:
         find_next_free_slot,
         create_calendar_event,
         list_upcoming_events,
+        check_calendar_clash,
+        suggest_meeting_agenda,
+        generate_prebooking_proposal,
+        scan_inbox_triage,
         search_emails,
         read_email_thread,
         create_gmail_draft,
         send_email_response,
         send_chat_approval_request,
         send_chat_notification,
+        create_presentation_deck,
+        create_executive_briefing_doc,
+        search_drive_files,
+        create_calendar_proposal_card,
+        create_draft_review_card,
+        create_presentation_card,
+        create_briefing_doc_card,
     )
 except (ImportError, ValueError):
     from prompt import AGENT_INSTRUCTIONS
@@ -40,13 +51,47 @@ except (ImportError, ValueError):
         find_next_free_slot,
         create_calendar_event,
         list_upcoming_events,
+        check_calendar_clash,
+        suggest_meeting_agenda,
+        generate_prebooking_proposal,
+        scan_inbox_triage,
         search_emails,
         read_email_thread,
         create_gmail_draft,
         send_email_response,
         send_chat_approval_request,
         send_chat_notification,
+        create_presentation_deck,
+        create_executive_briefing_doc,
+        search_drive_files,
+        create_calendar_proposal_card,
+        create_draft_review_card,
+        create_presentation_card,
+        create_briefing_doc_card,
     )
+
+ALL_AGENT_TOOLS = [
+    get_current_datetime,
+    classify_contact,
+    get_contact_directory_info,
+    check_calendar_availability,
+    find_next_free_slot,
+    create_calendar_event,
+    list_upcoming_events,
+    check_calendar_clash,
+    suggest_meeting_agenda,
+    generate_prebooking_proposal,
+    scan_inbox_triage,
+    search_emails,
+    read_email_thread,
+    create_gmail_draft,
+    send_email_response,
+    send_chat_approval_request,
+    send_chat_notification,
+    create_presentation_deck,
+    create_executive_briefing_doc,
+    search_drive_files,
+]
 
 # ---------------------------------------------------------------------------
 # ADK Agent Definition
@@ -58,23 +103,9 @@ try:
     root_agent = Agent(
         name="agenica_agent",
         model=DEFAULT_MODEL,
-        description="Executive Assistant AI Agent managing Google Calendar scheduling, Gmail triage, and Google Chat HITL workflows for Abhi Sethi.",
+        description="Executive Assistant AI Agent managing Google Calendar scheduling, clash detection, 4-tier Gmail triage, 16:9 Google Slides deck generation with speaker notes, Google Docs briefing memos, and Google Chat HITL workflows for Abhi Sethi.",
         instruction=AGENT_INSTRUCTIONS,
-        tools=[
-            get_current_datetime,
-            classify_contact,
-            get_contact_directory_info,
-            check_calendar_availability,
-            find_next_free_slot,
-            create_calendar_event,
-            list_upcoming_events,
-            search_emails,
-            read_email_thread,
-            create_gmail_draft,
-            send_email_response,
-            send_chat_approval_request,
-            send_chat_notification,
-        ]
+        tools=ALL_AGENT_TOOLS
     )
 
     app = App(name="agenica", root_agent=root_agent)
@@ -137,8 +168,9 @@ def run_query(query: str, user_id: str = "aset", session_id: str = "session-1") 
 
 def _interactive():
     print("=" * 70)
-    print("Ms. Agenica S — Executive Assistant Agent (ADK)")
+    print("Ms. Agenica S — Enterprise Executive Assistant Agent (ADK)")
     print("Identity: agenica@google.com | Principal: Abhi Sethi (aset@google.com)")
+    print("Capabilities: 4-Tier Inbox Scan | Clash Detection | 16:9 Decks | Briefings")
     print("Protocols: Internal Googler (HITL) | External Partner (Draft-Delegate)")
     print("Type 'exit' or 'quit' to end session.")
     print("=" * 70)

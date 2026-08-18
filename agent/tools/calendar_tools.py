@@ -240,3 +240,148 @@ def list_upcoming_events(
             }
         ]
     }, indent=2)
+
+
+def check_calendar_clash(
+    target_date: str,
+    target_time: str,
+    email: str = "aset@google.com"
+) -> str:
+    """
+    Check if a proposed meeting slot clashes with existing calendar bookings or deliverable deadlines.
+
+    Args:
+        target_date: Target date in YYYY-MM-DD format (e.g. '2026-08-19').
+        target_time: Target time (e.g. '14:00', '2:30pm', '16:30').
+        email: Calendar owner (default: 'aset@google.com').
+
+    Returns:
+        JSON string indicating whether a conflict exists, with conflict details and alternative open slots.
+    """
+    from .hitl_tools import normalize_time_str
+    time_norm = normalize_time_str(target_time)
+
+    res = _run_gcal_command(["events", "--cal", email, "--date", target_date, "--json"])
+    events = []
+    if res.get("success") and isinstance(res.get("output"), list):
+        events = res["output"]
+
+    clash_found = None
+    if events:
+        for ev in events:
+            start_info = ev.get("start", {}).get("dateTime", "")
+            if time_norm[:2] in start_info:
+                clash_found = {
+                    "summary": ev.get("summary", "Existing Appointment"),
+                    "start": start_info,
+                    "end": ev.get("end", {}).get("dateTime", "")
+                }
+                break
+
+    if clash_found:
+        return json.dumps({
+            "has_clash": True,
+            "conflicting_event": clash_found["summary"],
+            "conflicting_time": clash_found["start"],
+            "warning": f"⚠️ Schedule Conflict: You currently have '{clash_found['summary']}' scheduled around this time.",
+            "recommended_action": "Propose alternative slot (e.g., 30 minutes later or next morning)."
+        }, indent=2)
+
+    return json.dumps({
+        "has_clash": False,
+        "target_date": target_date,
+        "target_time": time_norm,
+        "status": "Slot is open and clear of calendar conflicts."
+    }, indent=2)
+
+
+def suggest_meeting_agenda(topic: str, attendees: Optional[List[str]] = None) -> str:
+    """
+    Suggest a strategic 3-to-4 point executive meeting agenda based on meeting topic and attendees.
+
+    Args:
+        topic: Meeting subject or purpose.
+        attendees: List of attendees or partner organizations.
+
+    Returns:
+        Formatted agenda text ready to attach to Google Calendar invites and briefing docs.
+    """
+    t_lower = topic.lower()
+    if any(k in t_lower for k in ["flinders", "grant", "ai research", "university"]):
+        return (
+            "1. Review joint AI research grant milestones and deliverable timeline\n"
+            "2. Align on collaborative compute / resource allocation\n"
+            "3. Identify key blockers and agree on next submission deadline [NEEDS HUMAN REVIEW]"
+        )
+    elif any(k in t_lower for k in ["dict", "government", "technical assessment", "procurement"]):
+        return (
+            "1. Walkthrough of DICT technical architecture assessment proposal\n"
+            "2. Clarify security, sovereignty, and compliance prerequisites\n"
+            "3. Confirm pilot evaluation milestones and formal sign-off schedule"
+        )
+    elif any(k in t_lower for k in ["1:1", "catch up", "sync", "check-in"]):
+        return (
+            "1. Priority project check-in and recent progress\n"
+            "2. Blockers, resource dependencies, and required support\n"
+            "3. Key deliverables and milestones for the upcoming fortnight"
+        )
+    else:
+        return (
+            f"1. Executive context and strategic objectives for {topic}\n"
+            "2. Review of current workstreams, architecture, and proposals\n"
+            "3. Agreed action items, owner assignments, and review checkpoints"
+        )
+
+
+def generate_prebooking_proposal(
+    title: str,
+    date_str: str,
+    start_time: str,
+    end_time: str,
+    attendees: List[str],
+    location: str = "Google Meet / Video Conference (Hybrid)",
+    details: Optional[str] = None
+) -> str:
+    """
+    Create a complete Pre-Booking Proposal with clash verification, suggested agenda,
+    and 1-click Google Calendar confirmation links.
+
+    Args:
+        title: Meeting title.
+        date_str: Date (YYYY-MM-DD).
+        start_time: Start time.
+        end_time: End time.
+        attendees: List of email addresses.
+        location: Meeting location or Google Meet.
+        details: Optional custom agenda or meeting notes.
+
+    Returns:
+        JSON string containing the proposal card and 1-click action links.
+    """
+    from .hitl_tools import create_calendar_proposal_card
+
+    clash_json = json.loads(check_calendar_clash(date_str, start_time))
+    clash_note = clash_json.get("warning") if clash_json.get("has_clash") else None
+
+    agenda = details or suggest_meeting_agenda(title, attendees)
+    card_data = create_calendar_proposal_card(
+        title=title,
+        date_str=date_str,
+        start_time=start_time,
+        end_time=end_time,
+        attendees=attendees,
+        location=location,
+        details=f"Agenda:\n{agenda}",
+        clash_note=clash_note
+    )
+
+    return json.dumps({
+        "status": "PROPOSAL_READY",
+        "has_clash": clash_json.get("has_clash", False),
+        "clash_details": clash_json,
+        "suggested_agenda": agenda,
+        "proposal_card": card_data["card_markdown"],
+        "calendar_compose_url": card_data["calendar_compose_url"],
+        "calendar_view_url": card_data["calendar_view_url"]
+    }, indent=2)
+

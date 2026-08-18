@@ -1,23 +1,68 @@
-# Ms. Agenica S — ADK Executive Assistant Agent for Gemini Enterprise
+# Ms. Agenica S — Enterprise Executive Assistant (EA) Multi-Agent System
 
-Automated Executive Assistant Agent (**"Ms. Agenica S"**) for **Abhi Sethi (`aset@google.com`)**, built with the **Google Agent Development Kit (ADK)** and ready for registration on the **Gemini Enterprise App** and deployment to **Vertex AI Agent Engine (Reasoning Engine)**.
+An enterprise-grade **Personal Executive Assistant (EA) Multi-Agent System** for **Abhi Sethi (`aset@google.com`)**, built using the **Google Agent Development Kit (ADK)**, **Deterministic Workflows**, and the **Model Context Protocol (MCP)** for Google Workspace integration (Gmail, Google Calendar, Google Drive, Google Docs, and Google Slides).
 
 ---
 
-## 🌟 Identity & Display Branding
+## 🌟 High-Level Multi-Agent Architecture
 
-- **Display Name**: `Ms. Agenica S (EA to Abhi Sethi)`
-- **Primary Alias**: `agenica@google.com`
-- **Underlying Group Account**: `groupagent-agenica@google.com`
-- **Access Portal**: `http://an/groupagent-agenica`
-- **Executive Signature**:
-  ```text
-  --
-  Ms. Agenica S
-  Executive Assistant to Abhi Sethi
-  Google Workspace Executive Assistant Agent
-  agenica@google.com
-  ```
+```mermaid
+flowchart TD
+    User(["Abhi Sethi / Gemini Enterprise / Chat"]) --> Orchestrator["Ms. Agenica S Master Orchestrator (ADK Root Agent)"]
+    
+    subgraph "Deterministic Workflows & Skills Layer"
+        Orchestrator --> W1["4-Tier Inbox Triage & Daily Scan Flow"]
+        Orchestrator --> W2["Meeting Scheduling & Calendar Clash Detection Flow"]
+        Orchestrator --> W3["16:9 Executive Deck Builder & Briefing Flow"]
+    end
+
+    subgraph "Specialized Subagents"
+        W1 <--> InboxAgent["inbox_helper (4-Tier Triage & Queries)"]
+        W2 <--> SchedAgent["scheduling_assistant (Clash & Proposals)"]
+        W3 <--> ContentAgent["content_creator (Slides & Docs)"]
+    end
+
+    subgraph "Workspace Tooling & 1-Click Action Layer"
+        Tools["Google Workspace 1P Tools"]
+        HITL["Human-In-The-Loop 1-Click Action Cards"]
+        
+        InboxAgent --> Tools
+        SchedAgent --> Tools
+        ContentAgent --> Tools
+        
+        Tools --> HITL
+    end
+```
+
+---
+
+## 🤖 Subagent Capabilities
+
+### 1. Root EA Orchestrator (`agenica_agent`)
+* **Voice & Tone**: Authentic Executive Assistant register — unflappable, discreet, warm and capable, always thinking one step ahead. Avoids robotic filler, emojis, and system-log phrasing.
+* **Real-World Date Grounding**: Always calls `get_current_datetime` first to ground all relative dates ("tomorrow", "next Tuesday", "in 3 days") in real-world time.
+* **Routing & Synthesis**: Intelligently coordinates subagents and synthesizes multi-step operations into clean, actionable executive summaries.
+
+### 2. Inbox Helper (`inbox_helper`)
+* **4-Tier Categorization**:
+  1. `Needs action`: Urgent correspondence requiring review and drafted replies.
+  2. `Meeting invites`: Inbound meeting requests with calendar clash status.
+  3. `Waiting response`: Sent emails awaiting replies from external partners.
+  4. `FYI`: Low-priority informational summaries.
+* **Ad-hoc Email Queries**: Answers queries like *"Have I had a reply from Flinders on the AI grant?"* or *"List emails needing my attention"*.
+* **Privacy Gating**: Deterministically flags and protects confidential topics (HR issues, legal disputes, sensitive compensation).
+
+### 3. Meeting Scheduling Assistant (`scheduling_assistant`)
+* **Calendar Clash Detection**: Cross-references Google Calendar bookings and flags scheduling conflicts with existing appointments.
+* **Intelligent 3-to-4 Point Agenda**: Formulates structured agendas tailored to meeting topics and attendees.
+* **Pre-Booking Proposal Cards**: Applies executive defaults (09:00 - 17:00, Hybrid / Google Meet, 10-min reminders) and generates 1-click Google Calendar links (`[📅 Open & Edit in Google Calendar]`).
+
+### 4. Executive Content & Deck Creator (`content_creator`)
+* **16:9 Widescreen Presentation Decks**: Generates structured executive presentations adhering to executive styling (Deep Navy `#002B49`, Royal Blue `#1A73E8`, Vibrant Cyan `#00A3E0`) with bespoke **speaker notes on every single slide**.
+* **Google Docs Briefing Memos**: Formats strategic executive summaries, decision points, and talking points in Google Docs.
+* **Grounded Review Tags**: Explicitly tags assumptions and verification items:
+  * `[NEEDS HUMAN REVIEW: specific detail to check]`
+  * `[ASSUMPTION: detail assumed from context]`
 
 ---
 
@@ -25,39 +70,18 @@ Automated Executive Assistant Agent (**"Ms. Agenica S"**) for **Abhi Sethi (`ase
 
 | Target Audience | Processing Protocol | Agent Execution Action |
 | :--- | :--- | :--- |
-| **Internal Googlers (`@google.com`)** | **Full Autonomous Execution** *(with HITL Approval)* | Checks calendar availability, sends a Google Chat Human-In-The-Loop approval card to Abhi Sethi, and upon approval, dispatches the email response from `agenica@google.com` and creates the Google Calendar event with Google Meet. |
-| **External Partners** *(Flinders, DICT, RCH, etc.)* | **Draft-Delegate Protocol** | Checks calendar availability, creates a pending Gmail draft in `aset@google.com` signed as **Ms. Agenica S**, and sends a Google Chat ping to Abhi Sethi with a direct 1-click link to review and send. |
+| **Internal Googlers (`@google.com`)** | **Full Autonomous Execution** *(with HITL Review)* | Checks calendar availability, sends a Google Chat Human-In-The-Loop approval card to Abhi Sethi, and upon approval, dispatches the email response from `agenica@google.com` and creates the Google Calendar event with Google Meet. |
+| **External Partners** *(Flinders, DICT, RCH, Monash, etc.)* | **Draft-Delegate Protocol** | Checks calendar availability, creates a pending Gmail draft in `aset@google.com` signed as **Ms. Agenica S**, and sends an interactive 1-click card with direct link for Abhi Sethi to review & send in Gmail. |
 
 ---
 
-## 🏗️ Architecture & Project Structure
+## 🛠️ Interactive 1-Click Action Cards (Human-In-The-Loop)
 
-```text
-agenica/
-├── agent/
-│   ├── __init__.py                 # Exports root_agent, app, run_query
-│   ├── agent.py                    # Root ADK LlmAgent & session runner
-│   ├── prompt.py                   # System prompt & operating instructions
-│   ├── config.py                   # Principal & agent configuration settings
-│   ├── requirements.txt            # Package dependencies
-│   └── tools/
-│       ├── __init__.py             # Exports all tools
-│       ├── contact_tools.py        # Internal vs External audience classification
-│       ├── calendar_tools.py       # Availability checking & event scheduling
-│       ├── gmail_tools.py          # Inbox search, drafting & email dispatch
-│       └── chat_tools.py           # Google Chat HITL cards & 1-click draft links
-├── sidecars/
-│   └── agenica-ea/
-│       └── sidecar.json            # Scheduled background automation (cron)
-├── .agent_engine_config.json       # Vertex AI Agent Engine deployment configuration
-├── mcp_server.py                   # JSON-RPC 2.0 stdio MCP server
-├── deploy.py                       # Automated deployment & Gemini Enterprise publisher
-├── Dockerfile                      # Container definition for Cloud Run / GKE
-├── pyproject.toml                  # Python package configuration
-├── requirements.txt                # Root dependencies
-├── AGENTS.md                       # Persona and operating guidelines
-└── README.md                       # Documentation & deployment guide
-```
+All actions generate interactive 1-click links for confirmation:
+* `[📅 Open & Edit in Google Calendar](...)`
+* `[✉️ Open & Review Draft in Gmail](...)`
+* `[🎨 Open Presentation in Google Slides](...)`
+* `[📄 Open Briefing in Google Docs](...)`
 
 ---
 
@@ -65,35 +89,17 @@ agenica/
 
 ### 1. Interactive Agent CLI Testing
 
-Run a single prompt through the ADK agent:
-
 ```bash
-uv run python -m agent.agent "Dr. John from Flinders University emailed requesting 30 min next Tuesday at 2pm to discuss AI research."
-```
+# Run a single prompt through the ADK agent
+uv run python -m agent.agent "Scan my inbox and summarize what needs my attention"
 
-Or start the interactive REPL:
-
-```bash
+# Or start interactive REPL
 uv run python -m agent.agent --interactive
 ```
 
----
+### 2. MCP Server Mode
 
-### 2. Local Web Playground
-
-Launch the ADK web playground interface:
-
-```bash
-agents-cli playground
-# or:
-adk web agent
-```
-
----
-
-### 3. MCP Server Mode
-
-To connect Ms. Agenica S tools to `gemini-cli` or other MCP clients, add this to `~/.gemini/settings.json`:
+Add Ms. Agenica S to `~/.gemini/settings.json`:
 
 ```json
 {
@@ -108,38 +114,15 @@ To connect Ms. Agenica S tools to `gemini-cli` or other MCP clients, add this to
 
 ---
 
-## ☁️ Deployment & Gemini Enterprise Registration
+## ☁️ Deployment & Vertex AI Reasoning Engine
 
-### Option A: One-Click Deploy Script
-
-```bash
-python3 deploy.py --project ag-test-1310 --region us-central1
-```
-
-### Option B: Step-by-Step CLI Deployment
-
-#### Step 1: Deploy to Vertex AI Agent Engine (Reasoning Engine)
+Deploy or update on **Google Cloud Vertex AI Agent Engine**:
 
 ```bash
 adk deploy agent_engine \
   --project ag-test-1310 \
   --region us-central1 \
+  --agent_engine_id 1598524430286323712 \
   --display_name "Ms. Agenica S (EA to Abhi Sethi)" \
-  --description "Executive Assistant AI Agent managing Google Calendar, Gmail, and Google Chat HITL workflows."
+  agent
 ```
-
-#### Step 2: Register on Gemini Enterprise App
-
-```bash
-agents-cli publish gemini-enterprise \
-  --project ag-test-1310 \
-  --display-name "Ms. Agenica S (EA to Abhi Sethi)" \
-  --description "Executive Assistant for calendar scheduling, Gmail triage, and Google Chat HITL approvals." \
-  --interactive
-```
-
----
-
-## ⏱️ Background Scheduled Automation
-
-To run autonomous inbox and schedule triage every 15 minutes, enable the sidecar configuration in `sidecars/agenica-ea/sidecar.json`.

@@ -24,8 +24,8 @@ Executive Assistant to {PRINCIPAL_NAME}
 Google Workspace Executive Assistant Agent
 {AGENT_EMAIL}"""
 
-# Default Model (gemini-3.7-flash, gemini-3.6-flash, or gemini-2.5-flash)
-DEFAULT_MODEL = os.environ.get("ADK_MODEL", "gemini-3.7-flash")
+# Default Model (gemini-2.5-flash is GA and supported across all Vertex AI regions including us-central1)
+DEFAULT_MODEL = os.environ.get("ADK_MODEL", "gemini-2.5-flash")
 
 # Google Cloud Settings
 GCP_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "cowork-aset-6tnf0w")

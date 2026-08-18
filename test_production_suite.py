@@ -12,8 +12,8 @@ from datetime import datetime
 
 # Set Environment Variables
 os.environ["GOOGLE_CLOUD_PROJECT"] = "cowork-aset-6tnf0w"
-os.environ["GOOGLE_CLOUD_LOCATION"] = "global"
-os.environ["ADK_MODEL"] = "gemini-3.7-flash"
+os.environ["GOOGLE_CLOUD_LOCATION"] = "us-central1"
+os.environ["ADK_MODEL"] = "gemini-2.5-flash"
 os.environ["PRINCIPAL_EMAIL"] = "aset@google.com"
 os.environ["PRINCIPAL_NAME"] = "Abhi Sethi"
 os.environ["USER_TIMEZONE"] = "Asia/Singapore"
@@ -50,13 +50,13 @@ def test_1_auth_and_environment():
         from google.oauth2.credentials import Credentials
         from google import genai
         creds = Credentials(tok)
-        client = genai.Client(project="cowork-aset-6tnf0w", location="global", vertexai=True, credentials=creds)
-        res = client.models.generate_content(model="gemini-3.7-flash", contents="Say: System operational")
+        client = genai.Client(project="cowork-aset-6tnf0w", location="us-central1", vertexai=True, credentials=creds)
+        res = client.models.generate_content(model="gemini-2.5-flash", contents="Say: System operational")
         
         log_test("Auth & Preflight Probe", "PASS", {
             "account": account,
             "project": project,
-            "model": "gemini-3.7-flash",
+            "model": "gemini-2.5-flash",
             "vertex_ai_response": res.text.strip()
         })
     except Exception as e:

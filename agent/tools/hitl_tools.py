@@ -38,7 +38,7 @@ def create_calendar_proposal_card(
     location: str = "Google Meet / Video Conference (Hybrid)",
     details: Optional[str] = None,
     clash_note: Optional[str] = None,
-    timezone_str: str = "Australia/Adelaide"
+    timezone_str: str = "Asia/Singapore"
 ) -> Dict[str, Any]:
     """
     Generate an interactive Pre-Booking Proposal Card with 1-click Google Calendar link.

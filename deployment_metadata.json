@@ -3,11 +3,12 @@
   "project_number": "645694706016",
   "deployment_target": "agent_runtime",
   "principal_email": "aset@google.com",
-  "remote_agent_runtime_id": "projects/645694706016/locations/us-central1/reasoningEngines/1739473024874184704",
+  "remote_agent_runtime_id": "projects/645694706016/locations/us-central1/reasoningEngines/4554222791980744704",
   "agent_directory": "agent",
   "display_name": "Ms. Agenica S (EA to Abhi Sethi)",
-  "vertex_ai_console_url": "https://console.cloud.google.com/vertex-ai/agents/agent-engines/locations/us-central1/agent-engines/1739473024874184704/playground?project=645694706016",
+  "vertex_ai_console_url": "https://console.cloud.google.com/vertex-ai/agents/agent-engines/locations/us-central1/agent-engines/4554222791980744704/playground?project=645694706016",
+  "primary_timezone": "Asia/Singapore (SGT / UTC+8)",
   "model": "gemini-3.7-flash (Global Vertex AI Routing via GlobalGemini)",
-  "deployed_at": "2026-08-19T12:25:01Z",
+  "deployed_at": "2026-08-19T12:35:05Z",
   "test_suite_status": "6/6 PASS (100%)"
 }

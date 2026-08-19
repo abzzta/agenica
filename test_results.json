@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-19T12:20:33.767524",
+  "timestamp": "2026-08-19T12:31:35.852549",
   "principal": "Abhi Sethi (aset@google.com)",
   "project": "cowork-aset-6tnf0w",
   "tests": [
@@ -19,7 +19,7 @@
       "details": {
         "current_date": "2026-08-19",
         "day_of_week": "Wednesday",
-        "timezone": "Asia/Singapore",
+        "timezone": null,
         "relative_tomorrow": "2026-08-20"
       }
     },
@@ -30,7 +30,7 @@
         "clash_detected": false,
         "conflicting_event": "None",
         "proposal_status": "PROPOSAL_READY",
-        "calendar_link": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Partnership+Review%3A+DICT+%26+Google+Cloud&dates=20260819T140000%2F20260819T143000&details=Agenda%3A%0A1.+Walkthrough+of+DICT+technical+architecture+assessment+proposal%0A2.+Clarify+security%2C+sovereignty%2C+and+compliance+prerequisites%0A3.+Confirm+pilot+evaluation+milestones+and+formal+sign-off+schedule&location=Google+Meet+%2F+Video+Conference+%28Hybrid%29&ctz=Australia%2FAdelaide&add=lead%40dict.gov%2Caset%40google.com"
+        "calendar_link": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Partnership+Review%3A+DICT+%26+Google+Cloud&dates=20260819T140000%2F20260819T143000&details=Agenda%3A%0A1.+Walkthrough+of+DICT+technical+architecture+assessment+proposal%0A2.+Clarify+security%2C+sovereignty%2C+and+compliance+prerequisites%0A3.+Confirm+pilot+evaluation+milestones+and+formal+sign-off+schedule&location=Google+Meet+%2F+Video+Conference+%28Hybrid%29&ctz=Asia%2FSingapore&add=lead%40dict.gov%2Caset%40google.com"
       }
     },
     {
@@ -40,7 +40,7 @@
         "total_scanned": 5,
         "needs_action_count": 5,
         "draft_protocol": "DRAFT_DELEGATE_PROTOCOL",
-        "draft_url": "https://mail.google.com/mail/u/0/#drafts/r-1787142050"
+        "draft_url": "https://mail.google.com/mail/u/0/#drafts/r-1787142708"
       }
     },
     {

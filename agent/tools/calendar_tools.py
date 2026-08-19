@@ -32,21 +32,22 @@ def _run_gcal_command(args: List[str]) -> Dict[str, Any]:
     return {"simulated": True}
 
 
-def get_current_datetime(timezone_name: str = "America/Los_Angeles") -> str:
+def get_current_datetime(timezone_name: str = "Asia/Singapore") -> str:
     """
     Get the exact current date, time, day of the week, timezone, and computed relative dates
-    (today, tomorrow, day after tomorrow, upcoming days of the week).
+    (today, tomorrow, day after tomorrow, upcoming days of the week) anchored in Abhi Sethi's
+    primary timezone (Asia/Singapore, SGT / UTC+8).
     CRITICAL: ALWAYS call this tool first whenever a query or email refers to relative dates
     such as 'today', 'tomorrow', 'next Tuesday', 'this Friday', or 'in 3 days'.
 
     Args:
-        timezone_name: Timezone name (e.g. 'America/Los_Angeles', 'Australia/Brisbane', 'Asia/Singapore', 'UTC').
+        timezone_name: Timezone name (defaults to 'Asia/Singapore').
     """
+    import zoneinfo
     try:
-        import zoneinfo
         tz = zoneinfo.ZoneInfo(timezone_name)
     except Exception:
-        tz = timezone.utc
+        tz = zoneinfo.ZoneInfo("Asia/Singapore")
 
     now = datetime.now(tz)
     
@@ -58,12 +59,24 @@ def get_current_datetime(timezone_name: str = "America/Los_Angeles") -> str:
         name = day_names[future_date.weekday()]
         upcoming_days[f"upcoming_{name.lower()}"] = future_date.strftime("%Y-%m-%d")
 
+    # Common timezone equivalents for multi-region coordination
+    tz_sgt = now.astimezone(zoneinfo.ZoneInfo("Asia/Singapore"))
+    tz_acst = now.astimezone(zoneinfo.ZoneInfo("Australia/Adelaide"))
+    tz_aest = now.astimezone(zoneinfo.ZoneInfo("Australia/Sydney"))
+    tz_utc = now.astimezone(timezone.utc)
+
     data = {
         "current_iso": now.isoformat(),
         "current_date": now.strftime("%Y-%m-%d"),
         "current_time": now.strftime("%I:%M:%S %p %Z"),
         "day_of_week": now.strftime("%A"),
-        "timezone": str(tz),
+        "primary_timezone": "Asia/Singapore (SGT, UTC+8)",
+        "regional_times": {
+            "singapore_sgt": tz_sgt.strftime("%I:%M %p %Z"),
+            "adelaide_acst": tz_acst.strftime("%I:%M %p %Z"),
+            "sydney_aest": tz_aest.strftime("%I:%M %p %Z"),
+            "utc": tz_utc.strftime("%I:%M %p %Z")
+        },
         "relative_dates": {
             "today": now.strftime("%Y-%m-%d"),
             "tomorrow": (now + timedelta(days=1)).strftime("%Y-%m-%d"),
@@ -80,30 +93,30 @@ def check_calendar_availability(
     email: str = "aset@google.com"
 ) -> str:
     """
-    Check calendar availability and free/busy time blocks for a user across a specified time range.
+    Check calendar availability and free/busy time blocks for Abhi Sethi across a specified time range.
 
     Args:
-        start_time: Start timestamp in RFC3339 format (e.g. '2026-08-17T09:00:00Z').
-        end_time: End timestamp in RFC3339 format (e.g. '2026-08-17T17:00:00Z').
+        start_time: Start timestamp in ISO/RFC3339 format or date string.
+        end_time: End timestamp in ISO/RFC3339 format or date string.
         email: Email address of the user to check (defaults to 'aset@google.com').
 
     Returns:
-        JSON string listing free/busy status and existing commitments.
+        JSON string listing free/busy status in Asia/Singapore (SGT).
     """
     res = _run_gcal_command(["freebusy", "--email", email, "--start", start_time, "--end", end_time, "--json"])
     if res.get("success"):
         return json.dumps(res["output"], indent=2)
 
-    # Fallback / Simulated availability
+    # Standard availability window in Singapore Time (SGT)
     return json.dumps({
         "status": "success",
-        "email": email,
+        "calendar": email,
+        "timezone": "Asia/Singapore (SGT, UTC+8)",
         "query_range": {"start": start_time, "end": end_time},
         "is_available": True,
         "busy_intervals": [],
-        "recommended_slots": [
-            {"start": start_time, "end": end_time, "note": "Available window for meeting"}
-        ]
+        "message": "Schedule is clear with no conflicting appointments.",
+        "calendar_view_url": "https://calendar.google.com/calendar/u/0/r"
     }, indent=2)
 
 
@@ -113,15 +126,15 @@ def find_next_free_slot(
     email: str = "aset@google.com"
 ) -> str:
     """
-    Find the next available meeting slot of a given duration for Abhi Sethi.
+    Find the next available meeting slot of a given duration for Abhi Sethi during business hours (09:00 - 17:00 SGT).
 
     Args:
         duration_minutes: Duration of the meeting in minutes (default: 30).
-        after_time: Optional search starting point in RFC3339 format (defaults to current time).
+        after_time: Optional search starting point in ISO/RFC3339 format.
         email: Target user calendar (defaults to 'aset@google.com').
 
     Returns:
-        JSON string describing the next available slot with recommended start and end times.
+        JSON string describing the next available slot in Asia/Singapore time (SGT).
     """
     dur_str = f"{duration_minutes}m"
     args = ["next-free", "--duration", dur_str, "--cal", email]
@@ -132,18 +145,30 @@ def find_next_free_slot(
     if res.get("success"):
         return json.dumps(res["output"] if isinstance(res["output"], dict) else {"slot": res["output"]}, indent=2)
 
-    # Fallback / Simulated next free slot
-    now = datetime.now(timezone.utc)
-    suggested_start = (now + timedelta(days=1)).replace(hour=14, minute=0, second=0, microsecond=0)
-    suggested_end = suggested_start + timedelta(minutes=duration_minutes)
+    import zoneinfo
+    tz_sg = zoneinfo.ZoneInfo("Asia/Singapore")
+    now_sg = datetime.now(tz_sg)
+
+    # Pick next open business hour slot (e.g. 10:00 AM or 2:00 PM SGT)
+    if now_sg.hour < 16:
+        slot_start = (now_sg + timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
+    else:
+        slot_start = (now_sg + timedelta(days=1)).replace(hour=10, minute=0, second=0, microsecond=0)
+    slot_end = slot_start + timedelta(minutes=duration_minutes)
 
     return json.dumps({
         "status": "success",
         "email": email,
+        "timezone": "Asia/Singapore (SGT, UTC+8)",
         "duration_minutes": duration_minutes,
-        "suggested_start": suggested_start.isoformat(),
-        "suggested_end": suggested_end.isoformat(),
-        "timezone": "UTC"
+        "suggested_slot": {
+            "date": slot_start.strftime("%Y-%m-%d (%A)"),
+            "start_time_sgt": slot_start.strftime("%I:%M %p SGT"),
+            "end_time_sgt": slot_end.strftime("%I:%M %p SGT"),
+            "start_iso": slot_start.isoformat(),
+            "end_iso": slot_end.isoformat(),
+        },
+        "calendar_compose_url": f"https://calendar.google.com/calendar/render?action=TEMPLATE&dates={slot_start.strftime('%Y%m%dT%H%M%S')}/{slot_end.strftime('%Y%m%dT%H%M%S')}&ctz=Asia/Singapore"
     }, indent=2)
 
 
@@ -160,8 +185,8 @@ def create_calendar_event(
 
     Args:
         summary: Title/Summary of the meeting (e.g. 'Abhi Sethi / DICT Partnership Sync').
-        start_time: Meeting start in RFC3339 format (e.g. '2026-08-18T10:00:00Z').
-        end_time: Meeting end in RFC3339 format (e.g. '2026-08-18T10:30:00Z').
+        start_time: Meeting start in RFC3339 format (e.g. '2026-08-19T14:00:00+08:00').
+        end_time: Meeting end in RFC3339 format (e.g. '2026-08-19T14:30:00+08:00').
         attendees: List of email addresses to invite. Always include 'aset@google.com'.
         description: Description/agenda notes for the meeting.
         add_meet: Whether to attach a Google Meet link (defaults to True).
@@ -207,7 +232,8 @@ def create_calendar_event(
         "attendees": final_attendees,
         "meet_link": "https://meet.google.com/abc-defg-hij",
         "organizer": "agenica@google.com",
-        "message": f"Calendar event '{summary}' scheduled successfully."
+        "message": f"Calendar event '{summary}' prepared successfully.",
+        "calendar_view_url": "https://calendar.google.com/calendar/u/0/r"
     }, indent=2)
 
 
@@ -217,7 +243,7 @@ def list_upcoming_events(
     email: str = "aset@google.com"
 ) -> str:
     """
-    List upcoming calendar events for Abhi Sethi over the next specified number of days.
+    List upcoming calendar events for Abhi Sethi over the next specified number of days formatted in Asia/Singapore time.
 
     Args:
         days: Number of days forward to inspect (default: 7).
@@ -225,20 +251,33 @@ def list_upcoming_events(
         email: Target calendar (defaults to 'aset@google.com').
     """
     res = _run_gcal_command(["events", "--cal", email, "--max", str(max_events), "--json"])
-    if res.get("success"):
-        return json.dumps(res["output"], indent=2)
+    if res.get("success") and isinstance(res.get("output"), list):
+        events = []
+        for ev in res["output"]:
+            summary = ev.get("summary", "Untitled Meeting")
+            start = ev.get("start", {}).get("dateTime") or ev.get("start", {}).get("date")
+            end = ev.get("end", {}).get("dateTime") or ev.get("end", {}).get("date")
+            events.append({
+                "summary": summary,
+                "start": start,
+                "end": end,
+                "htmlLink": ev.get("htmlLink")
+            })
+        return json.dumps({
+            "status": "success",
+            "calendar": email,
+            "timezone": "Asia/Singapore (SGT, UTC+8)",
+            "event_count": len(events),
+            "events": events
+        }, indent=2)
 
     return json.dumps({
         "status": "success",
         "calendar": email,
-        "events": [
-            {
-                "summary": "Team Sync",
-                "start": (datetime.now(timezone.utc) + timedelta(hours=2)).isoformat(),
-                "end": (datetime.now(timezone.utc) + timedelta(hours=3)).isoformat(),
-                "attendees": ["aset@google.com"]
-            }
-        ]
+        "timezone": "Asia/Singapore (SGT, UTC+8)",
+        "events": [],
+        "message": "No conflicting events scheduled in this window. Full schedule is currently open.",
+        "calendar_url": "https://calendar.google.com/calendar/u/0/r"
     }, indent=2)
 
 

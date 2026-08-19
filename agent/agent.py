@@ -94,15 +94,28 @@ ALL_AGENT_TOOLS = [
 ]
 
 # ---------------------------------------------------------------------------
-# ADK Agent Definition
+# ADK Agent Definition with Global Vertex AI Routing
 # ---------------------------------------------------------------------------
 try:
+    from functools import cached_property
+    from google.adk.models import Gemini
     from google.adk.agents import Agent
     from google.adk.apps import App
+    from google.genai import Client
+
+    class GlobalGemini(Gemini):
+        """Custom Gemini model provider that explicitly routes to Vertex AI global location for gemini-3.7-flash, gemini-3.6-flash, etc."""
+        @cached_property
+        def api_client(self) -> Client:
+            return Client(
+                vertexai=True,
+                location="global",
+                project=os.environ.get("GOOGLE_CLOUD_PROJECT", "cowork-aset-6tnf0w")
+            )
 
     root_agent = Agent(
         name="agenica_agent",
-        model=DEFAULT_MODEL,
+        model=GlobalGemini(model=DEFAULT_MODEL),
         description="Executive Assistant AI Agent managing Google Calendar scheduling, clash detection, 4-tier Gmail triage, 16:9 Google Slides deck generation with speaker notes, Google Docs briefing memos, and Google Chat HITL workflows for Abhi Sethi.",
         instruction=AGENT_INSTRUCTIONS,
         tools=ALL_AGENT_TOOLS

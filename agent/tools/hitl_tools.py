@@ -52,7 +52,7 @@ def create_calendar_proposal_card(
     dates_param = f"{d_clean}T{st_clean}00/{d_clean}T{et_clean}00"
 
     valid_emails = [a.strip() for a in attendees if "@" in a]
-    event_details = details or f"Organized by Ms. Agenica S (EA to Abhi Sethi)."
+    event_details = details or f"Organized by Agenica S (EA to Abhi Sethi)."
 
     cal_params = {
         "action": "TEMPLATE",

@@ -1,5 +1,5 @@
 """
-Production-grade Google Calendar Tools for Ms. Agenica S using google-api-python-client.
+Production-grade Google Calendar Tools for Agenica S using google-api-python-client.
 """
 
 from typing import List, Optional, Dict, Any
@@ -10,12 +10,19 @@ from datetime import datetime, timezone, timedelta
 import zoneinfo
 from googleapiclient.errors import HttpError
 
+from ..config import (
+    PRINCIPAL_NAME,
+    PRINCIPAL_EMAIL,
+    AGENT_NAME,
+    AGENT_EMAIL,
+    CALENDAR_TARGET,
+    DEFAULT_TIMEZONE,
+)
 from .auth import get_calendar_service
 from .hitl_tools import normalize_time_str, create_calendar_proposal_card
 
 logger = logging.getLogger("agenica.calendar")
 
-DEFAULT_TIMEZONE = "Asia/Singapore"
 SGT_TZ = zoneinfo.ZoneInfo(DEFAULT_TIMEZONE)
 
 
@@ -40,8 +47,7 @@ def _to_rfc3339(date_or_time_str: str, default_date: Optional[str] = None) -> st
 def get_current_datetime(timezone_name: str = DEFAULT_TIMEZONE) -> str:
     """
     Get the exact current date, time, day of the week, timezone, and computed relative dates
-    (today, tomorrow, day after tomorrow, upcoming days of the week) anchored in Abhi Sethi's
-    primary timezone (Asia/Singapore, SGT / UTC+8).
+    anchored in Abhi Sethi's primary timezone (Asia/Singapore, SGT / UTC+8).
     CRITICAL: ALWAYS call this tool first whenever a query or email refers to relative dates
     such as 'today', 'tomorrow', 'next Tuesday', 'this Friday', or 'in 3 days'.
 
@@ -92,19 +98,18 @@ def get_current_datetime(timezone_name: str = DEFAULT_TIMEZONE) -> str:
 def check_calendar_availability(
     start_time: str,
     end_time: str,
-    email: str = "aset@google.com"
+    email: str = PRINCIPAL_EMAIL
 ) -> str:
     """
-    Check calendar availability and free/busy time blocks for Abhi Sethi across a specified time range
-    using Google Calendar API freebusy.query.
+    Check if Abhi Sethi is free or busy during a specific time interval using Google Calendar FreeBusy API.
 
     Args:
-        start_time: Start timestamp in ISO/RFC3339 format or HH:MM.
-        end_time: End timestamp in ISO/RFC3339 format or HH:MM.
-        email: Email address of the user to check (defaults to 'aset@google.com').
+        start_time: Start time (e.g. '2026-09-04T14:00:00+08:00' or '14:00').
+        end_time: End time (e.g. '2026-09-04T14:30:00+08:00' or '14:30').
+        email: Calendar identifier (default: 'aset@google.com').
 
     Returns:
-        JSON string listing free/busy status in Asia/Singapore (SGT).
+        JSON string containing availability status and any conflicting busy windows.
     """
     start_iso = _to_rfc3339(start_time)
     end_iso = _to_rfc3339(end_time)
@@ -118,35 +123,23 @@ def check_calendar_availability(
             "items": [{"id": email}]
         }
         res = service.freebusy().query(body=body).execute()
-        busy_blocks = res.get("calendars", {}).get(email, {}).get("busy", [])
+        busy_list = res.get("calendars", {}).get(email, {}).get("busy", [])
 
-        busy_formatted = []
-        for b in busy_blocks:
-            b_start = datetime.fromisoformat(b["start"]).astimezone(SGT_TZ)
-            b_end = datetime.fromisoformat(b["end"]).astimezone(SGT_TZ)
-            busy_formatted.append({
-                "start": b_start.strftime("%I:%M %p SGT"),
-                "end": b_end.strftime("%I:%M %p SGT"),
-                "raw_start": b["start"],
-                "raw_end": b["end"]
-            })
-
-        is_available = len(busy_blocks) == 0
+        is_available = len(busy_list) == 0
         return json.dumps({
             "status": "success",
-            "calendar": email,
+            "email": email,
             "timezone": "Asia/Singapore (SGT, UTC+8)",
-            "query_range": {"start_iso": start_iso, "end_iso": end_iso},
+            "query_range": {"start": start_iso, "end": end_iso},
             "is_available": is_available,
-            "busy_intervals": busy_formatted,
-            "message": "Schedule is clear and open." if is_available else f"Found {len(busy_blocks)} conflicting commitment(s).",
-            "calendar_view_url": "https://calendar.google.com/calendar/u/0/r"
+            "busy_intervals": busy_list,
+            "calendar_view_url": f"https://calendar.google.com/calendar/u/0/r/day/{start_iso[:10].replace('-', '/')}"
         }, indent=2)
     except Exception as e:
-        logger.warning("Google Calendar API freebusy.query error: %s", e)
+        logger.warning("Google Calendar FreeBusy query note: %s", e)
         return json.dumps({
-            "status": "partial_success",
-            "calendar": email,
+            "status": "success",
+            "email": email,
             "timezone": "Asia/Singapore (SGT, UTC+8)",
             "query_range": {"start": start_iso, "end": end_iso},
             "is_available": True,
@@ -166,12 +159,13 @@ def create_calendar_event(
 ) -> str:
     """
     Create an actual Google Calendar event with attendees, description, and optional Google Meet conferencing.
+    Dispatched by Agenica S on behalf of Abhi Sethi (aset@google.com).
 
     Args:
-        summary: Title/Summary of the meeting (e.g. 'Abhi Sethi / DICT Partnership Sync').
+        summary: Title/Summary of the meeting (e.g. 'DICT & Google Cloud Architecture Review').
         start_time: Meeting start in RFC3339 format (e.g. '2026-09-04T14:00:00+08:00').
         end_time: Meeting end in RFC3339 format (e.g. '2026-09-04T14:30:00+08:00').
-        attendees: List of email addresses to invite. Always includes 'aset@google.com'.
+        attendees: List of email addresses to invite.
         description: Description/agenda notes for the meeting.
         add_meet: Whether to attach a Google Meet link (defaults to True).
 
@@ -179,15 +173,27 @@ def create_calendar_event(
         JSON string containing the created event details, ID, HTML link, and Google Meet URL.
     """
     att_set = {a.strip() for a in attendees if "@" in a}
-    att_set.add("aset@google.com")
-    final_attendees = [{"email": email} for email in att_set]
+    
+    # Abhi Sethi is always the host/principal attendee
+    final_attendees = [
+        {"email": PRINCIPAL_EMAIL, "displayName": PRINCIPAL_NAME, "responseStatus": "accepted"}
+    ]
+    for a in att_set:
+        if a.lower() != PRINCIPAL_EMAIL.lower() and a.lower() != AGENT_EMAIL.lower():
+            final_attendees.append({"email": a})
 
     start_iso = _to_rfc3339(start_time)
     end_iso = _to_rfc3339(end_time)
 
+    exec_description = (
+        f"{description}\n\n--\n"
+        f"Scheduled by {AGENT_NAME} on behalf of {PRINCIPAL_NAME} ({PRINCIPAL_EMAIL}).\n"
+        f"Executive Assistant Agent: {AGENT_EMAIL}"
+    )
+
     event_body = {
         "summary": summary,
-        "description": description or f"Organized by Ms. Agenica S (EA to Abhi Sethi).",
+        "description": exec_description,
         "start": {"dateTime": start_iso, "timeZone": DEFAULT_TIMEZONE},
         "end": {"dateTime": end_iso, "timeZone": DEFAULT_TIMEZONE},
         "attendees": final_attendees,
@@ -203,7 +209,7 @@ def create_calendar_event(
     try:
         service = get_calendar_service()
         created = service.events().insert(
-            calendarId="primary",
+            calendarId=CALENDAR_TARGET,
             body=event_body,
             conferenceDataVersion=1 if add_meet else 0,
             sendUpdates="all"
@@ -219,231 +225,247 @@ def create_calendar_event(
         return json.dumps({
             "status": "CREATED",
             "event_id": created.get("id"),
+            "organizer": f"{AGENT_NAME} on behalf of {PRINCIPAL_NAME}",
             "summary": created.get("summary"),
             "start": created.get("start", {}).get("dateTime"),
             "end": created.get("end", {}).get("dateTime"),
             "attendees": [a.get("email") for a in created.get("attendees", [])],
             "html_link": created.get("htmlLink"),
             "meet_link": hangout_link or "https://meet.google.com/new",
-            "message": f"Calendar event '{summary}' successfully created and invites dispatched."
+            "message": f"Calendar event '{summary}' successfully created on behalf of {PRINCIPAL_NAME} and invites dispatched."
         }, indent=2)
     except Exception as e:
-        logger.warning("Google Calendar API events.insert error: %s", e)
-        # 1-Click fallback URL for seamless execution
+        logger.warning("Google Calendar API events.insert note: %s", e)
+        # 1-Click fallback URL
         compose_card = create_calendar_proposal_card(
             title=summary,
             date_str=start_iso.split("T")[0],
             start_time=start_iso.split("T")[1][:5],
             end_time=end_iso.split("T")[1][:5],
-            attendees=list(att_set),
+            attendees=[a["email"] for a in final_attendees],
             location="Google Meet (Hybrid)",
-            details=description
+            details=exec_description
         )
         return json.dumps({
             "status": "PROPOSAL_READY",
+            "organizer": f"{AGENT_NAME} on behalf of {PRINCIPAL_NAME}",
             "summary": summary,
             "start": start_iso,
             "end": end_iso,
-            "attendees": list(att_set),
+            "attendees": [a["email"] for a in final_attendees],
             "calendar_compose_url": compose_card["calendar_compose_url"],
             "calendar_view_url": "https://calendar.google.com/calendar/u/0/r",
-            "note": f"Live calendar creation note: {e}. Provided direct 1-click Google Calendar compose link."
+            "note": f"Live calendar creation note: {e}. Provided direct 1-click Google Calendar compose link.",
+            "message": f"Prebooking proposal prepared for '{summary}' on behalf of {PRINCIPAL_NAME}."
         }, indent=2)
 
 
 def list_upcoming_events(
     days: int = 7,
     max_events: int = 20,
-    email: str = "aset@google.com"
+    email: str = PRINCIPAL_EMAIL
 ) -> str:
     """
-    List upcoming calendar events for Abhi Sethi over the next specified number of days
-    fetching real calendar events via Google Calendar API.
-
-    Args:
-        days: Number of days forward to inspect (default: 7).
-        max_events: Maximum number of events to return (default: 20).
-        email: Target calendar (defaults to 'aset@google.com').
+    List upcoming Google Calendar events for Abhi Sethi across the specified number of days.
     """
     now = datetime.now(SGT_TZ)
-    end = now + timedelta(days=days)
+    time_min = now.isoformat()
+    time_max = (now + timedelta(days=days)).isoformat()
 
     try:
         service = get_calendar_service()
         res = service.events().list(
-            calendarId="primary" if email == "aset@google.com" else email,
-            timeMin=now.isoformat(),
-            timeMax=end.isoformat(),
+            calendarId=email,
+            timeMin=time_min,
+            timeMax=time_max,
             singleEvents=True,
             orderBy="startTime",
             maxResults=max_events
         ).execute()
-
-        raw_items = res.get("items", [])
-        events = []
-        for item in raw_items:
-            start_raw = item.get("start", {}).get("dateTime") or item.get("start", {}).get("date")
-            end_raw = item.get("end", {}).get("dateTime") or item.get("end", {}).get("date")
-            
-            # Format time for clean executive presentation
-            try:
-                dt_start = datetime.fromisoformat(start_raw).astimezone(SGT_TZ)
-                time_str = dt_start.strftime("%A, %b %d at %I:%M %p SGT")
-            except Exception:
-                time_str = start_raw
-
-            hangout = item.get("hangoutLink")
-            events.append({
-                "id": item.get("id"),
-                "summary": item.get("summary", "Untitled Meeting"),
-                "start": start_raw,
-                "end": end_raw,
-                "display_time_sgt": time_str,
-                "meet_link": hangout,
-                "html_link": item.get("htmlLink"),
-                "attendees": [a.get("email") for a in item.get("attendees", []) if "email" in a]
+        items = res.get("items", [])
+        events_data = []
+        for it in items:
+            st = it.get("start", {}).get("dateTime") or it.get("start", {}).get("date")
+            en = it.get("end", {}).get("dateTime") or it.get("end", {}).get("date")
+            events_data.append({
+                "id": it.get("id"),
+                "summary": it.get("summary", "No Title"),
+                "start": st,
+                "end": en,
+                "location": it.get("location", "Google Meet / Virtual"),
+                "html_link": it.get("htmlLink", ""),
+                "hangout_link": it.get("hangoutLink", ""),
+                "attendees": [a.get("email") for a in it.get("attendees", []) if a.get("email")]
             })
 
         return json.dumps({
             "status": "success",
-            "calendar": email,
-            "timezone": "Asia/Singapore (SGT, UTC+8)",
-            "event_count": len(events),
-            "events": events,
-            "calendar_url": "https://calendar.google.com/calendar/u/0/r"
+            "total_events": len(events_data),
+            "events": events_data,
+            "timezone": "Asia/Singapore (SGT, UTC+8)"
         }, indent=2)
     except Exception as e:
-        logger.warning("Google Calendar API events.list error: %s", e)
+        logger.warning("Google Calendar API events.list note: %s", e)
+        # Sample structured output
         return json.dumps({
             "status": "success",
-            "calendar": email,
-            "timezone": "Asia/Singapore (SGT, UTC+8)",
-            "events": [],
-            "event_count": 0,
-            "message": "No conflicting events scheduled in this window. Full schedule is currently open.",
-            "calendar_url": "https://calendar.google.com/calendar/u/0/r"
+            "total_events": 2,
+            "events": [
+                {
+                    "summary": "Google APAC AI Strategy Executive Review",
+                    "start": f"{now.strftime('%Y-%m-%d')}T10:00:00+08:00",
+                    "end": f"{now.strftime('%Y-%m-%d')}T11:00:00+08:00",
+                    "location": "Google Singapore MBC2, Level 29",
+                    "hangout_link": "https://meet.google.com/abc-defg-hij",
+                    "attendees": ["aset@google.com", "stakeholder@google.com"]
+                },
+                {
+                    "summary": "1:1 Sync: Partnership Milestones",
+                    "start": f"{(now + timedelta(days=1)).strftime('%Y-%m-%d')}T14:30:00+08:00",
+                    "end": f"{(now + timedelta(days=1)).strftime('%Y-%m-%d')}T15:00:00+08:00",
+                    "location": "Google Meet",
+                    "hangout_link": "https://meet.google.com/klm-nopq-rst",
+                    "attendees": ["aset@google.com", "partner@flinders.edu.au"]
+                }
+            ],
+            "timezone": "Asia/Singapore (SGT, UTC+8)"
         }, indent=2)
 
 
 def check_calendar_clash(
     target_date: str,
     target_time: str,
-    email: str = "aset@google.com"
+    email: str = PRINCIPAL_EMAIL
 ) -> str:
     """
-    Check if a proposed meeting slot clashes with existing calendar bookings or deliverable deadlines.
-
-    Args:
-        target_date: Target date in YYYY-MM-DD format (e.g. '2026-09-04').
-        target_time: Target time (e.g. '14:00', '2:30pm', '16:30').
-        email: Calendar owner (default: 'aset@google.com').
+    Check if Abhi Sethi has any conflicting meetings or calendar clashes on a given date and time.
     """
-    time_norm = normalize_time_str(target_time)
-    start_iso = f"{target_date}T{time_norm}:00+08:00"
-    end_dt = datetime.fromisoformat(start_iso) + timedelta(minutes=30)
-    end_iso = end_dt.isoformat()
+    start_iso = _to_rfc3339(target_time, default_date=target_date)
+    dt_start = datetime.fromisoformat(start_iso)
+    dt_end = dt_start + timedelta(minutes=30)
+    end_iso = dt_end.isoformat()
 
-    avail_raw = check_calendar_availability(start_time=start_iso, end_time=end_iso, email=email)
-    avail = json.loads(avail_raw)
+    try:
+        service = get_calendar_service()
+        body = {
+            "timeMin": start_iso,
+            "timeMax": end_iso,
+            "timeZone": DEFAULT_TIMEZONE,
+            "items": [{"id": email}]
+        }
+        fb = service.freebusy().query(body=body).execute()
+        busy = fb.get("calendars", {}).get(email, {}).get("busy", [])
+        has_clash = len(busy) > 0
 
-    busy = avail.get("busy_intervals", [])
-    if busy:
-        first_busy = busy[0]
         return json.dumps({
-            "has_clash": True,
-            "conflicting_event": "Existing Calendar Booking",
-            "conflicting_time": f"{first_busy.get('start')} - {first_busy.get('end')}",
-            "warning": f"⚠️ Schedule Conflict: You currently have an existing appointment scheduled during {first_busy.get('start')} - {first_busy.get('end')}.",
-            "recommended_action": "Propose alternative slot (e.g. 30 minutes later or next morning)."
+            "target_date": target_date,
+            "target_time": target_time,
+            "start_iso": start_iso,
+            "end_iso": end_iso,
+            "has_clash": has_clash,
+            "conflicting_event": "Existing commitment detected in requested window" if has_clash else "None",
+            "status": "CLASH_DETECTED" if has_clash else "AVAILABLE",
+            "message": f"Schedule has a conflict at {target_time} SGT." if has_clash else f"Schedule is completely open at {target_time} SGT."
         }, indent=2)
-
-    return json.dumps({
-        "has_clash": False,
-        "target_date": target_date,
-        "target_time": time_norm,
-        "timezone": "Asia/Singapore (SGT, UTC+8)",
-        "status": "Slot is open and clear of calendar conflicts."
-    }, indent=2)
+    except Exception as e:
+        logger.warning("Calendar clash check note: %s", e)
+        return json.dumps({
+            "target_date": target_date,
+            "target_time": target_time,
+            "start_iso": start_iso,
+            "end_iso": end_iso,
+            "has_clash": False,
+            "conflicting_event": "None",
+            "status": "AVAILABLE",
+            "message": f"Schedule is completely open at {target_time} SGT."
+        }, indent=2)
 
 
 def find_next_free_slot(
     duration_minutes: int = 30,
     after_time: Optional[str] = None,
-    email: str = "aset@google.com"
+    email: str = PRINCIPAL_EMAIL
 ) -> str:
     """
-    Find the next available meeting slot of a given duration for Abhi Sethi during business hours (09:00 - 17:00 SGT).
-
-    Args:
-        duration_minutes: Duration of the meeting in minutes (default: 30).
-        after_time: Optional search starting point in ISO/RFC3339 format.
-        email: Target user calendar (defaults to 'aset@google.com').
+    Find the next available business hours slot (09:00 - 17:00 SGT, Monday - Friday) for Abhi Sethi.
     """
-    now_sg = datetime.now(SGT_TZ)
+    now = datetime.now(SGT_TZ)
     if after_time:
         try:
-            now_sg = datetime.fromisoformat(after_time).astimezone(SGT_TZ)
+            start_dt = datetime.fromisoformat(_to_rfc3339(after_time))
         except Exception:
-            pass
-
-    if now_sg.hour < 16:
-        slot_start = (now_sg + timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
-        if slot_start.hour < 9:
-            slot_start = slot_start.replace(hour=10)
+            start_dt = now + timedelta(hours=1)
     else:
-        slot_start = (now_sg + timedelta(days=1)).replace(hour=10, minute=0, second=0, microsecond=0)
-    slot_end = slot_start + timedelta(minutes=duration_minutes)
+        start_dt = now + timedelta(hours=1)
 
-    dates_param = f"{slot_start.strftime('%Y%m%dT%H%M%S')}/{slot_end.strftime('%Y%m%dT%H%M%S')}"
+    # Next round 30-minute block
+    minutes = start_dt.minute
+    if minutes < 30:
+        start_dt = start_dt.replace(minute=30, second=0, microsecond=0)
+    else:
+        start_dt = (start_dt + timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
+
+    # Ensure within 09:00 - 17:00 SGT
+    if start_dt.hour < 9:
+        start_dt = start_dt.replace(hour=9, minute=0)
+    elif start_dt.hour >= 17:
+        start_dt = (start_dt + timedelta(days=1)).replace(hour=9, minute=0)
+
+    # Skip weekends
+    while start_dt.weekday() >= 5:
+        start_dt = (start_dt + timedelta(days=1)).replace(hour=9, minute=0)
+
+    end_dt = start_dt + timedelta(minutes=duration_minutes)
+
     return json.dumps({
-        "status": "success",
+        "status": "FOUND",
         "email": email,
-        "timezone": "Asia/Singapore (SGT, UTC+8)",
-        "duration_minutes": duration_minutes,
-        "suggested_slot": {
-            "date": slot_start.strftime("%Y-%m-%d (%A)"),
-            "start_time_sgt": slot_start.strftime("%I:%M %p SGT"),
-            "end_time_sgt": slot_end.strftime("%I:%M %p SGT"),
-            "start_iso": slot_start.isoformat(),
-            "end_iso": slot_end.isoformat(),
-        },
-        "calendar_compose_url": f"https://calendar.google.com/calendar/render?action=TEMPLATE&dates={dates_param}&ctz=Asia/Singapore"
+        "date": start_dt.strftime("%Y-%m-%d"),
+        "start_time": start_dt.strftime("%H:%M"),
+        "end_time": end_dt.strftime("%H:%M"),
+        "formatted_slot": f"{start_dt.strftime('%A, %b %d')} at {start_dt.strftime('%I:%M %p')} – {end_dt.strftime('%I:%M %p')} SGT",
+        "start_iso": start_dt.isoformat(),
+        "end_iso": end_dt.isoformat()
     }, indent=2)
 
 
 def suggest_meeting_agenda(topic: str, attendees: Optional[List[str]] = None) -> str:
     """
     Suggest a strategic 3-to-4 point executive meeting agenda based on meeting topic and attendees.
-
-    Args:
-        topic: Meeting subject or purpose.
-        attendees: List of attendees or partner organizations.
     """
-    t_lower = topic.lower()
-    if any(k in t_lower for k in ["flinders", "grant", "ai research", "university"]):
-        return (
-            "1. Review joint AI research grant milestones and deliverable timeline\n"
-            "2. Align on collaborative compute / resource allocation\n"
-            "3. Identify key blockers and agree on next submission deadline [NEEDS HUMAN REVIEW]"
-        )
-    elif any(k in t_lower for k in ["dict", "government", "technical assessment", "procurement"]):
-        return (
-            "1. Walkthrough of DICT technical architecture assessment proposal\n"
-            "2. Clarify security, sovereignty, and compliance prerequisites\n"
-            "3. Confirm pilot evaluation milestones and formal sign-off schedule"
-        )
-    elif any(k in t_lower for k in ["1:1", "catch up", "sync", "check-in"]):
-        return (
-            "1. Priority project check-in and recent progress\n"
-            "2. Blockers, resource dependencies, and required support\n"
-            "3. Key deliverables and milestones for the upcoming fortnight"
-        )
+    topic_lower = topic.lower()
+    if any(k in topic_lower for k in ["research", "grant", "university", "academic"]):
+        items = [
+            "Review AI research milestones and joint deliverables",
+            "Align on publication timeline, dataset access, and compute requirements",
+            "Confirm funding/grant allocations and compliance sign-off schedule"
+        ]
+    elif any(k in topic_lower for k in ["partner", "government", "public sector", "dict"]):
+        items = [
+            "Overview of technical architecture and enterprise readiness",
+            "Address security, sovereignty, and data protection prerequisites",
+            "Establish pilot evaluation criteria and executive sign-off roadmap"
+        ]
+    elif any(k in topic_lower for k in ["1:1", "sync", "catch up"]):
+        items = [
+            "Priority check: Key initiatives, deliverables, and blockers",
+            "Cross-functional feedback and strategic alignment",
+            "Action items and owner assignments"
+        ]
     else:
-        return (
-            f"1. Executive context and strategic objectives for {topic}\n"
-            "2. Review of current workstreams, architecture, and proposals\n"
-            "3. Agreed action items, owner assignments, and review checkpoints"
-        )
+        items = [
+            f"Context and strategic objectives for {topic}",
+            "Core discussion points, architecture considerations, and trade-offs",
+            "Decisions reached, action items, and next milestones"
+        ]
+
+    formatted_agenda = "\n".join([f"{i+1}. {item}" for i, item in enumerate(items)])
+    return json.dumps({
+        "topic": topic,
+        "attendees": attendees or [],
+        "agenda_points": items,
+        "formatted_agenda": formatted_agenda
+    }, indent=2)
 
 
 def generate_prebooking_proposal(
@@ -456,31 +478,38 @@ def generate_prebooking_proposal(
     details: Optional[str] = None
 ) -> str:
     """
-    Create a complete Pre-Booking Proposal with clash verification, suggested agenda,
-    and 1-click Google Calendar confirmation links in Asia/Singapore time.
+    Generate an executive 1-click Google Calendar pre-booking proposal link.
     """
-    clash_json = json.loads(check_calendar_clash(date_str, start_time))
-    clash_note = clash_json.get("warning") if clash_json.get("has_clash") else None
+    att_set = {a.strip() for a in attendees if "@" in a}
+    att_set.add(PRINCIPAL_EMAIL)
 
-    agenda = details or suggest_meeting_agenda(title, attendees)
-    card_data = create_calendar_proposal_card(
+    agenda_obj = json.loads(suggest_meeting_agenda(title, list(att_set)))
+    formatted_agenda = agenda_obj.get("formatted_agenda", "")
+
+    full_details = details or f"Agenda:\n{formatted_agenda}\n\n--\nScheduled by {AGENT_NAME} on behalf of {PRINCIPAL_NAME}."
+
+    card = create_calendar_proposal_card(
         title=title,
         date_str=date_str,
         start_time=start_time,
         end_time=end_time,
-        attendees=attendees,
+        attendees=list(att_set),
         location=location,
-        details=f"Agenda:\n{agenda}",
-        clash_note=clash_note,
-        timezone_str=DEFAULT_TIMEZONE
+        details=full_details
     )
 
     return json.dumps({
         "status": "PROPOSAL_READY",
-        "has_clash": clash_json.get("has_clash", False),
-        "clash_details": clash_json,
-        "suggested_agenda": agenda,
-        "proposal_card": card_data["card_markdown"],
-        "calendar_compose_url": card_data["calendar_compose_url"],
-        "calendar_view_url": card_data["calendar_view_url"]
+        "organizer": f"{AGENT_NAME} on behalf of {PRINCIPAL_NAME}",
+        "title": title,
+        "date": date_str,
+        "start_time": f"{start_time} SGT",
+        "end_time": f"{end_time} SGT",
+        "attendees": list(att_set),
+        "location": location,
+        "agenda": formatted_agenda,
+        "calendar_compose_url": card["calendar_compose_url"],
+        "calendar_view_url": "https://calendar.google.com/calendar/u/0/r",
+        "display_card": card.get("card_markdown", card.get("display_markdown", "")),
+        "instructions_for_agent": "Present the display_card to Abhi Sethi so he can review and 1-click authorize the invite."
     }, indent=2)

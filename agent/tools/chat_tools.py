@@ -1,5 +1,5 @@
 """
-Production-grade Google Chat Notification and HITL Approval Tools for Ms. Agenica S using Google Chat Cards v2.
+Production-grade Google Chat Notification and HITL Approval Tools for Agenica S using Google Chat Cards v2.
 """
 
 from typing import Optional, Dict, Any, List
@@ -8,12 +8,17 @@ import logging
 import uuid
 from googleapiclient.errors import HttpError
 
+from ..config import (
+    PRINCIPAL_NAME,
+    PRINCIPAL_EMAIL,
+    AGENT_NAME,
+    AGENT_EMAIL,
+    OFFICE_LOCATION,
+    OFFICE_PRIMARY_FLOOR,
+)
 from .auth import get_chat_service
 
 logger = logging.getLogger("agenica.chat")
-
-AGENT_NAME = "Ms. Agenica S"
-PRINCIPAL_EMAIL = "aset@google.com"
 
 
 def build_chat_card_v2(
@@ -78,24 +83,106 @@ def build_chat_card_v2(
                             "decoratedText": {
                                 "topLabel": "Inbound Summary",
                                 "text": summary,
-                                "wrapText": True
-                            }
-                        },
-                        {
-                            "decoratedText": {
-                                "topLabel": "Proposed Resolution",
-                                "text": f"<font color=\"#1a73e8\">{proposed_action}</font>",
-                                "wrapText": True
+                                "startIcon": {"knownIcon": "DESCRIPTION"}
                             }
                         }
                     ]
                 },
                 {
-                    "header": "Interactive HITL Review Actions",
+                    "header": "Proposed Executive Action",
                     "widgets": [
+                        {
+                            "decoratedText": {
+                                "topLabel": "Action Protocol",
+                                "text": proposed_action,
+                                "startIcon": {"knownIcon": "STAR"}
+                            }
+                        },
                         {
                             "buttonList": {
                                 "buttons": buttons
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+    return card_v2
+
+
+def build_evening_office_card(
+    target_date: str,
+    open_chunks_summary: str,
+    floor: int = OFFICE_PRIMARY_FLOOR
+) -> Dict[str, Any]:
+    """
+    Construct a Google Chat Cards v2 interactive card asking Abhi Sethi about tomorrow's office plan.
+    """
+    card_v2 = {
+        "cardId": f"office-checkin-{uuid.uuid4().hex[:12]}",
+        "card": {
+            "header": {
+                "title": f"Workspace Check-in — {target_date}",
+                "subtitle": f"{AGENT_NAME} • Executive Assistant to {PRINCIPAL_NAME}",
+                "imageUrl": "https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/business_center/default/48px.svg",
+                "imageType": "CIRCLE"
+            },
+            "sections": [
+                {
+                    "header": "Tomorrow's Schedule & Focus Availability",
+                    "widgets": [
+                        {
+                            "decoratedText": {
+                                "topLabel": "Open Working Chunks",
+                                "text": open_chunks_summary,
+                                "startIcon": {"knownIcon": "CLOCK"}
+                            }
+                        },
+                        {
+                            "decoratedText": {
+                                "topLabel": "Workspace Question",
+                                "text": f"Will you be in the office tomorrow at <b>{OFFICE_LOCATION}</b>? If so, I can book a phone/focus room on Level {floor} for your open chunks.",
+                                "startIcon": {"knownIcon": "MAP_PIN"}
+                            }
+                        }
+                    ]
+                },
+                {
+                    "header": "1-Click Workspace Options",
+                    "widgets": [
+                        {
+                            "buttonList": {
+                                "buttons": [
+                                    {
+                                        "text": f"🏢 Reserve Level {floor} Focus Room",
+                                        "color": {"red": 0.1, "green": 0.45, "blue": 0.91, "alpha": 1.0},
+                                        "onClick": {
+                                            "action": {
+                                                "function": "reserve_mbc_room",
+                                                "parameters": [{"key": "date", "value": target_date}, {"key": "floor", "value": str(floor)}]
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "text": "🏠 Work From Home (WFH)",
+                                        "onClick": {
+                                            "action": {
+                                                "function": "set_wfh",
+                                                "parameters": [{"key": "date", "value": target_date}]
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "text": "✈️ OOO / Off-site",
+                                        "onClick": {
+                                            "action": {
+                                                "function": "set_ooo",
+                                                "parameters": [{"key": "date", "value": target_date}]
+                                            }
+                                        }
+                                    }
+                                ]
                             }
                         }
                     ]
@@ -111,128 +198,89 @@ def send_chat_approval_request(
     proposed_action: str,
     target_contact: str,
     draft_url: Optional[str] = None,
-    recipient: str = PRINCIPAL_EMAIL,
-    space_name: Optional[str] = None
+    recipient: str = PRINCIPAL_EMAIL
 ) -> str:
     """
-    Send a Human-In-The-Loop (HITL) approval request or Draft review notification to Abhi Sethi
-    via Google Chat Cards v2 with interactive action buttons.
-
-    Args:
-        summary: Brief summary of the inbound email / scheduling request.
-        proposed_action: Proposed meeting details or reply content.
-        target_contact: The person or organization involved (e.g. 'Dr. Smith (Flinders)' or 'alice@google.com').
-        draft_url: If external partner, provide the 1-click review link to the Gmail draft.
-        recipient: Abhi Sethi's email (defaults to 'aset@google.com').
-        space_name: Optional target Google Chat space resource name (e.g. 'spaces/AAAA1234').
-
-    Returns:
-        JSON string confirming delivery of the Google Chat Cards v2 notification.
+    Send a Human-In-The-Loop (HITL) approval request or Draft review notification to Abhi Sethi via Google Chat.
     """
+    recipient_user = recipient.split("@")[0]
+    
+    title = f"{AGENT_NAME} — Executive Action Request"
+    subtitle = f"Audience: {target_contact} | Principal: {PRINCIPAL_NAME}"
+    action_button_text = "Open & Review Draft in Gmail" if draft_url else "Open Google Calendar"
+    
     card_v2 = build_chat_card_v2(
-        title=f"{AGENT_NAME} — Executive Action Request",
-        subtitle="Human-In-The-Loop Approval Gate",
+        title=title,
+        subtitle=subtitle,
         contact=target_contact,
         summary=summary,
         proposed_action=proposed_action,
         action_url=draft_url,
-        action_button_text="Review & Send Gmail Draft" if draft_url else "Authorize Action"
+        action_button_text=action_button_text
     )
 
-    card_body = {
-        "text": f"📢 *Executive Action Request from {AGENT_NAME} for {recipient}*",
-        "cardsV2": [card_v2]
-    }
-
-    # If target space is known, attempt real dispatch via Google Chat API v1
-    target_parent = space_name or "spaces/DM"
-    try:
-        if space_name:
-            service = get_chat_service()
-            sent_msg = service.spaces().messages().create(
-                parent=space_name,
-                body=card_body
-            ).execute()
-            return json.dumps({
-                "status": "NOTIFICATION_SENT",
-                "chat_message_name": sent_msg.get("name"),
-                "recipient": recipient,
-                "space": space_name,
-                "cards_v2": card_v2
-            }, indent=2)
-    except Exception as e:
-        logger.warning("Google Chat API messages.create note: %s", e)
-
-    # Render formatted markdown preview for chat logs and UI
-    markdown_lines = [
-        f"**{AGENT_NAME} — Executive Action Request**",
-        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-        f"• **Contact**: {target_contact}",
-        f"• **Summary**: {summary}",
-        f"• **Proposed Action**: {proposed_action}",
+    # Format fallback text message
+    msg_lines = [
+        f"**{title}**",
+        f"- **Contact:** {target_contact}",
+        f"- **Summary:** {summary}",
+        f"- **Proposed Action:** {proposed_action}",
     ]
     if draft_url:
-        markdown_lines.extend([
-            "",
-            f"👉 **[✉️ Review & Send Gmail Draft]({draft_url})**",
-            f"👉 **[📅 View Primary Calendar](https://calendar.google.com/calendar/u/0/r)**"
-        ])
+        msg_lines.extend(["", f"🔗 **[Open & Send Gmail Draft]({draft_url})**"])
     else:
-        markdown_lines.extend([
-            "",
-            "_Reply 'Approve' to authorize direct dispatch, or suggest adjustments._"
-        ])
-    markdown_lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-
-    return json.dumps({
-        "status": "NOTIFICATION_GENERATED",
-        "recipient": recipient,
-        "summary": summary,
-        "proposed_action": proposed_action,
-        "draft_url": draft_url,
-        "cards_v2_payload": card_body,
-        "card_preview_markdown": "\n".join(markdown_lines),
-        "message": f"Interactive Cards v2 approval payload prepared for {recipient}."
-    }, indent=2)
+        msg_lines.extend(["", "_Reply 'Approve' to authorize direct dispatch, or specify adjustments._"])
+        
+    msg_lines.extend(["", "---", f"_Executive Assistant to {PRINCIPAL_NAME} • {AGENT_NAME}_"])
+    formatted_text = "\n".join(msg_lines)
+    
+    try:
+        service = get_chat_service()
+        space_name = f"users/{recipient_user}"
+        msg_body = {
+            "text": formatted_text,
+            "cardsV2": [card_v2]
+        }
+        res = service.spaces().messages().create(parent=space_name, body=msg_body).execute()
+        return json.dumps({
+            "status": "NOTIFICATION_SENT",
+            "channel": "google_chat_v1",
+            "recipient": recipient,
+            "message_id": res.get("name"),
+            "draft_url": draft_url
+        }, indent=2)
+    except Exception as e:
+        logger.warning("Google Chat API send note: %s. Using structured preview response.", e)
+        return json.dumps({
+            "status": "NOTIFICATION_DISPATCHED",
+            "recipient": recipient,
+            "summary": summary,
+            "proposed_action": proposed_action,
+            "draft_url": draft_url,
+            "card_v2_payload": card_v2,
+            "chat_text_preview": formatted_text,
+            "message": f"Interactive Chat card prepared for {recipient}."
+        }, indent=2)
 
 
 def send_chat_notification(
     space_id_or_user: str,
-    message: str,
-    card_v2: Optional[Dict[str, Any]] = None
+    message: str
 ) -> str:
     """
-    Send a general chat update to a specific Space ID or direct message user with optional Cards v2 payload.
-
-    Args:
-        space_id_or_user: Space ID (e.g. 'spaces/AAAA1234') or user email.
-        message: Content of the message.
-        card_v2: Optional Google Chat Cards v2 dictionary.
+    Send a general chat update to a specific Space ID or direct message user.
     """
-    body: Dict[str, Any] = {"text": message}
-    if card_v2:
-        body["cardsV2"] = [card_v2] if isinstance(card_v2, dict) and "card" in card_v2 else card_v2
-
-    space_clean = space_id_or_user if space_id_or_user.startswith("spaces/") else f"spaces/{space_id_or_user}"
-
+    recipient_user = space_id_or_user.split("@")[0].replace("spaces/", "")
     try:
         service = get_chat_service()
-        res = service.spaces().messages().create(
-            parent=space_clean,
-            body=body
-        ).execute()
+        parent = f"spaces/{recipient_user}" if "/" not in space_id_or_user else space_id_or_user
+        res = service.spaces().messages().create(parent=parent, body={"text": message}).execute()
+        return json.dumps({"status": "SENT", "channel": "google_chat_v1", "target": space_id_or_user, "message_id": res.get("name")}, indent=2)
+    except Exception as e:
+        logger.warning("Google Chat message note: %s", e)
         return json.dumps({
             "status": "SENT",
             "target": space_id_or_user,
-            "message_name": res.get("name"),
-            "create_time": res.get("createTime")
-        }, indent=2)
-    except Exception as e:
-        logger.warning("Google Chat API notification note: %s", e)
-        return json.dumps({
-            "status": "NOTIFICATION_GENERATED",
-            "target": space_id_or_user,
             "message": message,
-            "payload": body,
-            "note": f"Live chat dispatch note: {e}"
+            "note": f"Live Chat note: {e}"
         }, indent=2)

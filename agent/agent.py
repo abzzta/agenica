@@ -1,5 +1,5 @@
 """
-Ms. Agenica S — ADK & Vertex AI Agent Package.
+Agenica S — ADK & Vertex AI Agent Package.
 Exposes root_agent and app for deployment to Vertex AI Agent Engine (Reasoning Engine)
 and registration with Gemini Enterprise App.
 """
@@ -25,13 +25,19 @@ try:
         check_calendar_clash,
         suggest_meeting_agenda,
         generate_prebooking_proposal,
+        find_daily_focus_chunks,
+        book_mbc_room_for_chunk,
+        reserve_daily_focus_rooms,
         scan_inbox_triage,
         search_emails,
         read_email_thread,
         create_gmail_draft,
         send_email_response,
+        handle_thread_delegation,
         send_chat_approval_request,
         send_chat_notification,
+        build_chat_card_v2,
+        build_evening_office_card,
         create_presentation_deck,
         create_executive_briefing_doc,
         search_drive_files,
@@ -54,13 +60,19 @@ except (ImportError, ValueError):
         check_calendar_clash,
         suggest_meeting_agenda,
         generate_prebooking_proposal,
+        find_daily_focus_chunks,
+        book_mbc_room_for_chunk,
+        reserve_daily_focus_rooms,
         scan_inbox_triage,
         search_emails,
         read_email_thread,
         create_gmail_draft,
         send_email_response,
+        handle_thread_delegation,
         send_chat_approval_request,
         send_chat_notification,
+        build_chat_card_v2,
+        build_evening_office_card,
         create_presentation_deck,
         create_executive_briefing_doc,
         search_drive_files,
@@ -81,11 +93,15 @@ ALL_AGENT_TOOLS = [
     check_calendar_clash,
     suggest_meeting_agenda,
     generate_prebooking_proposal,
+    find_daily_focus_chunks,
+    book_mbc_room_for_chunk,
+    reserve_daily_focus_rooms,
     scan_inbox_triage,
     search_emails,
     read_email_thread,
     create_gmail_draft,
     send_email_response,
+    handle_thread_delegation,
     send_chat_approval_request,
     send_chat_notification,
     create_presentation_deck,
@@ -104,19 +120,25 @@ try:
     from google.genai import Client
 
     class GlobalGemini(Gemini):
-        """Custom Gemini model provider that explicitly routes to Vertex AI global location for gemini-3.7-flash, gemini-3.6-flash, etc."""
+        """Custom Gemini model provider that explicitly routes to Vertex AI global location for gemini-3.7-flash."""
         @cached_property
         def api_client(self) -> Client:
+            try:
+                from .tools.auth import get_workspace_credentials
+                creds, _ = get_workspace_credentials()
+            except Exception:
+                creds = None
             return Client(
                 vertexai=True,
                 location="global",
-                project=os.environ.get("GOOGLE_CLOUD_PROJECT", "cowork-aset-6tnf0w")
+                project=os.environ.get("GOOGLE_CLOUD_PROJECT", "ag-test-1310"),
+                credentials=creds
             )
 
     root_agent = Agent(
         name="agenica_agent",
         model=GlobalGemini(model=DEFAULT_MODEL),
-        description="Executive Assistant AI Agent managing Google Calendar scheduling, clash detection, 4-tier Gmail triage, 16:9 Google Slides deck generation with speaker notes, Google Docs briefing memos, and Google Chat HITL workflows for Abhi Sethi.",
+        description="Executive Assistant AI Agent managing Google Calendar scheduling, Singapore MBC2 workspace reservations, email thread delegation, 4-tier Gmail triage, 16:9 Google Slides deck generation with speaker notes, Google Docs briefing memos, and Google Chat HITL workflows for Abhi Sethi.",
         instruction=AGENT_INSTRUCTIONS,
         tools=ALL_AGENT_TOOLS
     )
@@ -175,15 +197,15 @@ async def _run_query_async(query: str, user_id: str = "aset", session_id: str = 
 
 
 def run_query(query: str, user_id: str = "aset", session_id: str = "session-1") -> str:
-    """Execute a single-turn query against Ms. Agenica S."""
+    """Execute a single-turn query against Agenica S."""
     return asyncio.run(_run_query_async(query, user_id, session_id))
 
 
 def _interactive():
     print("=" * 70)
-    print("Ms. Agenica S — Enterprise Executive Assistant Agent (ADK)")
+    print("Agenica S — Enterprise Executive Assistant Agent (ADK)")
     print("Identity: agenica@google.com | Principal: Abhi Sethi (aset@google.com)")
-    print("Capabilities: 4-Tier Inbox Scan | Clash Detection | 16:9 Decks | Briefings")
+    print("Capabilities: 4-Tier Inbox Scan | Clash Detection | MBC2 L29 Rooms | Decks")
     print("Protocols: Internal Googler (HITL) | External Partner (Draft-Delegate)")
     print("Type 'exit' or 'quit' to end session.")
     print("=" * 70)

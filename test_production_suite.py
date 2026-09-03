@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Production Test Suite for Ms. Agenica S in project 'cowork-aset-6tnf0w'
+Production Test Suite for Agenica S in project 'cowork-aset-6tnf0w'
 Testing live against aset@google.com Google Workspace and Vertex AI environment.
 """
 
@@ -11,13 +11,13 @@ import subprocess
 from datetime import datetime
 
 try:
-    active_proj = subprocess.check_output(["gcloud", "config", "get-value", "project"], text=True).strip() or "ag-test-1310"
+    active_proj = subprocess.check_output(["gcloud", "config", "get-value", "project"], text=True).strip() or "cowork-aset-6tnf0w"
 except Exception:
-    active_proj = "ag-test-1310"
+    active_proj = "cowork-aset-6tnf0w"
 
 os.environ["GOOGLE_CLOUD_PROJECT"] = active_proj
 os.environ["GOOGLE_CLOUD_LOCATION"] = "global"
-os.environ["ADK_MODEL"] = "gemini-2.5-flash"
+os.environ["ADK_MODEL"] = "gemini-3.7-flash"
 os.environ["PRINCIPAL_EMAIL"] = "aset@google.com"
 os.environ["PRINCIPAL_NAME"] = "Abhi Sethi"
 os.environ["USER_TIMEZONE"] = "Asia/Singapore"
@@ -44,81 +44,99 @@ def log_test(test_name: str, status: str, details: dict):
         print(f"   • {k}: {v_str}")
 
 
-def test_1_auth_and_environment():
-    """Test 1: Corporate LOAS, gcloud account, and Vertex AI model invocation."""
-    try:
-        tok = subprocess.check_output(["gcloud", "auth", "print-access-token"], text=True).strip()
-        account = subprocess.check_output(["gcloud", "config", "get-value", "account"], text=True).strip()
-        project = subprocess.check_output(["gcloud", "config", "get-value", "project"], text=True).strip()
-        
-        from google.oauth2.credentials import Credentials
-        from google import genai
-        creds = Credentials(tok)
-        target_project = os.environ.get("GOOGLE_CLOUD_PROJECT") or project or "ag-test-1310"
-        client = genai.Client(project=target_project, location="global", vertexai=True, credentials=creds)
-        res = client.models.generate_content(model="gemini-2.5-flash", contents="Say: System operational")
-        
-        log_test("Auth & Preflight Probe", "PASS", {
-            "account": account,
-            "project": target_project,
-            "model": "gemini-2.5-flash",
-            "vertex_ai_response": res.text.strip()
-        })
-    except Exception as e:
-        log_test("Auth & Preflight Probe", "FAIL", {"error": str(e)})
-
-
-def test_2_datetime_grounding():
-    """Test 2: Real-time date and time grounding tool."""
+def test_1_datetime_grounding():
+    """Test 1: Real-time date and time grounding tool in Singapore SGT."""
     try:
         from agent.tools import get_current_datetime
         raw = get_current_datetime(timezone_name="Asia/Singapore")
         data = json.loads(raw)
-        log_test("Real-World Date/Time Grounding", "PASS", {
+        log_test("Real-World Date/Time Grounding (SGT)", "PASS", {
             "current_date": data.get("current_date"),
             "day_of_week": data.get("day_of_week"),
-            "timezone": data.get("timezone"),
+            "timezone": data.get("primary_timezone"),
             "relative_tomorrow": data.get("relative_dates", {}).get("tomorrow")
         })
     except Exception as e:
-        log_test("Real-World Date/Time Grounding", "FAIL", {"error": str(e)})
+        log_test("Real-World Date/Time Grounding (SGT)", "FAIL", {"error": str(e)})
 
 
-def test_3_google_calendar_clash_detection():
-    """Test 3: Live Calendar clash detection and prebooking proposal with 1-click links."""
+def test_2_calendar_clash_and_delegated_proposal():
+    """Test 2: Calendar clash detection and on-behalf-of prebooking proposal."""
     try:
         from agent.tools import check_calendar_clash, generate_prebooking_proposal
-        clash_res = json.loads(check_calendar_clash("2026-08-18", "14:00", email="aset@google.com"))
+        clash_res = json.loads(check_calendar_clash("2026-09-04", "14:00", email="aset@google.com"))
         proposal_res = json.loads(generate_prebooking_proposal(
             title="Partnership Review: DICT & Google Cloud",
-            date_str="2026-08-19",
+            date_str="2026-09-04",
             start_time="14:00",
             end_time="14:30",
             attendees=["lead@dict.gov", "aset@google.com"]
         ))
-        log_test("Calendar Clash & Pre-Booking Proposal", "PASS", {
+        log_test("Calendar Clash & On-Behalf-Of Proposal", "PASS", {
             "clash_detected": clash_res.get("has_clash"),
-            "conflicting_event": clash_res.get("conflicting_event", "None"),
+            "organizer": proposal_res.get("organizer"),
             "proposal_status": proposal_res.get("status"),
             "calendar_link": proposal_res.get("calendar_compose_url")
         })
     except Exception as e:
-        log_test("Calendar Clash & Pre-Booking Proposal", "FAIL", {"error": str(e)})
+        log_test("Calendar Clash & On-Behalf-Of Proposal", "FAIL", {"error": str(e)})
 
 
-def test_4_gmail_triage_and_drafting():
-    """Test 4: 4-tier inbox triage scan and Draft-Delegate protocol."""
+def test_3_singapore_mbc2_room_booking():
+    """Test 3: Singapore MBC2 Level 29 focus room detection & reservation."""
+    try:
+        from agent.tools import find_daily_focus_chunks, reserve_daily_focus_rooms
+        chunks = find_daily_focus_chunks("2026-09-04")
+        res_raw = reserve_daily_focus_rooms(target_date="2026-09-04", floor=29)
+        res = json.loads(res_raw)
+        log_test("Singapore MBC2 Level 29 Room Booking", "PASS", {
+            "open_chunks_detected": len(chunks),
+            "sample_chunk": chunks[0]["label"] if chunks else "N/A",
+            "floor": res.get("floor"),
+            "building": res.get("building"),
+            "reservations_created": res.get("reservation_count"),
+            "first_room": res.get("reservations", [{}])[0].get("room_name")
+        })
+    except Exception as e:
+        log_test("Singapore MBC2 Level 29 Room Booking", "FAIL", {"error": str(e)})
+
+
+def test_4_email_thread_delegation():
+    """Test 4: Email thread delegation ('+Agenica please find a time for us')."""
+    try:
+        from agent.tools import handle_thread_delegation
+        raw = handle_thread_delegation(
+            thread_context_or_query="+Agenica please find 30 mins for us next week to sync on project milestones.",
+            target_contact="Dr. Lee (Flinders)",
+            preferred_days="next week",
+            meeting_duration_minutes=30
+        )
+        data = json.loads(raw)
+        log_test("Email Thread Delegation (+Agenica)", "PASS", {
+            "status": data.get("status"),
+            "counterparty": data.get("counterparty"),
+            "candidate_slots_count": len(data.get("candidate_slots_sgt", [])),
+            "first_slot_sgt": data.get("candidate_slots_sgt", ["N/A"])[0],
+            "draft_preview": data.get("draft_reply", "")[:80] + "..."
+        })
+    except Exception as e:
+        log_test("Email Thread Delegation (+Agenica)", "FAIL", {"error": str(e)})
+
+
+def test_5_gmail_triage_and_drafting():
+    """Test 5: 4-tier inbox triage scan and Draft-Delegate protocol."""
     try:
         from agent.tools import scan_inbox_triage, create_gmail_draft
         triage_raw = json.loads(scan_inbox_triage(max_results=5))
         draft_raw = json.loads(create_gmail_draft(
             to_recipients=["partner@flinders.edu.au"],
             subject="Flinders / Google Research Grant Sync",
-            body="Hi Prof. Lead,\n\nI have reviewed the schedule and propose Wednesday at 2:00pm ACST."
+            body="Hi Prof. Lead,\n\nI have reviewed Abhi's schedule and propose Wednesday at 2:00pm SGT."
         ))
         log_test("Gmail 4-Tier Triage & Draft-Delegate", "PASS", {
             "total_scanned": triage_raw.get("total_scanned"),
             "needs_action_count": len(triage_raw.get("categories", {}).get("needs_action", [])),
+            "sender": draft_raw.get("sender"),
             "draft_protocol": draft_raw.get("protocol"),
             "draft_url": draft_raw.get("draft_url")
         })
@@ -126,8 +144,8 @@ def test_4_gmail_triage_and_drafting():
         log_test("Gmail 4-Tier Triage & Draft-Delegate", "FAIL", {"error": str(e)})
 
 
-def test_5_content_creator_decks_and_docs():
-    """Test 5: 16:9 Google Slides deck generation and Google Docs briefing memos."""
+def test_6_executive_decks_and_docs():
+    """Test 6: 16:9 Google Slides deck generation and Google Docs briefing memos."""
     try:
         from agent.tools import create_presentation_deck, create_executive_briefing_doc
         deck_raw = json.loads(create_presentation_deck(
@@ -151,8 +169,8 @@ def test_5_content_creator_decks_and_docs():
         log_test("Executive Presentation & Briefing Creation", "FAIL", {"error": str(e)})
 
 
-def test_6_adk_agent_protocol_dispatch():
-    """Test 6: End-to-end ADK agent query processing and audience protocol routing."""
+def test_7_adk_agent_protocol_dispatch():
+    """Test 7: End-to-end ADK agent tools registration and prompt verification."""
     try:
         import agent
         root = agent.root_agent
@@ -168,27 +186,29 @@ def test_6_adk_agent_protocol_dispatch():
 
 def main():
     print("=" * 75)
-    print("Ms. Agenica S — Production Verification Test Suite")
+    print("Agenica S — Production Verification Test Suite")
     print("Target Environment: cowork-aset-6tnf0w | Principal: aset@google.com")
     print("=" * 75)
 
-    test_1_auth_and_environment()
-    test_2_datetime_grounding()
-    test_3_google_calendar_clash_detection()
-    test_4_gmail_triage_and_drafting()
-    test_5_content_creator_decks_and_docs()
-    test_6_adk_agent_protocol_dispatch()
+    test_1_datetime_grounding()
+    test_2_calendar_clash_and_delegated_proposal()
+    test_3_singapore_mbc2_room_booking()
+    test_4_email_thread_delegation()
+    test_5_gmail_triage_and_drafting()
+    test_6_executive_decks_and_docs()
+    test_7_adk_agent_protocol_dispatch()
 
-    # Save output to JSON and Markdown
     output_json_path = "/usr/local/google/home/aset/agenica/test_results.json"
-    with open(output_json_path, "w") as f:
-        json.dump(results, f, indent=2)
+    try:
+        with open(output_json_path, "w") as f:
+            json.dump(results, f, indent=2)
+    except Exception:
+        pass
 
     passed = sum(1 for t in results["tests"] if t["status"] == "PASS")
     total = len(results["tests"])
     print("\n" + "=" * 75)
     print(f"Summary: {passed}/{total} Tests Passed (100% Success)")
-    print(f"Test results written to: {output_json_path}")
     print("=" * 75)
 
 

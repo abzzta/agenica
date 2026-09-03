@@ -1,5 +1,5 @@
 """
-Central Authentication Utility for Ms. Agenica S Google Workspace & Cloud APIs.
+Central Authentication Utility for Agenica S Google Workspace & Cloud APIs.
 
 Supports:
 1. User OAuth 2.0 Token (via WORKSPACE_TOKEN_PATH or ~/.config/agenica/token.json)
@@ -11,6 +11,7 @@ Supports:
 import os
 import json
 import logging
+import shutil
 import subprocess
 from typing import List, Optional, Tuple, Any
 
@@ -114,9 +115,17 @@ def get_workspace_credentials(
         except Exception as e:
             logger.warning("Failed loading credentials from WORKSPACE_ACCESS_TOKEN: %s", e)
 
+    gcloud_candidates = [
+        shutil.which("gcloud"),
+        os.path.expanduser("~/google-cloud-sdk/bin/gcloud"),
+        "/usr/local/google/home/aset/google-cloud-sdk/bin/gcloud",
+        "gcloud"
+    ]
+    gcloud_bin = next((p for p in gcloud_candidates if p and os.path.exists(p)), "gcloud")
+
     try:
         tok = subprocess.check_output(
-            ["gcloud", "auth", "print-access-token"],
+            [gcloud_bin, "auth", "print-access-token"],
             text=True,
             timeout=5,
             stderr=subprocess.DEVNULL
@@ -135,7 +144,6 @@ def get_workspace_credentials(
         return creds, f"adc_default:project={project}"
     except Exception as e:
         logger.error("All credential resolution strategies failed: %s", e)
-        # Return anonymous credentials placeholder to allow discovery client initialization
         from google.auth.credentials import AnonymousCredentials
         return AnonymousCredentials(), "anonymous_fallback"
 

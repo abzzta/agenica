@@ -1,5 +1,5 @@
 """
-Content Creator Specialized Subagent for Ms. Agenica S.
+Content Creator Specialized Subagent for Agenica S.
 """
 
 from typing import Dict, Any, List, Optional

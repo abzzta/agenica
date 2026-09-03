@@ -1,5 +1,5 @@
 """
-Configuration settings for Ms. Agenica S - Executive Assistant Agent.
+Configuration settings for Agenica S - Executive Assistant Agent.
 """
 
 import os
@@ -11,11 +11,18 @@ PRINCIPAL_EMAIL = os.environ.get("PRINCIPAL_EMAIL", "aset@google.com")
 DEFAULT_TIMEZONE = os.environ.get("USER_TIMEZONE", "Asia/Singapore")
 
 # Agent Identity & Branding
-AGENT_NAME = "Ms. Agenica S"
-AGENT_DISPLAY_NAME = f"Ms. Agenica S (EA to {PRINCIPAL_NAME})"
-AGENT_EMAIL = "agenica@google.com"
-AGENT_GROUP_ACCOUNT = "groupagent-agenica@google.com"
+AGENT_NAME = "Agenica S"
+AGENT_DISPLAY_NAME = f"Agenica S (EA to {PRINCIPAL_NAME})"
+AGENT_EMAIL = os.environ.get("AGENT_EMAIL", "agenica@google.com")
+DELEGATE_AGENT_EMAIL = os.environ.get("DELEGATE_AGENT_EMAIL", "corpagent-eng-aset@google.com")
+CALENDAR_TARGET = os.environ.get("CALENDAR_TARGET", PRINCIPAL_EMAIL)
 AGENT_ACCESS_PORTAL = "http://an/groupagent-agenica"
+
+# Office & Location Defaults (Google Singapore MBC2)
+OFFICE_LOCATION = "Google Singapore MBC2 (Mapletree Business City II)"
+OFFICE_PRIMARY_FLOOR = 29
+OFFICE_FALLBACK_FLOORS = [28, 30]
+BUILDING_CODE = "SIN-MBC2"
 
 # Official Signature
 AGENT_SIGNATURE = f"""--
@@ -28,7 +35,7 @@ Google Workspace Executive Assistant Agent
 DEFAULT_MODEL = os.environ.get("ADK_MODEL", "gemini-3.7-flash")
 
 # Google Cloud Settings
-GCP_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "cowork-aset-6tnf0w")
+GCP_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "ag-test-1310")
 GCP_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "global")
 os.environ["GOOGLE_CLOUD_PROJECT"] = GCP_PROJECT
 os.environ["GOOGLE_CLOUD_LOCATION"] = "global"

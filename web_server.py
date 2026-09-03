@@ -1,16 +1,14 @@
 """
-Agenica S — Production Executive Assistant Web Portal with Natural Voice Interaction.
+Agenica S — Live Conversational Executive Assistant Web Portal.
 
 Features:
-1. Powered by Gemini 3.7 Flash in Vertex AI (global routing).
-2. Natural Voice Interaction:
-   - Voice Recognition (Speech-to-Text) with Australian English (en-AU).
-   - Voice Synthesis (Text-to-Speech) using Australian English Female voice.
-   - Live speech transcription and audio wave animations.
-3. Full integration with Abhi Sethi's Google Workspace:
-   - Direct calendar creation on primary calendar (aset@google.com).
-   - Real-time room availability verification for Google Singapore MBC2 Level 29.
-   - 4-Tier Gmail triage, thread delegation, and executive briefing generation.
+1. Continuous Hands-Free Conversation:
+   - Always listening once activated (hands-free back-and-forth dialogue).
+   - Natural, casual, friendly persona (speaks like a real EA in Australian English).
+   - Audio barge-in: starts listening immediately when you speak.
+   - Dual output: casual spoken response for voice + rich visual cards on screen.
+2. Powered by Gemini 3.7 Flash on global Vertex AI.
+3. Full integration with Abhi Sethi's Google Workspace (Calendar, Level 29 MBC2 rooms, Gmail).
 """
 
 import os
@@ -31,64 +29,73 @@ os.environ["GOOGLE_GENAI_MODEL"] = "gemini-3.7-flash"
 
 from agent.config import (
     AGENT_NAME,
-    AGENT_EMAIL,
     PRINCIPAL_NAME,
     PRINCIPAL_EMAIL,
     OFFICE_LOCATION,
     OFFICE_PRIMARY_FLOOR,
-    BUILDING_CODE,
-    DEFAULT_TIMEZONE
 )
 from agent.agent import _run_query_async
 
 logger = logging.getLogger("agenica.web")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
-app = FastAPI(title="Agenica S — Executive Assistant Portal", version="2.0.0")
+app = FastAPI(title="Agenica S — Live Conversational Assistant", version="2.5.0")
 
 
-def clean_text_for_speech(text: str) -> str:
-    """Clean markdown, links, bullet points, and code blocks for smooth natural speech synthesis."""
-    # Remove code blocks
+def generate_conversational_speech(text: str) -> str:
+    """Extract a warm, casual, human spoken sentence for voice output."""
+    import re
+    # Remove code blocks and markdown links
     s = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
-    # Convert markdown links [Label](url) -> Label
     s = re.sub(r"\[(.*?)\]\(.*?\)", r"\1", s)
-    # Remove bold, italics, headers
+    # Remove markdown headers and formatting
     s = re.sub(r"[*#_`>~]", "", s)
-    # Replace bullet dashes/asterisks
-    s = re.sub(r"^\s*[-*•]\s+", "", s, flags=re.MULTILINE)
-    # Collapse whitespace
-    s = re.sub(r"\n+", ". ", s)
-    s = re.sub(r"\s+", " ", s).strip()
-    return s[:800]
+    # Remove common emoji unicode blocks
+    s = re.sub(r"[\U00010000-\U0010ffff]", "", s)
+    
+    clean_lines = []
+    for line in s.splitlines():
+        line = line.strip()
+        if not line or line.startswith(("-", "•", "1.", "2.", "3.", "4.", "Date:", "Time:", "Status:", "Room:", "Event:", "Current Time:")):
+            continue
+        if len(line) > 12 and not line.startswith("http"):
+            clean_lines.append(line)
+            
+    if clean_lines:
+        res = clean_lines[0]
+        if len(clean_lines) > 1 and len(res) < 120:
+            res += " " + clean_lines[1]
+    else:
+        res = "All set, Abhi! Let me know if you need anything else."
+    res = re.sub(r"\s+", " ", res).strip()
+    return res[:250]
 
 
-HTML_PORTAL = f"""<!DOCTYPE html>
+HTML_LIVE_PORTAL = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{AGENT_NAME} — Executive Assistant Portal</title>
+  <title>{AGENT_NAME} — Live Executive Voice Assistant</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {{
-      --bg: #0A0F1D;
-      --card-bg: #131B2E;
+      --bg: #070B14;
+      --card: #0F172A;
       --border: #1E293B;
-      --primary: #38BDF8;
-      --primary-hover: #0EA5E9;
-      --text: #F1F5F9;
+      --accent: #38BDF8;
+      --accent-glow: rgba(56, 189, 248, 0.4);
+      --text: #F8FAFC;
       --text-muted: #94A3B8;
-      --bubble-user: #0369A1;
-      --bubble-agent: #1E293B;
-      --accent-green: #10B981;
-      --accent-pulse: rgba(56, 189, 248, 0.35);
+      --agent-bubble: #1E293B;
+      --user-bubble: #0284C7;
+      --active-green: #10B981;
     }}
     * {{ box-sizing: border-box; margin: 0; padding: 0; }}
     body {{
-      font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Google Sans', -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
       display: flex;
@@ -96,16 +103,16 @@ HTML_PORTAL = f"""<!DOCTYPE html>
       height: 100vh;
       overflow: hidden;
     }}
+
     header {{
-      background: var(--card-bg);
+      background: var(--card);
       border-bottom: 1px solid var(--border);
-      padding: 14px 28px;
+      padding: 16px 28px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }}
-    .header-left {{
+    .brand {{
       display: flex;
       align-items: center;
       gap: 14px;
@@ -113,453 +120,361 @@ HTML_PORTAL = f"""<!DOCTYPE html>
     .avatar {{
       width: 44px;
       height: 44px;
-      border-radius: 12px;
+      border-radius: 50%;
       background: linear-gradient(135deg, #0284C7, #38BDF8);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 16px;
       color: white;
-      box-shadow: 0 0 16px var(--accent-pulse);
+      box-shadow: 0 0 16px var(--accent-glow);
     }}
-    .titles h1 {{
+    .brand-titles h1 {{
       font-size: 17px;
       font-weight: 700;
-      color: #FFFFFF;
       letter-spacing: -0.2px;
     }}
-    .titles p {{
+    .brand-titles p {{
       font-size: 12px;
       color: var(--text-muted);
-      margin-top: 2px;
     }}
-    .header-right {{
+
+    .header-controls {{
       display: flex;
       align-items: center;
       gap: 16px;
     }}
-    .badge {{
+    .live-status-pill {{
       display: flex;
       align-items: center;
       gap: 8px;
+      padding: 6px 14px;
+      border-radius: 20px;
       background: rgba(16, 185, 129, 0.1);
       border: 1px solid rgba(16, 185, 129, 0.3);
-      padding: 6px 12px;
-      border-radius: 20px;
       font-size: 12px;
-      font-weight: 500;
       color: #34D399;
+      font-weight: 500;
     }}
-    .status-dot {{
+    .pulse-dot {{
       width: 8px;
       height: 8px;
       background: #10B981;
       border-radius: 50%;
-      box-shadow: 0 0 10px #10B981;
-      animation: pulse 2s infinite;
+      box-shadow: 0 0 8px #10B981;
+      animation: pulse 1.8s infinite;
     }}
     @keyframes pulse {{
-      0% {{ transform: scale(0.95); opacity: 0.8; }}
-      50% {{ transform: scale(1.15); opacity: 1; }}
-      100% {{ transform: scale(0.95); opacity: 0.8; }}
+      0%, 100% {{ transform: scale(0.9); opacity: 0.8; }}
+      50% {{ transform: scale(1.2); opacity: 1; }}
     }}
 
-    .voice-settings {{
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #1E293B;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      color: var(--text-muted);
-    }}
-    .voice-toggle {{
-      background: none;
-      border: none;
-      color: var(--primary);
-      cursor: pointer;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-    }}
-
-    .main-container {{
+    .portal-body {{
       flex: 1;
       display: flex;
       flex-direction: column;
-      max-width: 1050px;
+      max-width: 900px;
       width: 100%;
       margin: 0 auto;
-      padding: 20px 24px;
+      padding: 20px;
       overflow: hidden;
     }}
 
-    .quick-chips {{
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 12px;
-      margin-bottom: 10px;
-      scrollbar-width: none;
-    }}
-    .quick-chips::-webkit-scrollbar {{ display: none; }}
-    .chip {{
-      white-space: nowrap;
-      background: var(--card-bg);
+    /* Voice Center Orb */
+    .voice-stage {{
+      background: var(--card);
       border: 1px solid var(--border);
-      color: #E2E8F0;
-      padding: 9px 16px;
-      border-radius: 20px;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }}
-    .chip:hover {{
-      border-color: var(--primary);
-      background: rgba(56, 189, 248, 0.1);
-      transform: translateY(-1px);
-    }}
-
-    .chat-box {{
-      flex: 1;
-      overflow-y: auto;
-      padding-right: 8px;
+      border-radius: 24px;
+      padding: 24px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      position: relative;
     }}
-    .chat-box::-webkit-scrollbar {{
-      width: 6px;
+    .orb-container {{
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #38BDF8 0%, #0369A1 70%, #070B14 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 0 25px var(--accent-glow);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }}
-    .chat-box::-webkit-scrollbar-thumb {{
-      background: var(--border);
-      border-radius: 3px;
+    .orb-container:hover {{
+      transform: scale(1.06);
+      box-shadow: 0 0 35px rgba(56, 189, 248, 0.6);
+    }}
+    .orb-container.listening {{
+      animation: orbListen 1.5s infinite alternate;
+      background: radial-gradient(circle, #10B981 0%, #047857 70%, #070B14 100%);
+      box-shadow: 0 0 40px rgba(16, 185, 129, 0.8);
+    }}
+    .orb-container.speaking {{
+      animation: orbSpeak 0.8s infinite alternate;
+      background: radial-gradient(circle, #F59E0B 0%, #B45309 70%, #070B14 100%);
+      box-shadow: 0 0 40px rgba(245, 158, 11, 0.8);
+    }}
+    @keyframes orbListen {{
+      from {{ transform: scale(1); }}
+      to {{ transform: scale(1.12); }}
+    }}
+    @keyframes orbSpeak {{
+      from {{ transform: scale(1); }}
+      to {{ transform: scale(1.18); }}
     }}
 
-    .message {{
-      display: flex;
-      gap: 14px;
-      max-width: 82%;
+    .voice-state-label {{
+      margin-top: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #F8FAFC;
     }}
-    .message.user {{
+    .voice-sub-label {{
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }}
+    .live-transcript {{
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--accent);
+      font-style: italic;
+      min-height: 20px;
+      text-align: center;
+    }}
+
+    /* Chat Stream */
+    .chat-stream {{
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }}
+    .chat-stream::-webkit-scrollbar {{ width: 5px; }}
+    .chat-stream::-webkit-scrollbar-thumb {{ background: var(--border); border-radius: 4px; }}
+
+    .msg {{
+      display: flex;
+      gap: 12px;
+      max-width: 85%;
+    }}
+    .msg.user {{
       align-self: flex-end;
       flex-direction: row-reverse;
     }}
-    .message.agent {{
+    .msg.agent {{
       align-self: flex-start;
     }}
-    .message-content {{
-      padding: 14px 18px;
-      border-radius: 16px;
+    .msg-content {{
+      padding: 12px 18px;
+      border-radius: 18px;
       font-size: 14px;
-      line-height: 1.6;
-      word-break: break-word;
+      line-height: 1.55;
     }}
-    .message.user .message-content {{
-      background: var(--bubble-user);
+    .msg.user .msg-content {{
+      background: var(--user-bubble);
       color: white;
       border-bottom-right-radius: 4px;
     }}
-    .message.agent .message-content {{
-      background: var(--bubble-agent);
+    .msg.agent .msg-content {{
+      background: var(--agent-bubble);
       border: 1px solid var(--border);
-      color: #F8FAFC;
+      color: var(--text);
       border-bottom-left-radius: 4px;
     }}
-    .message.agent .message-content a {{
-      color: #38BDF8;
-      font-weight: 500;
+    .msg.agent .msg-content a {{
+      color: var(--accent);
       text-decoration: underline;
     }}
-    .message.agent .message-content pre {{
-      background: #0B1120;
-      padding: 10px 14px;
+    .msg.agent .msg-content pre {{
+      background: #070B14;
+      padding: 8px 12px;
       border-radius: 8px;
-      font-family: 'Roboto Mono', monospace;
       font-size: 12px;
-      margin: 10px 0;
-      overflow-x: auto;
+      margin: 8px 0;
       border: 1px solid var(--border);
     }}
-    .message.agent .message-content h3 {{
-      font-size: 15px;
-      margin: 12px 0 6px 0;
-      color: #38BDF8;
-    }}
-    .message.agent .message-content ul {{
-      margin-left: 20px;
-      margin-top: 6px;
-    }}
-    .speak-btn {{
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 14px;
-      margin-top: 6px;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      transition: color 0.2s;
-    }}
-    .speak-btn:hover {{ color: var(--primary); }}
 
-    .voice-visualizer {{
-      display: none;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      padding: 10px;
-      margin-top: 8px;
-      background: rgba(56, 189, 248, 0.08);
-      border-radius: 12px;
-      border: 1px dashed var(--primary);
-    }}
-    .wave-bar {{
-      width: 4px;
-      height: 14px;
-      background: var(--primary);
-      border-radius: 2px;
-      animation: wave 1s ease-in-out infinite;
-    }}
-    .wave-bar:nth-child(2) {{ animation-delay: 0.15s; }}
-    .wave-bar:nth-child(3) {{ animation-delay: 0.3s; }}
-    .wave-bar:nth-child(4) {{ animation-delay: 0.45s; }}
-    .wave-bar:nth-child(5) {{ animation-delay: 0.6s; }}
-    @keyframes wave {{
-      0%, 100% {{ height: 6px; }}
-      50% {{ height: 24px; }}
-    }}
-
-    .input-container {{
-      margin-top: 14px;
+    /* Controls Bar */
+    .bottom-bar {{
+      margin-top: 12px;
       display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }}
-    .input-bar {{
-      display: flex;
-      align-items: center;
       gap: 10px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 32px;
-      padding: 6px 8px 6px 18px;
-      transition: border-color 0.2s, box-shadow 0.2s;
     }}
-    .input-bar:focus-within {{
-      border-color: var(--primary);
-      box-shadow: 0 0 14px var(--accent-pulse);
-    }}
-    .input-bar input {{
+    .bottom-bar input {{
       flex: 1;
-      background: transparent;
-      border: none;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 12px 20px;
       color: white;
       font-size: 14px;
       outline: none;
     }}
-    .mic-btn {{
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: #1E293B;
-      border: 1px solid var(--border);
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 18px;
-      transition: all 0.2s;
-    }}
-    .mic-btn:hover {{
-      background: rgba(56, 189, 248, 0.15);
-      border-color: var(--primary);
-      transform: scale(1.05);
-    }}
-    .mic-btn.recording {{
-      background: #EF4444;
-      color: white;
-      border-color: #DC2626;
-      animation: micPulse 1.2s infinite;
-    }}
-    @keyframes micPulse {{
-      0% {{ box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }}
-      70% {{ box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }}
-      100% {{ box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }}
+    .bottom-bar input:focus {{
+      border-color: var(--accent);
     }}
     .send-btn {{
-      background: var(--primary);
-      color: #0A0F1D;
+      background: var(--accent);
+      color: #070B14;
       border: none;
-      padding: 0 20px;
-      height: 42px;
-      border-radius: 24px;
+      padding: 0 24px;
+      border-radius: 28px;
       font-weight: 600;
       font-size: 14px;
       cursor: pointer;
-      transition: all 0.2s;
-    }}
-    .send-btn:hover {{
-      background: var(--primary-hover);
-      transform: scale(1.02);
-    }}
-    .loading-text {{
-      display: none;
-      font-size: 12px;
-      color: var(--primary);
-      margin-left: 14px;
-      font-style: italic;
     }}
   </style>
 </head>
 <body>
   <header>
-    <div class="header-left">
+    <div class="brand">
       <div class="avatar">AS</div>
-      <div class="titles">
+      <div class="brand-titles">
         <h1>{AGENT_NAME}</h1>
-        <p>Executive Assistant to {PRINCIPAL_NAME} • {OFFICE_LOCATION}</p>
+        <p>Conversational Executive Assistant to {PRINCIPAL_NAME} • Australian English</p>
       </div>
     </div>
-    <div class="header-right">
-      <div class="voice-settings">
-        <span>🗣️ Voice: <b id="voiceNameLabel">Australian English (Female)</b></span>
-        <button class="voice-toggle" id="audioToggleBtn" onclick="toggleAudio()" title="Mute/Unmute Speech Output">🔊</button>
-      </div>
-      <div class="badge">
-        <div class="status-dot"></div>
-        <span>Gemini 3.7 Flash Active (SGT UTC+8)</span>
+    <div class="header-controls">
+      <div class="live-status-pill">
+        <div class="pulse-dot"></div>
+        <span>Live Audio Ready • Gemini 3.7 Flash</span>
       </div>
     </div>
   </header>
 
-  <div class="main-container">
-    <div class="quick-chips">
-      <div class="chip" onclick="sendPrompt('I will be in the office tomorrow. Please verify availability and book a focus or phone room on Level 29 in MBC2 Singapore for large chunks of the day.')">🏢 Reserve Level 29 Focus Room</div>
-      <div class="chip" onclick="sendPrompt('I was added to an email thread with Dr. Lee from Flinders asking for 30 mins next Tuesday. Please find a time for us on behalf of Abhi.')">📧 Thread: Find Time with Dr. Lee</div>
-      <div class="chip" onclick="sendPrompt('Scan my inbox, perform a 4-tier triage scan, and summarize items requiring action.')">📬 4-Tier Inbox Triage</div>
-      <div class="chip" onclick="sendPrompt('Summarize my calendar schedule for today and check if I have any meeting clashes.')">📅 Check Today\'s Schedule</div>
-      <div class="chip" onclick="sendPrompt('Prepare an executive briefing document in Google Docs for an upcoming public sector enterprise architecture review.')">📄 Create Briefing Memo</div>
+  <div class="portal-body">
+    <!-- Center Live Voice Stage -->
+    <div class="voice-stage">
+      <div class="orb-container" id="voiceOrb" onclick="toggleLiveVoice()">
+        <span style="font-size:28px;" id="orbIcon">🎙️</span>
+      </div>
+      <div class="voice-state-label" id="voiceStateLabel">Tap Orb to Start Hands-Free Conversation</div>
+      <div class="voice-sub-label" id="voiceSubLabel">Continuous conversational listening with Australian English female voice</div>
+      <div class="live-transcript" id="liveTranscript"></div>
     </div>
 
-    <div class="chat-box" id="chatBox">
-      <div class="message agent">
-        <div class="avatar" style="width:34px; height:34px; font-size:13px;">AS</div>
-        <div class="message-content">
-          Good day, Abhi. I am <b>{AGENT_NAME}</b>, your executive assistant.<br><br>
-          I am connected to your Google Workspace with direct calendar write access, real-time room availability verification for <b>Level {OFFICE_PRIMARY_FLOOR} in MBC2 Singapore</b>, email thread delegation, and briefing document authoring.<br><br>
-          <i>You can speak directly using the microphone button below or type your request.</i>
+    <!-- Live Action & Message Stream -->
+    <div class="chat-stream" id="chatStream">
+      <div class="msg agent">
+        <div class="avatar" style="width:32px; height:32px; font-size:12px;">AS</div>
+        <div class="msg-content">
+          Hey Abhi! I'm <b>{AGENT_NAME}</b>. Tap the microphone orb above and talk to me naturally—I'm listening constantly so we can have a real conversation, or you can type below anytime.
         </div>
       </div>
     </div>
 
-    <div class="voice-visualizer" id="visualizer">
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <span style="font-size:13px; color:var(--primary); margin-left:8px;" id="liveTranscript">Listening in Australian English...</span>
-    </div>
-
-    <div class="input-container">
-      <div class="loading-text" id="loading">Agenica S is analyzing your calendar and executing requests...</div>
-      <form class="input-bar" id="chatForm" onsubmit="handleSend(event)">
-        <input type="text" id="userInput" placeholder="Speak or type a request (e.g. 'Book a room tomorrow on level 29')..." autocomplete="off">
-        <button type="button" class="mic-btn" id="micBtn" onclick="toggleVoiceRecording()" title="Click to speak in Australian English">🎙️</button>
-        <button type="submit" class="send-btn">Send</button>
-      </form>
-    </div>
+    <!-- Bottom Input Backup -->
+    <form class="bottom-bar" onsubmit="handleTextSubmit(event)">
+      <input type="text" id="textInput" placeholder="Or type a message here..." autocomplete="off">
+      <button type="submit" class="send-btn">Send</button>
+    </form>
   </div>
 
   <script>
-    const chatBox = document.getElementById('chatBox');
-    const userInput = document.getElementById('userInput');
-    const loading = document.getElementById('loading');
-    const micBtn = document.getElementById('micBtn');
-    const visualizer = document.getElementById('visualizer');
+    const voiceOrb = document.getElementById('voiceOrb');
+    const orbIcon = document.getElementById('orbIcon');
+    const voiceStateLabel = document.getElementById('voiceStateLabel');
+    const voiceSubLabel = document.getElementById('voiceSubLabel');
     const liveTranscript = document.getElementById('liveTranscript');
-    const voiceNameLabel = document.getElementById('voiceNameLabel');
-    const audioToggleBtn = document.getElementById('audioToggleBtn');
+    const chatStream = document.getElementById('chatStream');
+    const textInput = document.getElementById('textInput');
 
-    let audioEnabled = true;
-    let selectedVoice = null;
+    let isLiveActive = false;
     let recognition = null;
-    let isRecording = false;
+    let auFemaleVoice = null;
+    let isSpeaking = false;
 
     // --- Voice Synthesis Setup (Australian English Female) ---
-    function initSpeechSynthesis() {{
+    function initSpeech() {{
       const synth = window.speechSynthesis;
-      function setVoice() {{
+      function pickVoice() {{
         const voices = synth.getVoices();
         if (!voices || voices.length === 0) return;
 
-        // 1. Look for Australian English female voice (e.g. Karen, Catherine, Lee, or en-AU female)
-        let best = voices.find(v => v.lang.startsWith('en-AU') && (v.name.includes('Karen') || v.name.includes('Female') || v.name.includes('Catherine') || v.name.includes('Natural')));
-        // 2. Fallback to any en-AU voice
-        if (!best) best = voices.find(v => v.lang.startsWith('en-AU'));
-        // 3. Fallback to British English female (e.g. en-GB)
-        if (!best) best = voices.find(v => v.lang.startsWith('en-GB') && v.name.includes('Female'));
-        // 4. Fallback to any English voice
-        if (!best) best = voices.find(v => v.lang.startsWith('en'));
+        // Find Australian English female voice
+        let v = voices.find(x => x.lang.startsWith('en-AU') && (x.name.includes('Karen') || x.name.includes('Female') || x.name.includes('Catherine') || x.name.includes('Google') || x.name.includes('Natural')));
+        if (!v) v = voices.find(x => x.lang.startsWith('en-AU'));
+        if (!v) v = voices.find(x => x.lang.startsWith('en-GB') && x.name.includes('Female'));
+        if (!v) v = voices.find(x => x.lang.startsWith('en'));
 
-        selectedVoice = best || voices[0];
-        if (selectedVoice) {{
-          voiceNameLabel.textContent = `${{selectedVoice.name}} (${{selectedVoice.lang}})`;
-        }}
+        auFemaleVoice = v || voices[0];
       }}
 
-      setVoice();
+      pickVoice();
       if (synth.onvoiceschanged !== undefined) {{
-        synth.onvoiceschanged = setVoice;
+        synth.onvoiceschanged = pickVoice;
       }}
     }}
 
-    function speakText(text) {{
-      if (!audioEnabled || !('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel(); // Stop any previous utterance
+    function speakCasualReply(text, onComplete = null) {{
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
 
-      const utterance = new SpeechSynthesisUtterance(text);
-      if (selectedVoice) {{
-        utterance.voice = selectedVoice;
-        utterance.lang = selectedVoice.lang || 'en-AU';
+      const utter = new SpeechSynthesisUtterance(text);
+      if (auFemaleVoice) {{
+        utter.voice = auFemaleVoice;
+        utter.lang = auFemaleVoice.lang || 'en-AU';
       }} else {{
-        utterance.lang = 'en-AU';
+        utter.lang = 'en-AU';
       }}
-      utterance.pitch = 1.05; // Slightly higher pitch for crisp executive clarity
-      utterance.rate = 1.02;  // Natural conversational tempo
-      window.speechSynthesis.speak(utterance);
+      utter.pitch = 1.08;
+      utter.rate = 1.05;
+
+      utter.onstart = () => {{
+        isSpeaking = true;
+        voiceOrb.className = 'orb-container speaking';
+        orbIcon.textContent = '🔊';
+        voiceStateLabel.textContent = 'Agenica S is speaking...';
+        voiceSubLabel.textContent = text;
+      }};
+
+      utter.onend = () => {{
+        isSpeaking = false;
+        if (isLiveActive) {{
+          // Immediately resume hands-free listening!
+          startListening();
+        }} else {{
+          resetOrbState();
+        }}
+        if (onComplete) onComplete();
+      }};
+
+      utter.onerror = () => {{
+        isSpeaking = false;
+        if (isLiveActive) startListening();
+      }};
+
+      window.speechSynthesis.speak(utter);
     }}
 
-    function toggleAudio() {{
-      audioEnabled = !audioEnabled;
-      audioToggleBtn.textContent = audioEnabled ? '🔊' : '🔇';
-      audioToggleBtn.title = audioEnabled ? 'Audio Output ON' : 'Audio Output Muted';
-      if (!audioEnabled) window.speechSynthesis.cancel();
-    }}
-
-    // --- Voice Recognition Setup (Speech-to-Text en-AU) ---
-    function initSpeechRecognition() {{
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {{
-        micBtn.style.display = 'none';
+    // --- Continuous Hands-Free Speech Recognition ---
+    function initRecognition() {{
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) {{
+        voiceStateLabel.textContent = 'Speech recognition not supported in this browser.';
         return;
       }}
 
-      recognition = new SpeechRecognition();
-      recognition.lang = 'en-AU'; // Australian English
+      recognition = new SpeechRec();
+      recognition.lang = 'en-AU';
       recognition.interimResults = true;
       recognition.continuous = false;
 
       recognition.onstart = () => {{
-        isRecording = true;
-        micBtn.classList.add('recording');
-        visualizer.style.display = 'flex';
-        liveTranscript.textContent = 'Listening (Australian English)...';
+        voiceOrb.className = 'orb-container listening';
+        orbIcon.textContent = '🟢';
+        voiceStateLabel.textContent = 'I am listening... (speak freely)';
+        voiceSubLabel.textContent = 'Speak naturally in Australian English';
+        liveTranscript.textContent = '';
       }};
 
       recognition.onresult = (event) => {{
@@ -572,86 +487,94 @@ HTML_PORTAL = f"""<!DOCTYPE html>
             interim += event.results[i][0].transcript;
           }}
         }}
-        userInput.value = final || interim;
-        liveTranscript.textContent = final || interim || 'Listening...';
+        liveTranscript.textContent = final || interim;
         if (final) {{
-          stopVoiceRecording();
-          sendPrompt(final.trim(), true);
+          recognition.stop();
+          processLiveInput(final.trim());
         }}
       }};
 
       recognition.onerror = (e) => {{
-        console.warn('Speech recognition error:', e.error);
-        stopVoiceRecording();
+        console.warn('Speech rec error:', e.error);
+        if (isLiveActive && !isSpeaking) {{
+          setTimeout(() => {{
+            if (isLiveActive && !isSpeaking) startListening();
+          }}, 800);
+        }}
       }};
 
       recognition.onend = () => {{
-        stopVoiceRecording();
+        if (isLiveActive && !isSpeaking) {{
+          // Re-arm automatically for continuous listening loop
+          startListening();
+        }}
       }};
     }}
 
-    function toggleVoiceRecording() {{
-      if (!recognition) return;
-      if (isRecording) {{
-        recognition.stop();
-        stopVoiceRecording();
-      }} else {{
-        try {{
-          recognition.start();
-        }} catch (err) {{
-          console.error(err);
-        }}
+    function startListening() {{
+      if (!recognition || isSpeaking) return;
+      try {{
+        recognition.start();
+      }} catch (err) {{
+        // Already active
       }}
     }}
 
-    function stopVoiceRecording() {{
-      isRecording = false;
-      micBtn.classList.remove('recording');
-      visualizer.style.display = 'none';
+    function toggleLiveVoice() {{
+      if (isLiveActive) {{
+        // Turn off live mode
+        isLiveActive = false;
+        if (recognition) recognition.stop();
+        window.speechSynthesis.cancel();
+        resetOrbState();
+      }} else {{
+        // Turn on continuous live mode
+        isLiveActive = true;
+        window.speechSynthesis.cancel();
+        startListening();
+      }}
     }}
 
-    // --- Chat Flow & Rendering ---
-    function appendMessage(sender, text, spokenText = '') {{
-      const msgDiv = document.createElement('div');
-      msgDiv.className = `message ${{sender}}`;
+    function resetOrbState() {{
+      voiceOrb.className = 'orb-container';
+      orbIcon.textContent = '🎙️';
+      voiceStateLabel.textContent = 'Tap Orb to Start Hands-Free Conversation';
+      voiceSubLabel.textContent = 'Continuous conversational listening with Australian English female voice';
+      liveTranscript.textContent = '';
+    }}
 
-      const avatar = document.createElement('div');
-      avatar.className = 'avatar';
-      avatar.style.width = '34px';
-      avatar.style.height = '34px';
-      avatar.style.fontSize = '13px';
-      avatar.textContent = sender === 'user' ? 'A' : 'AS';
+    // --- Message Stream & Processing ---
+    function appendMsg(sender, text) {{
+      const d = document.createElement('div');
+      d.className = `msg ${{sender}}`;
 
-      const content = document.createElement('div');
-      content.className = 'message-content';
+      const av = document.createElement('div');
+      av.className = 'avatar';
+      av.style.width = '32px';
+      av.style.height = '32px';
+      av.style.fontSize = '12px';
+      av.textContent = sender === 'user' ? 'A' : 'AS';
 
-      // Markdown formatting
-      let formatted = text
+      const c = document.createElement('div');
+      c.className = 'msg-content';
+      c.innerHTML = text
         .replace(/\\*\\*(.*?)\\*\\*/g, '<b>$1</b>')
         .replace(/\\*(.*?)\\*/g, '<i>$1</i>')
         .replace(/\\[(.*?)\\]\\((.*?)\\)/g, '<a href="$2" target="_blank">$1</a>')
         .replace(/\\n/g, '<br>');
-      content.innerHTML = formatted;
 
-      if (sender === 'agent' && spokenText) {{
-        const spkBtn = document.createElement('button');
-        spkBtn.className = 'speak-btn';
-        spkBtn.innerHTML = '🔊 <span>Listen</span>';
-        spkBtn.onclick = () => speakText(spokenText);
-        content.appendChild(document.createElement('br'));
-        content.appendChild(spkBtn);
-      }}
-
-      msgDiv.appendChild(avatar);
-      msgDiv.appendChild(content);
-      chatBox.appendChild(msgDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
+      d.appendChild(av);
+      d.appendChild(c);
+      chatStream.appendChild(d);
+      chatStream.scrollTop = chatStream.scrollHeight;
     }}
 
-    async function sendPrompt(text, spokeQuery = false) {{
+    async function processLiveInput(text) {{
       if (!text) return;
-      appendMessage('user', text);
-      loading.style.display = 'block';
+      appendMsg('user', text);
+      voiceStateLabel.textContent = 'Thinking...';
+      voiceOrb.className = 'orb-container';
+      orbIcon.textContent = '⚡';
 
       try {{
         const res = await fetch('/api/chat', {{
@@ -659,35 +582,31 @@ HTML_PORTAL = f"""<!DOCTYPE html>
           headers: {{ 'Content-Type': 'application/json' }},
           body: JSON.stringify({{ message: text }})
         }});
-        if (!res.ok) {{
-          const err = await res.text();
-          throw new Error(`Server returned ${{res.status}}: ${{err.slice(0, 100)}}`);
-        }}
         const data = await res.json();
-        appendMessage('agent', data.reply, data.spoken_text);
         
-        // Auto-speak response if query was spoken or audio is active
-        if (spokeQuery || audioEnabled) {{
-          speakText(data.spoken_text || data.reply);
-        }}
-      }} catch (err) {{
-        appendMessage('agent', 'Error processing request: ' + err.message);
-      }} finally {{
-        loading.style.display = 'none';
+        // Show rich details in chat
+        appendMsg('agent', data.reply);
+
+        // Speak back ONLY the casual, friendly spoken sentence
+        const speech = data.spoken_reply || "Done, Abhi!";
+        speakCasualReply(speech);
+      }} catch (e) {{
+        appendMsg('agent', 'Sorry Abhi, I had a hiccup processing that: ' + e.message);
+        if (isLiveActive) startListening();
       }}
     }}
 
-    function handleSend(e) {{
+    function handleTextSubmit(e) {{
       e.preventDefault();
-      const text = userInput.value.trim();
-      if (!text) return;
-      userInput.value = '';
-      sendPrompt(text, false);
+      const val = textInput.value.trim();
+      if (!val) return;
+      textInput.value = '';
+      processLiveInput(val);
     }}
 
     window.addEventListener('DOMContentLoaded', () => {{
-      initSpeechSynthesis();
-      initSpeechRecognition();
+      initSpeech();
+      initRecognition();
     }});
   </script>
 </body>
@@ -696,33 +615,46 @@ HTML_PORTAL = f"""<!DOCTYPE html>
 
 
 @app.get("/", response_class=HTMLResponse)
-async def serve_portal(request: Request):
-    """Serve the interactive Voice-Enabled Executive Assistant Web Portal."""
-    return HTMLResponse(content=HTML_PORTAL)
+async def serve_live_portal(request: Request):
+    """Serve the Live Hands-Free Conversational Voice Portal."""
+    return HTMLResponse(content=HTML_LIVE_PORTAL)
 
 
 @app.post("/api/chat")
-async def handle_api_chat(request: Request):
-    """Execute query with Gemini 3.7 Flash and return reply with speech-optimized text."""
+async def handle_conversational_chat(request: Request):
+    """
+    Process request with Gemini 3.7 Flash and return:
+    1. reply: Detailed markdown / cards for visual chat.
+    2. spoken_reply: Warm, casual 1-2 sentence spoken reply for the Australian EA voice.
+    """
     try:
         data = await request.json()
         message = data.get("message", "").strip()
         if not message:
-            return JSONResponse({"reply": "Please state your request for Agenica S.", "spoken_text": "Please state your request."})
+            return JSONResponse({
+                "reply": "Please let me know what you'd like me to do.",
+                "spoken_reply": "I'm listening, Abhi. What can I do for you?"
+            })
 
         # Run query through ADK runner with Gemini 3.7 Flash
-        reply = await _run_query_async(message, user_id="aset", session_id="voice-web-session")
-        spoken_text = clean_text_for_speech(reply)
+        try:
+            reply = await _run_query_async(message, user_id="aset", session_id="live-voice-session")
+        except Exception as query_err:
+            logger.warning("Primary 3.7 flash encountered preemption, falling back to 2.5-flash: %s", query_err)
+            os.environ["GOOGLE_CLOUD_LOCATION"] = "us-central1"
+            os.environ["ADK_MODEL"] = "gemini-2.5-flash"
+            reply = await _run_query_async(message, user_id="aset", session_id="live-voice-session-fb")
+        spoken_reply = generate_conversational_speech(reply)
 
         return JSONResponse({
             "reply": reply,
-            "spoken_text": spoken_text
+            "spoken_reply": spoken_reply
         })
     except Exception as e:
-        logger.error("Error executing web chat query: %s", e, exc_info=True)
+        logger.error("Error in conversational chat: %s", e, exc_info=True)
         return JSONResponse({
-            "reply": f"I encountered an error executing your request: {e}",
-            "spoken_text": f"I encountered an error executing your request: {e}"
+            "reply": f"Encountered an issue: {e}",
+            "spoken_reply": "Sorry Abhi, I hit a slight snag with that request."
         })
 
 
@@ -732,13 +664,13 @@ def healthz():
         "status": "ok",
         "agent": AGENT_NAME,
         "principal": PRINCIPAL_NAME,
-        "model": "gemini-3.7-flash (global Vertex AI)"
+        "mode": "live_conversational_voice"
     }
 
 
 def main():
     port = int(os.environ.get("PORT", 8080))
-    logger.info("Starting Agenica S Voice Portal on port %d...", port)
+    logger.info("Starting Agenica S Live Conversational Portal on port %d...", port)
     uvicorn.run(app, host="0.0.0.0", port=port)
 
 

@@ -127,6 +127,21 @@ def get_workspace_credentials(
     ]
     gcloud_bin = next((p for p in gcloud_candidates if p and os.path.exists(p)), "gcloud")
 
+    # 3. Application Default Credentials (ADC) with quota project
+    try:
+        creds, project = google.auth.default()
+        quota_proj = os.environ.get("GOOGLE_CLOUD_PROJECT", "cowork-aset-6tnf0w")
+        if hasattr(creds, "with_quota_project"):
+            creds = creds.with_quota_project(quota_proj)
+        if hasattr(creds, "refresh") and not creds.valid:
+            creds.refresh(Request())
+        if creds and creds.valid:
+            logger.info("Loaded ADC credentials with quota project %s", quota_proj)
+            return creds, f"adc_default:project={project or quota_proj}"
+    except Exception as e:
+        logger.debug("ADC resolution note: %s", e)
+
+    # 4. Fallback to gcloud access token
     try:
         tok = subprocess.check_output(
             [gcloud_bin, "auth", "print-access-token"],
@@ -140,16 +155,8 @@ def get_workspace_credentials(
     except Exception:
         pass
 
-    # 4. Fallback to ADC
-    try:
-        creds, project = google.auth.default(scopes=scopes)
-        if creds and creds.expired and hasattr(creds, "refresh"):
-            creds.refresh(Request())
-        return creds, f"adc_default:project={project}"
-    except Exception as e:
-        logger.error("All credential resolution strategies failed: %s", e)
-        from google.auth.credentials import AnonymousCredentials
-        return AnonymousCredentials(), "anonymous_fallback"
+    from google.auth.credentials import AnonymousCredentials
+    return AnonymousCredentials(), "anonymous_fallback"
 
 
 def get_calendar_service() -> Resource:

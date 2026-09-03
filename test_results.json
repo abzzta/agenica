@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-03T16:25:21.561104",
+  "timestamp": "2026-09-03T21:14:21.218613",
   "principal": "Abhi Sethi (aset@google.com)",
   "project": "cowork-aset-6tnf0w",
   "tests": [
@@ -17,22 +17,22 @@
       "test_name": "Calendar Clash & On-Behalf-Of Proposal",
       "status": "PASS",
       "details": {
-        "clash_detected": false,
+        "clash_detected": true,
         "organizer": "Agenica S on behalf of Abhi Sethi",
         "proposal_status": "PROPOSAL_READY",
-        "calendar_link": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Partnership+Review%3A+DICT+%26+Google+Cloud&dates=20260904T140000%2F20260904T143000&details=Agenda%3A%0A1.+Overview+of+technical+architecture+and+enterprise+readiness%0A2.+Address+security%2C+sovereignty%2C+and+data+protection+prerequisites%0A3.+Establish+pilot+evaluation+criteria+and+executive+sign-off+roadmap%0A%0A--%0AScheduled+by+Agenica+S+on+behalf+of+Abhi+Sethi.&location=Google+Meet+%2F+Video+Conference+%28Hybrid%29&ctz=Asia%2FSingapore&add=aset%40google.com%2Clead%40dict.gov"
+        "calendar_link": "https://calendar.google.com/calendar/render?action=TEMPLATE&authuser=aset%40google.com&src=aset%40google.com&text=Partnership+Review%3A+DICT+%26+Google+Cloud&dates=20260904T140000%2F20260904T143000&details=Agenda%3A%0A1.+Overview+of+technical+architecture+and+enterprise+readiness%0A2.+Address+security%2C+sovereignty%2C+and+data+protection+prerequisites%0A3.+Establish+pilot+evaluation+criteria+and+executive+sign-off+roadmap%0A%0A--%0AScheduled+by+Agenica+S+on+behalf+of+Abhi+Sethi.&location=Google+Meet+%2F+Video+Conference+%28Hybrid%29&ctz=Asia%2FSingapore&add=aset%40google.com%2Clead%40dict.gov"
       }
     },
     {
       "test_name": "Singapore MBC2 Level 29 Room Booking",
       "status": "PASS",
       "details": {
-        "open_chunks_detected": 1,
-        "sample_chunk": "09:00 AM \u2013 06:00 PM (540 mins)",
+        "open_chunks_detected": 2,
+        "sample_chunk": "09:30 AM \u2013 01:30 PM (240 mins)",
         "floor": 29,
         "building": "SIN-MBC2",
-        "reservations_created": 1,
-        "first_room": "SIN-MBC2-29-Focus-Marina"
+        "reservations_created": 2,
+        "first_room": "29B8049 - B80 Hillview 16 Vernon"
       }
     },
     {
@@ -50,11 +50,11 @@
       "test_name": "Gmail 4-Tier Triage & Draft-Delegate",
       "status": "PASS",
       "details": {
-        "total_scanned": 4,
-        "needs_action_count": 1,
+        "total_scanned": 5,
+        "needs_action_count": 3,
         "sender": "Agenica S <agenica@google.com>",
         "draft_protocol": "DRAFT_DELEGATE_PROTOCOL",
-        "draft_url": "https://mail.google.com/mail/u/0/#drafts/r-1788423928"
+        "draft_url": "https://mail.google.com/mail/u/aset@google.com/#drafts/r-1200293208909154083"
       }
     },
     {

@@ -31,12 +31,12 @@ Executive Assistant to {PRINCIPAL_NAME}
 Google Workspace Executive Assistant Agent
 {AGENT_EMAIL}"""
 
-# Default Model (gemini-2.5-flash for reliable high quota, or gemini-3.7-flash)
-DEFAULT_MODEL = os.environ.get("ADK_MODEL", "gemini-2.5-flash")
+# Default Model (gemini-3.7-flash for reliable high quota, or gemini-3.7-flash)
+DEFAULT_MODEL = os.environ.get("ADK_MODEL", "gemini-3.7-flash")
 
 # Google Cloud Settings
-GCP_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "cowork-aset-6tnf0w")
-GCP_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
+GCP_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "ag-test-1310")
+GCP_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "global")
 os.environ["GOOGLE_CLOUD_PROJECT"] = GCP_PROJECT
 os.environ["GOOGLE_CLOUD_LOCATION"] = "global"
 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "TRUE"

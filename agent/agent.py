@@ -130,8 +130,8 @@ try:
                 creds = None
             return Client(
                 vertexai=True,
-                location="global",
-                project=os.environ.get("GOOGLE_CLOUD_PROJECT", "ag-test-1310"),
+                location=os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1"),
+                project=os.environ.get("GOOGLE_CLOUD_PROJECT", "cowork-aset-6tnf0w"),
                 credentials=creds
             )
 

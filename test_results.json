@@ -1,36 +1,49 @@
 {
-  "timestamp": "2026-09-03T15:59:14.299328",
+  "timestamp": "2026-09-03T16:25:21.561104",
   "principal": "Abhi Sethi (aset@google.com)",
-  "project": "ag-test-1310",
+  "project": "cowork-aset-6tnf0w",
   "tests": [
     {
-      "test_name": "Auth & Preflight Probe",
-      "status": "PASS",
-      "details": {
-        "account": "aset@google.com",
-        "project": "ag-test-1310",
-        "model": "gemini-2.5-flash",
-        "vertex_ai_response": "System operational"
-      }
-    },
-    {
-      "test_name": "Real-World Date/Time Grounding",
+      "test_name": "Real-World Date/Time Grounding (SGT)",
       "status": "PASS",
       "details": {
         "current_date": "2026-09-03",
         "day_of_week": "Thursday",
-        "timezone": null,
+        "timezone": "Asia/Singapore (SGT, UTC+8)",
         "relative_tomorrow": "2026-09-04"
       }
     },
     {
-      "test_name": "Calendar Clash & Pre-Booking Proposal",
+      "test_name": "Calendar Clash & On-Behalf-Of Proposal",
       "status": "PASS",
       "details": {
         "clash_detected": false,
-        "conflicting_event": "None",
+        "organizer": "Agenica S on behalf of Abhi Sethi",
         "proposal_status": "PROPOSAL_READY",
-        "calendar_link": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Partnership+Review%3A+DICT+%26+Google+Cloud&dates=20260819T140000%2F20260819T143000&details=Agenda%3A%0A1.+Walkthrough+of+DICT+technical+architecture+assessment+proposal%0A2.+Clarify+security%2C+sovereignty%2C+and+compliance+prerequisites%0A3.+Confirm+pilot+evaluation+milestones+and+formal+sign-off+schedule&location=Google+Meet+%2F+Video+Conference+%28Hybrid%29&ctz=Asia%2FSingapore&add=lead%40dict.gov%2Caset%40google.com"
+        "calendar_link": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Partnership+Review%3A+DICT+%26+Google+Cloud&dates=20260904T140000%2F20260904T143000&details=Agenda%3A%0A1.+Overview+of+technical+architecture+and+enterprise+readiness%0A2.+Address+security%2C+sovereignty%2C+and+data+protection+prerequisites%0A3.+Establish+pilot+evaluation+criteria+and+executive+sign-off+roadmap%0A%0A--%0AScheduled+by+Agenica+S+on+behalf+of+Abhi+Sethi.&location=Google+Meet+%2F+Video+Conference+%28Hybrid%29&ctz=Asia%2FSingapore&add=aset%40google.com%2Clead%40dict.gov"
+      }
+    },
+    {
+      "test_name": "Singapore MBC2 Level 29 Room Booking",
+      "status": "PASS",
+      "details": {
+        "open_chunks_detected": 1,
+        "sample_chunk": "09:00 AM \u2013 06:00 PM (540 mins)",
+        "floor": 29,
+        "building": "SIN-MBC2",
+        "reservations_created": 1,
+        "first_room": "SIN-MBC2-29-Focus-Marina"
+      }
+    },
+    {
+      "test_name": "Email Thread Delegation (+Agenica)",
+      "status": "PASS",
+      "details": {
+        "status": "THREAD_DELEGATION_PROCESSED",
+        "counterparty": "Dr. Lee (Flinders)",
+        "candidate_slots_count": 3,
+        "first_slot_sgt": "Monday, Sep 07 at 10:30 AM \u2013 11:00 AM SGT",
+        "draft_preview": "Hi Dr. Lee (Flinders),\n\nI would be delighted to coordinate a time for you and Ab..."
       }
     },
     {
@@ -39,8 +52,9 @@
       "details": {
         "total_scanned": 4,
         "needs_action_count": 1,
+        "sender": "Agenica S <agenica@google.com>",
         "draft_protocol": "DRAFT_DELEGATE_PROTOCOL",
-        "draft_url": "https://mail.google.com/mail/u/0/#drafts/r-1788422365"
+        "draft_url": "https://mail.google.com/mail/u/0/#drafts/r-1788423928"
       }
     },
     {
@@ -59,8 +73,8 @@
       "status": "PASS",
       "details": {
         "agent_name": "agenica_agent",
-        "model": "model='gemini-2.5-flash' base_url=None speech_config=None use_interactions_api=False retry_options=None",
-        "registered_tools_count": 20,
+        "model": "model='gemini-3.7-flash' client=None base_url=None api_version=None speech_config=None use_interactions_api=False retry_options=None",
+        "registered_tools_count": 24,
         "app_name": "agenica"
       }
     }

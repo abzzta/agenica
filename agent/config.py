@@ -35,8 +35,8 @@ Google Workspace Executive Assistant Agent
 DEFAULT_MODEL = os.environ.get("ADK_MODEL", "gemini-2.5-flash")
 
 # Google Cloud Settings
-GCP_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "ag-test-1310")
-GCP_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "global")
+GCP_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "cowork-aset-6tnf0w")
+GCP_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
 os.environ["GOOGLE_CLOUD_PROJECT"] = GCP_PROJECT
 os.environ["GOOGLE_CLOUD_LOCATION"] = "global"
 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "TRUE"

@@ -220,14 +220,19 @@ def book_mbc_room_for_chunk(
 
     start_compact = start_iso.replace("-", "").replace(":", "").split("+")[0]
     end_compact = end_iso.replace("-", "").replace(":", "").split("+")[0]
-    calendar_link = (
-        f"https://calendar.google.com/calendar/render?action=TEMPLATE&"
-        f"text={urllib.parse.quote(event_summary)}&"
-        f"dates={start_compact}%2F{end_compact}&"
-        f"details={urllib.parse.quote(event_description)}&"
-        f"location={urllib.parse.quote(event_location)}&"
-        f"ctz=Asia%2FSingapore"
-    )
+
+    cal_params = {
+        "action": "TEMPLATE",
+        "authuser": PRINCIPAL_EMAIL,
+        "src": PRINCIPAL_EMAIL,
+        "text": event_summary,
+        "dates": f"{start_compact}/{end_compact}",
+        "details": event_description,
+        "location": event_location,
+        "ctz": "Asia/Singapore",
+        "add": f"{PRINCIPAL_EMAIL},{selected_room['email']}"
+    }
+    calendar_link = f"https://calendar.google.com/calendar/render?{urllib.parse.urlencode(cal_params)}"
 
     try:
         service = get_calendar_service()

@@ -193,7 +193,7 @@ def scan_inbox_triage(
         "total_scanned": total_scanned,
         "categories": triage_categories,
         "triage_summary": "\n".join(summary_cards),
-        "inbox_url": "https://mail.google.com/mail/u/0/#inbox"
+        "inbox_url": f"https://mail.google.com/mail/u/{PRINCIPAL_EMAIL}/#inbox"
     }, indent=2)
 
 
@@ -339,7 +339,7 @@ def handle_thread_delegation(
     )
 
     draft_id = f"r-{int(now.timestamp())}"
-    draft_url = f"https://mail.google.com/mail/u/0/#drafts/{draft_id}"
+    draft_url = f"https://mail.google.com/mail/u/{PRINCIPAL_EMAIL}/#drafts/{draft_id}"
 
     # Try creating draft via Gmail API if available
     try:
@@ -352,7 +352,7 @@ def handle_thread_delegation(
         )
         created_draft = service.users().drafts().create(userId="me", body={"message": {"raw": raw_encoded}}).execute()
         draft_id = created_draft.get("id", draft_id)
-        draft_url = f"https://mail.google.com/mail/u/0/#drafts/{draft_id}"
+        draft_url = f"https://mail.google.com/mail/u/{PRINCIPAL_EMAIL}/#drafts/{draft_id}"
     except Exception as e:
         logger.warning("Gmail draft creation note: %s", e)
 
@@ -387,7 +387,7 @@ def create_gmail_draft(
     raw_encoded = _create_raw_email(to_recipients, subject, body, cc_recipients, in_reply_to_message_id)
 
     draft_id = f"r-{int(datetime.now().timestamp())}"
-    draft_url = f"https://mail.google.com/mail/u/0/#drafts/{draft_id}"
+    draft_url = f"https://mail.google.com/mail/u/{PRINCIPAL_EMAIL}/#drafts/{draft_id}"
 
     try:
         service = get_gmail_service()
@@ -397,7 +397,7 @@ def create_gmail_draft(
 
         created_draft = service.users().drafts().create(userId="me", body=draft_body).execute()
         draft_id = created_draft.get("id", draft_id)
-        draft_url = f"https://mail.google.com/mail/u/0/#drafts/{draft_id}"
+        draft_url = f"https://mail.google.com/mail/u/{PRINCIPAL_EMAIL}/#drafts/{draft_id}"
 
         return json.dumps({
             "status": "DRAFT_CREATED",

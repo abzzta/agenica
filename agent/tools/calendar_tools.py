@@ -133,19 +133,17 @@ def check_calendar_availability(
             "query_range": {"start": start_iso, "end": end_iso},
             "is_available": is_available,
             "busy_intervals": busy_list,
-            "calendar_view_url": f"https://calendar.google.com/calendar/u/0/r/day/{start_iso[:10].replace('-', '/')}"
+            "calendar_view_url": f"https://calendar.google.com/calendar/u/{PRINCIPAL_EMAIL}/r/day/{start_iso[:10].replace('-', '/')}"
         }, indent=2)
     except Exception as e:
-        logger.warning("Google Calendar FreeBusy query note: %s", e)
+        logger.warning("Google Calendar FreeBusy query note: %s. Using executive fallback schedule.", e)
+        # Safe fallback: return open calendar view
         return json.dumps({
-            "status": "success",
-            "email": email,
-            "timezone": "Asia/Singapore (SGT, UTC+8)",
-            "query_range": {"start": start_iso, "end": end_iso},
-            "is_available": True,
+            "target_calendar": CALENDAR_TARGET,
+            "timezone": DEFAULT_TIMEZONE,
             "busy_intervals": [],
             "note": f"Live freebusy query diagnostic note: {e}. Defaulting to open business hours window.",
-            "calendar_view_url": "https://calendar.google.com/calendar/u/0/r"
+            "calendar_view_url": f"https://calendar.google.com/calendar/u/{PRINCIPAL_EMAIL}/r"
         }, indent=2)
 
 
@@ -254,7 +252,7 @@ def create_calendar_event(
             "end": end_iso,
             "attendees": [a["email"] for a in final_attendees],
             "calendar_compose_url": compose_card["calendar_compose_url"],
-            "calendar_view_url": "https://calendar.google.com/calendar/u/0/r",
+            "calendar_view_url": f"https://calendar.google.com/calendar/u/{PRINCIPAL_EMAIL}/r",
             "note": f"Live calendar creation note: {e}. Provided direct 1-click Google Calendar compose link.",
             "message": f"Prebooking proposal prepared for '{summary}' on behalf of {PRINCIPAL_NAME}."
         }, indent=2)
@@ -509,7 +507,7 @@ def generate_prebooking_proposal(
         "location": location,
         "agenda": formatted_agenda,
         "calendar_compose_url": card["calendar_compose_url"],
-        "calendar_view_url": "https://calendar.google.com/calendar/u/0/r",
+        "calendar_view_url": f"https://calendar.google.com/calendar/u/{PRINCIPAL_EMAIL}/r",
         "display_card": card.get("card_markdown", card.get("display_markdown", "")),
         "instructions_for_agent": "Present the display_card to Abhi Sethi so he can review and 1-click authorize the invite."
     }, indent=2)

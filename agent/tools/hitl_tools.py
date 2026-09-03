@@ -6,6 +6,8 @@ from typing import Dict, List, Any, Optional
 import urllib.parse
 import json
 
+from ..config import PRINCIPAL_EMAIL
+
 
 def normalize_time_str(t: str) -> str:
     """Standardize time strings like '4.30pm', '4:30pm', '16:30' into standard 24h 'HH:MM' format."""
@@ -56,6 +58,8 @@ def create_calendar_proposal_card(
 
     cal_params = {
         "action": "TEMPLATE",
+        "authuser": PRINCIPAL_EMAIL,
+        "src": PRINCIPAL_EMAIL,
         "text": title,
         "dates": dates_param,
         "details": event_details,
@@ -66,7 +70,7 @@ def create_calendar_proposal_card(
         cal_params["add"] = ",".join(valid_emails)
 
     calendar_compose_url = f"https://calendar.google.com/calendar/render?{urllib.parse.urlencode(cal_params)}"
-    calendar_view_url = "https://calendar.google.com/calendar/r"
+    calendar_view_url = f"https://calendar.google.com/calendar/u/{PRINCIPAL_EMAIL}/r"
 
     card_lines = [
         "📅 **Meeting Proposal Ready for Review**",

@@ -125,7 +125,7 @@ try:
         def api_client(self) -> Client:
             try:
                 from .tools.auth import get_workspace_credentials
-                creds, _ = get_workspace_credentials()
+                creds, _ = get_workspace_credentials(["https://www.googleapis.com/auth/cloud-platform"])
             except Exception:
                 creds = None
             return Client(

@@ -8,6 +8,7 @@ import os
 import sys
 import json
 import logging
+import asyncio
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import argparse
 
@@ -19,14 +20,13 @@ from .config import (
     OFFICE_LOCATION,
     OFFICE_PRIMARY_FLOOR,
 )
-from .agent import run_query
+from .agent import _run_query_async, run_query
 from .tools.room_booking_tools import reserve_daily_focus_rooms
 
 logger = logging.getLogger("agenica.chat_service")
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
 
-def process_chat_event(event: dict) -> dict:
+async def process_chat_event(event: dict) -> dict:
     """
     Process an incoming Google Chat event conforming to official Chat API specifications.
     Handles:
@@ -81,18 +81,17 @@ def process_chat_event(event: dict) -> dict:
     msg_obj = event.get("message", {})
     user_text = msg_obj.get("argumentText") or msg_obj.get("text", "")
 
-    # Clean leading bot mention if present (e.g. '@Agenica S')
     cleaned_text = user_text.replace(f"@{AGENT_NAME}", "").strip()
     if not cleaned_text:
         cleaned_text = "Summarize today's agenda and any inbox items needing my attention."
 
     logger.info("Executing Agent Query: '%s'", cleaned_text)
 
-    # Route through Agenica S ADK agent runtime
+    # Route asynchronously through Agenica S ADK agent runtime
     try:
-        response_text = run_query(cleaned_text, user_id=sender_email.split("@")[0])
+        response_text = await _run_query_async(cleaned_text, user_id=sender_email.split("@")[0])
     except Exception as e:
-        logger.error("Error executing query: %s", e)
+        logger.error("Error executing query: %s", e, exc_info=True)
         response_text = f"I encountered an issue processing your request: {e}"
 
     return {
@@ -100,8 +99,13 @@ def process_chat_event(event: dict) -> dict:
     }
 
 
+def process_chat_event_sync(event: dict) -> dict:
+    """Synchronous wrapper for process_chat_event."""
+    return asyncio.run(process_chat_event(event))
+
+
 class ChatWebhookHandler(BaseHTTPRequestHandler):
-    """HTTP Handler for Google Chat Webhooks."""
+    """HTTP Handler for standalone HTTP server."""
 
     def do_POST(self):
         content_length = int(self.headers.get("Content-Length", 0))
@@ -112,7 +116,7 @@ class ChatWebhookHandler(BaseHTTPRequestHandler):
         except Exception:
             event = {"type": "MESSAGE", "message": {"text": body}}
 
-        reply_payload = process_chat_event(event)
+        reply_payload = process_chat_event_sync(event)
 
         self.send_response(200)
         self.send_header("Content-Type", "application/json; charset=utf-8")
@@ -120,7 +124,6 @@ class ChatWebhookHandler(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(reply_payload).encode("utf-8"))
 
     def log_message(self, format, *args):
-        # Override to suppress noisy default server logs
         return
 
 
@@ -129,7 +132,6 @@ def run_chat_server(port: int = 8080):
     server_address = ("", port)
     httpd = HTTPServer(server_address, ChatWebhookHandler)
     logger.info("🚀 %s Google Chat Service listening on port %d...", AGENT_NAME, port)
-    logger.info("Point your Google Chat App HTTP endpoint or Cloud Run service to this server.")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
@@ -154,7 +156,7 @@ def main():
             "user": {"email": PRINCIPAL_EMAIL, "displayName": PRINCIPAL_NAME},
             "message": {"text": args.test_query}
         }
-        res = process_chat_event(event)
+        res = process_chat_event_sync(event)
         print(f"\n{AGENT_NAME} Response:")
         print(res.get("text"))
     else:

@@ -43,7 +43,11 @@ CHAT_SCOPES = [
     "https://www.googleapis.com/auth/chat.bot",
 ]
 
-ALL_WORKSPACE_SCOPES = list(dict.fromkeys(CALENDAR_SCOPES + GMAIL_SCOPES + CHAT_SCOPES))
+CLOUD_PLATFORM_SCOPES = [
+    "https://www.googleapis.com/auth/cloud-platform",
+]
+
+ALL_WORKSPACE_SCOPES = list(dict.fromkeys(CLOUD_PLATFORM_SCOPES + CALENDAR_SCOPES + GMAIL_SCOPES + CHAT_SCOPES))
 
 
 def get_workspace_credentials(

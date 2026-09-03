@@ -666,11 +666,19 @@ async def websocket_live_stream(websocket: WebSocket):
     await websocket.accept()
     logger.info("Client connected to /ws/live WebSocket.")
 
-    # Initialize Google GenAI client pointing to Vertex AI
+    # Initialize Google GenAI client with explicit cowork-aset-6tnf0w quota project
+    import google.auth
+    from google.auth.transport.requests import Request
+    creds, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
+    creds = creds.with_quota_project("cowork-aset-6tnf0w")
+    if hasattr(creds, "refresh") and not creds.valid:
+        creds.refresh(Request())
+
     client = genai.Client(
         vertexai=True,
-        project=os.environ.get("GOOGLE_CLOUD_PROJECT", "cowork-aset-6tnf0w"),
-        location="us-central1"
+        project="cowork-aset-6tnf0w",
+        location="us-central1",
+        credentials=creds
     )
 
     config = types.LiveConnectConfig(

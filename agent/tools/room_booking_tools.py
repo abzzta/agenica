@@ -1,27 +1,28 @@
-import sys
 """
-Singapore MBC2 Office & Room Booking Tools for Agenica S.
-Handles workspace planning, focus block detection, and phone room/focus room
-reservations on Level 29 (and fallback floors L28/L30) in Mapletree Business City II.
+Singapore MBC2 Level 29 Room Booking Engine for Agenica S.
+
+Provides:
+1. Verified Room Resource Registry for Google Singapore MBC2 (Levels 29, 28, 30).
+2. Real-time availability verification via Google Calendar FreeBusy API.
+3. Direct calendar event creation on primary calendar (aset@google.com) with room resource attachment.
+4. Autonomous detection of open focus chunks and room allocation.
 """
 
-from typing import List, Dict, Any, Optional
+import os
 import json
 import logging
-import urllib.parse
-from datetime import datetime, timedelta
 import zoneinfo
+from datetime import datetime, timedelta
+from typing import Dict, List, Any, Optional
 
 from ..config import (
     PRINCIPAL_NAME,
     PRINCIPAL_EMAIL,
     AGENT_NAME,
-    AGENT_EMAIL,
+    DEFAULT_TIMEZONE,
     OFFICE_LOCATION,
     OFFICE_PRIMARY_FLOOR,
-    OFFICE_FALLBACK_FLOORS,
-    BUILDING_CODE,
-    DEFAULT_TIMEZONE,
+    BUILDING_CODE
 )
 from .auth import get_calendar_service
 from .calendar_tools import _to_rfc3339
@@ -29,75 +30,156 @@ from .calendar_tools import _to_rfc3339
 logger = logging.getLogger("agenica.rooms")
 SGT_TZ = zoneinfo.ZoneInfo(DEFAULT_TIMEZONE)
 
-# Verified Google Singapore MBC2 Level 29 Room Registry
-MBC2_ROOM_CATALOG = {
+# Verified Google Singapore MBC2 Room Resource Catalog
+MBC2_ROOM_CATALOG: Dict[int, List[Dict[str, Any]]] = {
     29: [
-        {"name": "29B8049 - B80 Hillview 16 Vernon", "type": "focus_room", "capacity": 4, "email": "google.com_29b8049_hillview16vernon@resource.calendar.google.com"},
-        {"name": "29B8071 - B80 Hillview 10 Serapong", "type": "large_room", "capacity": 10, "email": "google.com_29b8071_hillview10serapong@resource.calendar.google.com"},
-        {"name": "29B8005 - B80 Bukit Panjang 28 Teck Whye", "type": "large_room", "capacity": 12, "email": "google.com_29b8005_bukitpanjang28teckwhye@resource.calendar.google.com"},
+        {
+            "name": "SG-SIN-MBC2-29-B-B80 Hillview 1 Phone Room (1)",
+            "type": "phone_booth",
+            "capacity": 1,
+            "email": "c_1886jiupqc3dsilbnh5qsjo3n4dc24gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3gd8@resource.calendar.google.com"
+        },
+        {
+            "name": "SG-SIN-MBC2-29-B-B80 Hillview 2 Phone Room (1)",
+            "type": "phone_booth",
+            "capacity": 1,
+            "email": "c_1883srbno3st0jdjlnj7iev1e655u4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3gdg@resource.calendar.google.com"
+        },
+        {
+            "name": "SG-SIN-MBC2-29-B-B80 Hillview 3 Phone Room (2)",
+            "type": "phone_booth",
+            "capacity": 2,
+            "email": "c_188bju082q2oci34njdb89fs8vg0o4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3gdo@resource.calendar.google.com"
+        },
+        {
+            "name": "SG-SIN-MBC2-29-B-B80 Hillview 11 Phone Room (2)",
+            "type": "phone_booth",
+            "capacity": 2,
+            "email": "c_188ftvjd1gkiqhlnhsq2iegg565r64gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ec0@resource.calendar.google.com"
+        },
+        {
+            "name": "SG-SIN-MBC2-29-B-B80 Hillview 12 Phone Room (2)",
+            "type": "phone_booth",
+            "capacity": 2,
+            "email": "c_18849eljddta4il6n5m9fua0p5g964gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ce8@resource.calendar.google.com"
+        },
+        {
+            "name": "SG-SIN-MBC2-29-B-B80 Hillview 13 Phone Room (2)",
+            "type": "phone_booth",
+            "capacity": 2,
+            "email": "c_1889f8o4sn0uiifgmofi9v8tv9fk44gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ad8@resource.calendar.google.com"
+        },
+        {
+            "name": "SG-SIN-MBC2-29-B-B80 Hillview 14 Phone Room (2)",
+            "type": "phone_booth",
+            "capacity": 2,
+            "email": "c_18826t8a6ilbsimaint14phr9pa6a4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ad0@resource.calendar.google.com"
+        },
+        {
+            "name": "SG-SIN-MBC2-29-B-B80 Hillview 15 Phone Room (2)",
+            "type": "phone_booth",
+            "capacity": 2,
+            "email": "c_1887rc2uf77pojn7gnai0rc0opmlu4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3aco@resource.calendar.google.com"
+        },
+        {
+            "name": "SG-SIN-MBC2-29-B-B80 Hillview 4 Ann Siang (5)",
+            "type": "focus_room",
+            "capacity": 5,
+            "email": "c_188ae8it5va6ijlanna95a2ne023q4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ic0@resource.calendar.google.com"
+        },
+        {
+            "name": "SG-SIN-MBC2-29-B-B80 Hillview 5 Dempsey (5)",
+            "type": "focus_room",
+            "capacity": 5,
+            "email": "c_1884v2g527neqga4mtp1a76qnd8t04gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ic8@resource.calendar.google.com"
+        },
+        {
+            "name": "SG-SIN-MBC2-29-B-B80 Hillview 6 Emerald (5)",
+            "type": "focus_room",
+            "capacity": 5,
+            "email": "c_1886le8luk554h1ogs29su5f2ntnm4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3icg@resource.calendar.google.com"
+        },
+        {
+            "name": "SG-SIN-MBC2-29-B-B80 Hillview 8 Faber (5)",
+            "type": "focus_room",
+            "capacity": 5,
+            "email": "c_188anj14shn9mid3jr2mkpq8pimgc4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ed8@resource.calendar.google.com"
+        },
+        {
+            "name": "SG-SIN-MBC2-29-B-B80 Hillview 10 Serapong (9)",
+            "type": "large_room",
+            "capacity": 9,
+            "email": "c_1880698i1vcauiorl3r46l9og48di4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ec8@resource.calendar.google.com"
+        }
     ],
     28: [
-        {"name": "28B8010 - B80 Pasir Panjang", "type": "focus_room", "capacity": 4, "email": "google.com_28b8010_pasirpanjang@resource.calendar.google.com"},
+        {
+            "name": "SG-SIN-MBC2-28-B-B80 29 Phone Room - External (2)",
+            "type": "phone_booth",
+            "capacity": 2,
+            "email": "c_188bn1gj187ach0lkei0e29bl62gc4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi71fj4e3270o3gd0@resource.calendar.google.com"
+        }
     ],
     30: [
-        {"name": "30B8020 - B80 Marina South", "type": "focus_room", "capacity": 4, "email": "google.com_30b8020_marinasouth@resource.calendar.google.com"},
+        {
+            "name": "SG-SIN-MBC2-30-B-B80 1 Phone Room - External (2)",
+            "type": "phone_booth",
+            "capacity": 2,
+            "email": "c_1881uj9kh3vmki0bioh1hdsdhkk6m4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npj61fj6c3270o32e8@resource.calendar.google.com"
+        },
+        {
+            "name": "SG-SIN-MBC2-30-B-B80 2 Phone Room - External (2)",
+            "type": "phone_booth",
+            "capacity": 2,
+            "email": "c_1881o34eh99iiikkjdttrnvks0giq4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npj61fj6c3270o32do@resource.calendar.google.com"
+        }
     ]
 }
 
 
-def dispatch_calendar_invite_gmr(
-    summary: str,
-    description: str,
-    location: str,
+def check_room_availability(
+    room_email: str,
+    start_iso: str,
+    end_iso: str
+) -> bool:
+    """Query real-time free/busy status for a Google Calendar room resource."""
+    try:
+        service = get_calendar_service()
+        body = {
+            "timeMin": start_iso,
+            "timeMax": end_iso,
+            "items": [{"id": room_email}]
+        }
+        res = service.freebusy().query(body=body).execute()
+        busy_list = res.get("calendars", {}).get(room_email, {}).get("busy", [])
+        return len(busy_list) == 0
+    except Exception as e:
+        logger.warning("Error checking room availability for %s: %s", room_email, e)
+        return False
+
+
+def find_available_mbc_room(
+    floor: int,
     start_iso: str,
     end_iso: str,
-    recipient: str = PRINCIPAL_EMAIL
-) -> bool:
-    """Natively dispatch an RFC 5545 iCalendar invite to Abhi Sethi via Google Message Router (sendgmr)."""
-    try:
-        sys.path.append("/usr/local/google/home/aset/repos/ce-skills/.agents/skills/send-email/scripts")
-        from send_email import send_email_api
+    preferred_type: Optional[str] = None
+) -> Optional[Dict[str, Any]]:
+    """Find a verified MBC2 room on the given floor that is free for the entire requested window."""
+    candidate_rooms = list(MBC2_ROOM_CATALOG.get(floor, []))
+    if preferred_type:
+        candidate_rooms = sorted(candidate_rooms, key=lambda r: 0 if r.get("type") == preferred_type else 1)
 
-        st_dt = datetime.fromisoformat(start_iso.replace("Z", "+00:00")).astimezone(zoneinfo.ZoneInfo("UTC"))
-        et_dt = datetime.fromisoformat(end_iso.replace("Z", "+00:00")).astimezone(zoneinfo.ZoneInfo("UTC"))
-        dtstamp = datetime.now(zoneinfo.ZoneInfo("UTC")).strftime("%Y%m%dT%H%M%SZ")
-        uid = f"agenica-cal-{int(datetime.now().timestamp())}@google.com"
+    for room in candidate_rooms:
+        if check_room_availability(room["email"], start_iso, end_iso):
+            return room
 
-        ics_text = f"""BEGIN:VCALENDAR\r
-PRODID:-//Google Inc//Agenica S Executive Assistant//EN\r
-VERSION:2.0\r
-CALSCALE:GREGORIAN\r
-METHOD:REQUEST\r
-BEGIN:VEVENT\r
-DTSTAMP:{dtstamp}\r
-UID:{uid}\r
-SUMMARY:{summary}\r
-DESCRIPTION:{description}\r
-LOCATION:{location}\r
-DTSTART:{st_dt.strftime('%Y%m%dT%H%M%SZ')}\r
-DTEND:{et_dt.strftime('%Y%m%dT%H%M%SZ')}\r
-ORGANIZER;CN=Agenica S:mailto:agenica@google.com\r
-ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;CN={PRINCIPAL_NAME}:mailto:{PRINCIPAL_EMAIL}\r
-STATUS:CONFIRMED\r
-TRANSP:OPAQUE\r
-SEQUENCE:0\r
-END:VEVENT\r
-END:VCALENDAR"""
-
-        ics_path = f"/tmp/invite_{int(datetime.now().timestamp())}.ics"
-        with open(ics_path, "w", encoding="utf-8") as f:
-            f.write(ics_text)
-
-        return send_email_api(
-            to=recipient,
-            subject=f"Calendar Invite: {summary}",
-            body_or_path=f"Agenica S has scheduled: {summary} ({location}). The official calendar invitation is attached.",
-            is_html=False,
-            attachment=ics_path
-        )
-    except Exception as e:
-        logger.warning("GMR calendar invite dispatch note: %s", e)
-        return False
+    # If no room on preferred floor, check adjacent floors (28, 30)
+    for alt_floor in [28, 30]:
+        if alt_floor != floor:
+            for room in MBC2_ROOM_CATALOG.get(alt_floor, []):
+                if check_room_availability(room["email"], start_iso, end_iso):
+                    return room
+    return None
 
 
 def find_daily_focus_chunks(
@@ -106,251 +188,181 @@ def find_daily_focus_chunks(
     min_chunk_minutes: int = 60
 ) -> List[Dict[str, Any]]:
     """
-    Analyze Abhi Sethi's calendar for a specific date and identify large open chunks
-    of time (>= min_chunk_minutes) during working hours (09:00 to 18:00 SGT).
+    Scan Abhi Sethi's calendar for large uninterrupted open time blocks during business hours (09:00 - 18:00 SGT).
     """
-    start_day_dt = datetime.strptime(target_date, "%Y-%m-%d").replace(
-        hour=9, minute=0, second=0, tzinfo=SGT_TZ
-    )
-    end_day_dt = datetime.strptime(target_date, "%Y-%m-%d").replace(
-        hour=18, minute=0, second=0, tzinfo=SGT_TZ
-    )
+    day_start = f"{target_date}T09:00:00+08:00"
+    day_end = f"{target_date}T18:00:00+08:00"
 
-    busy_intervals = []
     try:
         service = get_calendar_service()
-        body = {
-            "timeMin": start_day_dt.isoformat(),
-            "timeMax": end_day_dt.isoformat(),
-            "timeZone": DEFAULT_TIMEZONE,
+        fb_query = {
+            "timeMin": day_start,
+            "timeMax": day_end,
             "items": [{"id": email}]
         }
-        fb = service.freebusy().query(body=body).execute()
-        raw_busy = fb.get("calendars", {}).get(email, {}).get("busy", [])
-        for b in raw_busy:
-            b_start = datetime.fromisoformat(b["start"]).astimezone(SGT_TZ)
-            b_end = datetime.fromisoformat(b["end"]).astimezone(SGT_TZ)
-            busy_intervals.append((b_start, b_end))
+        res = service.freebusy().query(body=fb_query).execute()
+        busy_spans = res.get("calendars", {}).get(email, {}).get("busy", [])
     except Exception as e:
         logger.warning("Live freebusy check note: %s. Using standard daily focus windows.", e)
+        busy_spans = []
 
-    busy_intervals.sort(key=lambda x: x[0])
+    # Parse busy spans
+    parsed_busy = []
+    for b in busy_spans:
+        st = datetime.fromisoformat(b["start"].replace("Z", "+00:00")).astimezone(SGT_TZ)
+        et = datetime.fromisoformat(b["end"].replace("Z", "+00:00")).astimezone(SGT_TZ)
+        parsed_busy.append((st, et))
 
-    focus_chunks = []
-    cursor = start_day_dt
+    parsed_busy.sort(key=lambda x: x[0])
 
-    for b_start, b_end in busy_intervals:
-        if b_start > cursor:
-            gap_minutes = int((b_start - cursor).total_seconds() / 60)
-            if gap_minutes >= min_chunk_minutes:
-                focus_chunks.append({
-                    "date": target_date,
-                    "start": cursor.strftime("%H:%M"),
-                    "end": b_start.strftime("%H:%M"),
-                    "duration_minutes": gap_minutes,
-                    "start_iso": cursor.isoformat(),
-                    "end_iso": b_start.isoformat(),
-                    "label": f"{cursor.strftime('%I:%M %p')} – {b_start.strftime('%I:%M %p')} ({gap_minutes} mins)"
+    work_start = datetime.fromisoformat(day_start)
+    work_end = datetime.fromisoformat(day_end)
+
+    free_chunks = []
+    curr = work_start
+
+    for b_st, b_et in parsed_busy:
+        if b_st > curr:
+            dur = (b_st - curr).total_seconds() / 60
+            if dur >= min_chunk_minutes:
+                free_chunks.append({
+                    "start": curr.strftime("%H:%M"),
+                    "end": b_st.strftime("%H:%M"),
+                    "duration_minutes": int(dur),
+                    "start_iso": curr.isoformat(),
+                    "end_iso": b_st.isoformat()
                 })
-        if b_end > cursor:
-            cursor = b_end
+        if b_et > curr:
+            curr = b_et
 
-    if cursor < end_day_dt:
-        gap_minutes = int((end_day_dt - cursor).total_seconds() / 60)
-        if gap_minutes >= min_chunk_minutes:
-            focus_chunks.append({
-                "date": target_date,
-                "start": cursor.strftime("%H:%M"),
-                "end": end_day_dt.strftime("%H:%M"),
-                "duration_minutes": gap_minutes,
-                "start_iso": cursor.isoformat(),
-                "end_iso": end_day_dt.isoformat(),
-                "label": f"{cursor.strftime('%I:%M %p')} – {end_day_dt.strftime('%I:%M %p')} ({gap_minutes} mins)"
+    if curr < work_end:
+        dur = (work_end - curr).total_seconds() / 60
+        if dur >= min_chunk_minutes:
+            free_chunks.append({
+                "start": curr.strftime("%H:%M"),
+                "end": work_end.strftime("%H:%M"),
+                "duration_minutes": int(dur),
+                "start_iso": curr.isoformat(),
+                "end_iso": work_end.isoformat()
             })
 
-    if not focus_chunks:
-        focus_chunks = [
+    if not free_chunks:
+        free_chunks = [
             {
-                "date": target_date,
                 "start": "09:30",
                 "end": "12:30",
                 "duration_minutes": 180,
                 "start_iso": f"{target_date}T09:30:00+08:00",
-                "end_iso": f"{target_date}T12:30:00+08:00",
-                "label": "09:30 AM – 12:30 PM (Morning Focus & Calls Block)"
+                "end_iso": f"{target_date}T12:30:00+08:00"
             },
             {
-                "date": target_date,
                 "start": "14:00",
                 "end": "17:30",
                 "duration_minutes": 210,
                 "start_iso": f"{target_date}T14:00:00+08:00",
-                "end_iso": f"{target_date}T17:30:00+08:00",
-                "label": "02:00 PM – 05:30 PM (Afternoon Focus & Strategy Block)"
+                "end_iso": f"{target_date}T17:30:00+08:00"
             }
         ]
 
-    return focus_chunks
+    return free_chunks
 
 
 def book_mbc_room_for_chunk(
     date_str: str,
     start_time: str,
     end_time: str,
-    preferred_floor: int = 29,
-    room_type: str = "phone_booth",
-    room_name: Optional[str] = None
+    preferred_floor: int = OFFICE_PRIMARY_FLOOR,
+    room_type: str = "phone_booth"
 ) -> Dict[str, Any]:
     """
-    Book a phone booth or focus room on Level 29 (or L28/L30 fallback) in MBC2 Singapore.
-    Creates an event on Abhi Sethi's calendar with the room resource attached.
+    Verify room availability and directly book a verified room in Google Singapore MBC2
+    by creating an event on Abhi Sethi's primary Google Calendar with the room resource attached.
     """
-    floors_to_check = [preferred_floor] + [f for f in OFFICE_FALLBACK_FLOORS if f != preferred_floor]
-    
-    selected_room = None
-    if room_name:
-        for f in floors_to_check:
-            for r in MBC2_ROOM_CATALOG.get(f, []):
-                if room_name.lower() in r["name"].lower():
-                    selected_room = {**r, "floor": f}
-                    break
-            if selected_room:
-                break
+    if "T" in start_time:
+        start_iso = _to_rfc3339(start_time)
+        end_iso = _to_rfc3339(end_time)
+        st_label = start_iso.split("T")[1][:5]
+        et_label = end_iso.split("T")[1][:5]
+    else:
+        st_norm = start_time if ":" in start_time else f"{start_time}:00"
+        et_norm = end_time if ":" in end_time else f"{end_time}:00"
+        if len(st_norm) == 4 and st_norm[1] == ":":
+            st_norm = "0" + st_norm
+        if len(et_norm) == 4 and et_norm[1] == ":":
+            et_norm = "0" + et_norm
+        start_iso = f"{date_str}T{st_norm}:00+08:00"
+        end_iso = f"{date_str}T{et_norm}:00+08:00"
+        st_label = st_norm
+        et_label = et_norm
 
-    if not selected_room:
-        for f in floors_to_check:
-            rooms = MBC2_ROOM_CATALOG.get(f, [])
-            matched = [r for r in rooms if r["type"] == room_type]
-            if matched:
-                selected_room = {**matched[0], "floor": f}
-                break
-            elif rooms:
-                selected_room = {**rooms[0], "floor": f}
-                break
-
-    if not selected_room:
-        selected_room = {
-            "name": f"SIN-MBC2-{preferred_floor}-Phone-Orchard",
-            "type": room_type,
+    # 1. Check real availability across verified rooms
+    available_room = find_available_mbc_room(preferred_floor, start_iso, end_iso, room_type)
+    if not available_room:
+        return {
+            "status": "UNAVAILABLE",
             "floor": preferred_floor,
-            "email": f"google.com_mbc2_{preferred_floor}_phone@resource.calendar.google.com"
+            "date": date_str,
+            "time_block": f"{st_label} – {et_label} SGT",
+            "message": f"No phone or meeting rooms on Level {preferred_floor} (or adjacent floors) are available for {st_label} – {et_label} SGT."
         }
 
-    start_iso = _to_rfc3339(start_time, default_date=date_str)
-    end_iso = _to_rfc3339(end_time, default_date=date_str)
-    floor_num = selected_room.get("floor", preferred_floor)
-    room_disp = selected_room["name"]
-
-    event_summary = f"Focus Work & Calls ({room_disp})"
-    event_description = (
-        f"Reserved by {AGENT_NAME} (EA to {PRINCIPAL_NAME})\n"
-        f"Location: {OFFICE_LOCATION}, Level {floor_num}\n"
-        f"Room: {room_disp} ({selected_room.get('type', 'workspace')})\n"
-        f"Purpose: Dedicated focus time, deep work, and private calls."
-    )
-    event_location = f"{OFFICE_LOCATION}, Level {floor_num} — {room_disp}"
-
-    attendees = [
-        {"email": PRINCIPAL_EMAIL, "displayName": PRINCIPAL_NAME, "responseStatus": "accepted"},
-        {"email": selected_room["email"], "displayName": room_disp, "resource": True}
-    ]
-
+    # 2. Directly create the event in Abhi Sethi's primary calendar with room resource
     event_body = {
-        "summary": event_summary,
-        "description": event_description,
-        "location": event_location,
+        "summary": f"Focus Work & Calls: {available_room['name']}",
+        "description": (
+            f"Reserved by Agenica S on behalf of {PRINCIPAL_NAME} ({PRINCIPAL_EMAIL}).\n"
+            f"Location: {OFFICE_LOCATION}, Level {preferred_floor}\n"
+            f"Room: {available_room['name']}\n"
+            f"Purpose: Dedicated focus work and private calls."
+        ),
         "start": {"dateTime": start_iso, "timeZone": DEFAULT_TIMEZONE},
         "end": {"dateTime": end_iso, "timeZone": DEFAULT_TIMEZONE},
-        "attendees": attendees,
-        "extendedProperties": {
-            "private": {
-                "booked_by": AGENT_NAME,
-                "room_floor": str(floor_num),
-                "room_type": selected_room.get("type", "workspace")
-            }
-        }
+        "location": f"{OFFICE_LOCATION}, Level {preferred_floor} — {available_room['name']}",
+        "attendees": [
+            {"email": PRINCIPAL_EMAIL, "displayName": PRINCIPAL_NAME, "responseStatus": "accepted"},
+            {"email": available_room["email"], "displayName": available_room["name"], "resource": True}
+        ]
     }
-
-    start_compact = start_iso.replace("-", "").replace(":", "").split("+")[0]
-    end_compact = end_iso.replace("-", "").replace(":", "").split("+")[0]
-
-    cal_params = {
-        "action": "TEMPLATE",
-        "authuser": PRINCIPAL_EMAIL,
-        "src": PRINCIPAL_EMAIL,
-        "text": event_summary,
-        "dates": f"{start_compact}/{end_compact}",
-        "details": event_description,
-        "location": event_location,
-        "ctz": "Asia/Singapore",
-        "add": f"{PRINCIPAL_EMAIL},{selected_room['email']}"
-    }
-    calendar_link = f"https://calendar.google.com/calendar/render?{urllib.parse.urlencode(cal_params)}"
 
     try:
         service = get_calendar_service()
         created = service.events().insert(
-            calendarId=PRINCIPAL_EMAIL,
+            calendarId="primary",
             body=event_body,
-            sendUpdates="none"
+            sendUpdates="all"
         ).execute()
 
         event_id = created.get("id")
-        html_link = created.get("htmlLink", calendar_link)
+        html_link = created.get("htmlLink")
 
         return {
             "status": "RESERVED",
             "event_id": event_id,
-            "room_name": room_disp,
-            "floor": floor_num,
+            "room_name": available_room["name"],
+            "floor": preferred_floor,
             "building": BUILDING_CODE,
             "date": date_str,
-            "time_block": f"{start_time} – {end_time} SGT",
+            "time_block": f"{st_label} – {et_label} SGT",
             "calendar_link": html_link,
-            "message": f"Successfully reserved {room_disp} (Level {floor_num}) for {start_time} – {end_time} SGT."
+            "message": f"Successfully created event on your Google Calendar and reserved {available_room['name']} for {st_label} – {et_label} SGT."
         }
     except Exception as e:
-        logger.warning("Live Calendar API room insert note: %s. Attempting native GMR calendar invite...", e)
-        gmr_sent = dispatch_calendar_invite_gmr(
-            summary=event_summary,
-            description=event_description,
-            location=event_location,
-            start_iso=start_iso,
-            end_iso=end_iso,
-            recipient=PRINCIPAL_EMAIL
-        )
-        if gmr_sent:
-            return {
-                "status": "INVITE_SENT",
-                "room_name": room_disp,
-                "floor": floor_num,
-                "building": BUILDING_CODE,
-                "date": date_str,
-                "time_block": f"{start_time} – {end_time} SGT",
-                "calendar_link": calendar_link,
-                "message": f"Calendar invite for {room_disp} (Level {floor_num}, {start_time} – {end_time} SGT) dispatched directly to {PRINCIPAL_EMAIL} via GMR."
-            }
-        else:
-            return {
-                "status": "NEEDS_APPROVAL",
-                "room_name": room_disp,
-                "floor": floor_num,
-                "building": BUILDING_CODE,
-                "date": date_str,
-                "time_block": f"{start_time} – {end_time} SGT",
-                "calendar_link": calendar_link,
-                "message": f"Reservation prepared for {room_disp} (Level {floor_num}). API insertion pending: {e}.",
-                "error_note": str(e)
-            }
+        logger.error("Direct calendar event creation failed: %s", e)
+        return {
+            "status": "FAILED",
+            "room_name": available_room["name"],
+            "error": str(e),
+            "message": f"Failed to book {available_room['name']} due to calendar API error: {e}"
+        }
 
 
 def reserve_daily_focus_rooms(
     target_date: str,
-    floor: int = 29
+    floor: int = OFFICE_PRIMARY_FLOOR
 ) -> str:
     """
-    Detect large open chunks of the day in Abhi Sethi's calendar and book phone/focus
-    rooms on Level 29 (or nearby floors) in MBC2 Singapore for all available blocks.
+    Scan Abhi Sethi's calendar for large open chunks of the day, verify room availability,
+    and directly book verified rooms on Level 29 in MBC2 Singapore into his primary Google Calendar.
 
     Args:
         target_date: Date in YYYY-MM-DD format (e.g. '2026-09-04').
@@ -378,16 +390,25 @@ def reserve_daily_focus_rooms(
         ""
     ]
     for r in reservations:
-        summary_lines.append(
-            f"- 📍 **{r['room_name']}** (Level {r['floor']}): `{r['time_block']}` [📅 View Calendar]({r['calendar_link']})"
-        )
+        if r.get("status") == "RESERVED":
+            summary_lines.append(
+                f"- ✅ **{r['room_name']}** (Level {r['floor']}): `{r['time_block']}` [📅 View Event]({r['calendar_link']})"
+            )
+        elif r.get("status") == "UNAVAILABLE":
+            summary_lines.append(
+                f"- ⚠️ `{r['time_block']}`: All Level {floor} rooms currently occupied."
+            )
+        else:
+            summary_lines.append(
+                f"- ❌ `{r.get('time_block', '')}`: Booking failed ({r.get('error', 'unknown error')})"
+            )
 
     return json.dumps({
         "status": "SUCCESS",
         "target_date": target_date,
         "floor": floor,
         "building": BUILDING_CODE,
-        "reservation_count": len(reservations),
+        "reservation_count": sum(1 for r in reservations if r.get("status") == "RESERVED"),
         "reservations": reservations,
         "summary": "\n".join(summary_lines)
     }, indent=2)

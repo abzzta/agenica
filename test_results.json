@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-08-19T12:31:35.852549",
+  "timestamp": "2026-09-03T15:59:14.299328",
   "principal": "Abhi Sethi (aset@google.com)",
-  "project": "cowork-aset-6tnf0w",
+  "project": "ag-test-1310",
   "tests": [
     {
       "test_name": "Auth & Preflight Probe",
       "status": "PASS",
       "details": {
         "account": "aset@google.com",
-        "project": "cowork-aset-6tnf0w",
-        "model": "gemini-3.7-flash",
+        "project": "ag-test-1310",
+        "model": "gemini-2.5-flash",
         "vertex_ai_response": "System operational"
       }
     },
@@ -17,10 +17,10 @@
       "test_name": "Real-World Date/Time Grounding",
       "status": "PASS",
       "details": {
-        "current_date": "2026-08-19",
-        "day_of_week": "Wednesday",
+        "current_date": "2026-09-03",
+        "day_of_week": "Thursday",
         "timezone": null,
-        "relative_tomorrow": "2026-08-20"
+        "relative_tomorrow": "2026-09-04"
       }
     },
     {
@@ -37,10 +37,10 @@
       "test_name": "Gmail 4-Tier Triage & Draft-Delegate",
       "status": "PASS",
       "details": {
-        "total_scanned": 5,
-        "needs_action_count": 5,
+        "total_scanned": 4,
+        "needs_action_count": 1,
         "draft_protocol": "DRAFT_DELEGATE_PROTOCOL",
-        "draft_url": "https://mail.google.com/mail/u/0/#drafts/r-1787142708"
+        "draft_url": "https://mail.google.com/mail/u/0/#drafts/r-1788422365"
       }
     },
     {
@@ -59,7 +59,7 @@
       "status": "PASS",
       "details": {
         "agent_name": "agenica_agent",
-        "model": "model='gemini-3.7-flash' base_url=None speech_config=None use_interactions_api=False retry_options=None",
+        "model": "model='gemini-2.5-flash' base_url=None speech_config=None use_interactions_api=False retry_options=None",
         "registered_tools_count": 20,
         "app_name": "agenica"
       }

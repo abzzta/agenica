@@ -10,10 +10,14 @@ import json
 import subprocess
 from datetime import datetime
 
-# Set Environment Variables
-os.environ["GOOGLE_CLOUD_PROJECT"] = "cowork-aset-6tnf0w"
+try:
+    active_proj = subprocess.check_output(["gcloud", "config", "get-value", "project"], text=True).strip() or "ag-test-1310"
+except Exception:
+    active_proj = "ag-test-1310"
+
+os.environ["GOOGLE_CLOUD_PROJECT"] = active_proj
 os.environ["GOOGLE_CLOUD_LOCATION"] = "global"
-os.environ["ADK_MODEL"] = "gemini-3.7-flash"
+os.environ["ADK_MODEL"] = "gemini-2.5-flash"
 os.environ["PRINCIPAL_EMAIL"] = "aset@google.com"
 os.environ["PRINCIPAL_NAME"] = "Abhi Sethi"
 os.environ["USER_TIMEZONE"] = "Asia/Singapore"
@@ -21,7 +25,7 @@ os.environ["USER_TIMEZONE"] = "Asia/Singapore"
 results = {
     "timestamp": datetime.now().isoformat(),
     "principal": "Abhi Sethi (aset@google.com)",
-    "project": "cowork-aset-6tnf0w",
+    "project": active_proj,
     "tests": []
 }
 
@@ -50,13 +54,14 @@ def test_1_auth_and_environment():
         from google.oauth2.credentials import Credentials
         from google import genai
         creds = Credentials(tok)
-        client = genai.Client(project="cowork-aset-6tnf0w", location="global", vertexai=True, credentials=creds)
-        res = client.models.generate_content(model="gemini-3.7-flash", contents="Say: System operational")
+        target_project = os.environ.get("GOOGLE_CLOUD_PROJECT") or project or "ag-test-1310"
+        client = genai.Client(project=target_project, location="global", vertexai=True, credentials=creds)
+        res = client.models.generate_content(model="gemini-2.5-flash", contents="Say: System operational")
         
         log_test("Auth & Preflight Probe", "PASS", {
             "account": account,
-            "project": project,
-            "model": "gemini-3.7-flash",
+            "project": target_project,
+            "model": "gemini-2.5-flash",
             "vertex_ai_response": res.text.strip()
         })
     except Exception as e:

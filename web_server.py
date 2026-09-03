@@ -6,11 +6,11 @@ Features:
    - Streams 16kHz PCM audio directly from browser microphone.
    - Streams 24kHz native neural audio back to browser using voice "Aoede".
    - Continuous server-side Voice Activity Detection (VAD) & hands-free conversation.
-   - Real-time dual transcription (input & output) for live visual feedback.
-   - Instant barge-in & interruption handling.
-2. Live Workspace Tool Execution:
-   - Real-time Google Calendar schedule queries.
-   - Real-time Singapore MBC2 Level 29 room availability & booking.
+   - Real-time live speech transcription.
+   - Automatic acoustic echo prevention so laptop speakers don't interrupt Gemini.
+2. Dynamic Workspace Context Injection:
+   - Pre-loads Abhi's live Google Calendar schedule for today & tomorrow directly into the conversational model context.
+   - Eliminates tool calling audio-drops, enabling fluid back-and-forth verbal dialogue.
 """
 
 import os
@@ -47,93 +47,36 @@ from agent.tools.room_booking_tools import book_mbc_room_for_chunk
 logger = logging.getLogger("agenica.live")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
-app = FastAPI(title="Agenica S — Gemini Multimodal Live Portal", version="3.1.0")
-
-LIVE_SYSTEM_INSTRUCTION = f"""
-You are {AGENT_NAME}, the world-class personal Executive Assistant to {PRINCIPAL_NAME} ({PRINCIPAL_EMAIL}).
-You are speaking over a live, continuous two-way audio call with Abhi.
-
-VOICE & CONVERSATIONAL RULES:
-- Talk naturally, warmly, casually, and directly like a trusted real person with a friendly Australian accent and cadence.
-- Keep your spoken responses concise and conversational (1 to 2 sentences).
-- Never read out markdown headers, bullets, asterisk symbols, or web links.
-- When Abhi asks about his schedule or wants to book a room, execute your tools immediately to get real facts, then casually share the outcome.
-- If booking a room in Singapore MBC2 (Level {OFFICE_PRIMARY_FLOOR}), use your booking tool and confirm the room name and time casually.
-"""
-
-LIVE_TOOLS = [
-    {
-        "function_declarations": [
-            {
-                "name": "check_calendar_schedule",
-                "description": "Check Abhi's upcoming calendar events and meetings for today or upcoming days.",
-                "parameters": {
-                    "type": "OBJECT",
-                    "properties": {
-                        "days": {
-                            "type": "INTEGER",
-                            "description": "Number of days ahead to inspect (default 2)."
-                        }
-                    }
-                }
-            },
-            {
-                "name": "book_singapore_mbc_room",
-                "description": f"Book a focus room or phone booth on Level {OFFICE_PRIMARY_FLOOR} at Google Singapore MBC2 in Abhi's calendar.",
-                "parameters": {
-                    "type": "OBJECT",
-                    "properties": {
-                        "date_str": {
-                            "type": "STRING",
-                            "description": "Date in YYYY-MM-DD format (e.g. 2026-09-04)."
-                        },
-                        "start_time": {
-                            "type": "STRING",
-                            "description": "Start time in HH:MM format (e.g. 14:30)."
-                        },
-                        "end_time": {
-                            "type": "STRING",
-                            "description": "End time in HH:MM format (e.g. 16:00)."
-                        },
-                        "room_type": {
-                            "type": "STRING",
-                            "description": "Room type preference: 'phone_booth' (1-2 persons) or 'focus_room' (5 persons)."
-                        }
-                    },
-                    "required": ["date_str", "start_time", "end_time"]
-                }
-            }
-        ]
-    }
-]
+app = FastAPI(title="Agenica S — Gemini Multimodal Live Portal", version="3.2.0")
 
 
-def execute_tool_call(name: str, args: Dict[str, Any]) -> Dict[str, Any]:
-    """Execute real Workspace tool for the live session."""
-    logger.info("Executing Live Tool Call: %s with args: %s", name, args)
+def build_live_instructions() -> str:
+    """Build system instructions with live calendar context."""
+    now_dt = get_current_datetime()
     try:
-        if name == "check_calendar_schedule":
-            days = args.get("days", 2)
-            events_summary = list_upcoming_events(days=days, max_events=6)
-            return {"schedule_summary": events_summary}
-        elif name == "book_singapore_mbc_room":
-            date_str = args.get("date_str", "2026-09-04")
-            start_time = args.get("start_time", "14:30")
-            end_time = args.get("end_time", "16:00")
-            room_type = args.get("room_type", "phone_booth")
-            res = book_mbc_room_for_chunk(
-                date_str=date_str,
-                start_time=start_time,
-                end_time=end_time,
-                preferred_floor=OFFICE_PRIMARY_FLOOR,
-                room_type=room_type
-            )
-            return res
-        else:
-            return {"error": f"Unknown tool {name}"}
+        schedule = list_upcoming_events(days=3, max_events=8)
     except Exception as e:
-        logger.error("Error running tool %s: %s", name, e, exc_info=True)
-        return {"error": str(e)}
+        logger.warning("Could not fetch calendar for instructions: %s", e)
+        schedule = "Unable to fetch live schedule at this instant."
+
+    return f"""You are {AGENT_NAME}, the world-class personal Executive Assistant to {PRINCIPAL_NAME} ({PRINCIPAL_EMAIL}).
+You are on a live, continuous voice call with Abhi.
+
+VOICE & CONVERSATIONAL STYLE:
+- Talk naturally, warmly, casually, and directly like a trusted real person with a friendly Australian accent and cadence.
+- Keep your spoken answers brief and conversational (1 to 2 sentences max).
+- Never recite markdown, bullet lists, asterisk symbols, or web links aloud.
+- Refer to him as Abhi.
+
+CURRENT REAL-WORLD CONTEXT:
+- Current Date & Time: {now_dt}
+- Office: Google Singapore MBC2, Level {OFFICE_PRIMARY_FLOOR}
+
+ABHI'S REAL LIVE SCHEDULE (TODAY & UPCOMING):
+{schedule}
+
+Use these real facts to answer Abhi immediately and naturally when he asks about his schedule, meetings, clashes, or availability!
+"""
 
 
 HTML_PAGE = f"""<!DOCTYPE html>
@@ -364,7 +307,7 @@ HTML_PAGE = f"""<!DOCTYPE html>
       <div class="avatar">AS</div>
       <div class="brand-titles">
         <h1>{AGENT_NAME}</h1>
-        <p>Gemini Multimodal Live API • Native Bidirectional Audio (Aoede Voice)</p>
+        <p>Gemini Multimodal Live API • Continuous Conversational Assistant</p>
       </div>
     </div>
     <div class="status-badge">
@@ -391,12 +334,12 @@ HTML_PAGE = f"""<!DOCTYPE html>
     <!-- Live Event Feed -->
     <div class="activity-stream" id="activityStream">
       <div class="chat-bubble agent">
-        G'day Abhi! Tap the orb above to open the <b>Gemini Multimodal Live API</b> connection. I will listen constantly through your microphone and talk back to you in real time with native voice. You don't have to click anything between turns!
+        G'day Abhi! Tap the orb above. I am connected directly to your calendar and will listen constantly through your mic and talk back natively in real time!
       </div>
     </div>
 
     <div class="bottom-hint">
-      Powered by Google Vertex AI Gemini Live Native Audio • Voice: Aoede • Low-latency bidirectional audio
+      Continuous live audio • Hands-free multi-turn conversation • Native 24kHz Aoede voice
     </div>
   </div>
 
@@ -407,6 +350,7 @@ HTML_PAGE = f"""<!DOCTYPE html>
     let micStream = null;
     let scriptProcessor = null;
     let isConnected = false;
+    let isAgentSpeaking = false;
     let nextPlayTime = 0;
     let activeSources = [];
 
@@ -466,7 +410,12 @@ HTML_PAGE = f"""<!DOCTYPE html>
         audioCtxOut.resume();
       }}
 
-      // Convert 16-bit PCM to Float32
+      isAgentSpeaking = true;
+      liveOrb.className = 'orb speaking';
+      orbIcon.textContent = '🔊';
+      stateTitle.textContent = 'Agenica is speaking...';
+      stateSubtitle.textContent = 'Native Gemini voice output (Aoede)';
+
       const int16Array = new Int16Array(arrayBuffer);
       if (int16Array.length === 0) return;
 
@@ -482,10 +431,9 @@ HTML_PAGE = f"""<!DOCTYPE html>
       source.buffer = audioBuffer;
       source.connect(audioCtxOut.destination);
 
-      // Schedule seamless audio chunks
       const now = audioCtxOut.currentTime;
       if (isNaN(nextPlayTime) || nextPlayTime < now) {{
-        nextPlayTime = now + 0.02; // tiny jitter buffer
+        nextPlayTime = now + 0.02;
       }}
       source.start(nextPlayTime);
       nextPlayTime += audioBuffer.duration;
@@ -493,27 +441,27 @@ HTML_PAGE = f"""<!DOCTYPE html>
       activeSources.push(source);
       source.onended = () => {{
         activeSources = activeSources.filter(s => s !== source);
-        if (activeSources.length === 0 && isConnected) {{
-          liveOrb.className = 'orb connected';
-          orbIcon.textContent = '🟢';
-          stateTitle.textContent = 'Listening... (Speak freely)';
-          stateSubtitle.textContent = 'Continuous live audio: speak naturally anytime';
-          currentAgentBubble = null;
+        if (activeSources.length === 0) {{
+          // Re-arm mic when agent finishes speaking!
+          isAgentSpeaking = false;
+          if (isConnected) {{
+            liveOrb.className = 'orb connected';
+            orbIcon.textContent = '🟢';
+            stateTitle.textContent = 'Listening... (Speak freely)';
+            stateSubtitle.textContent = 'Continuous live audio: speak naturally anytime';
+            currentAgentBubble = null;
+            currentUserBubble = null;
+          }}
         }}
       }};
-
-      liveOrb.className = 'orb speaking';
-      orbIcon.textContent = '🔊';
-      stateTitle.textContent = 'Agenica is speaking...';
-      stateSubtitle.textContent = 'Native Gemini voice output (Aoede)';
     }}
 
     function interruptPlayback() {{
-      // Instant barge-in: stop all playing chunks immediately
       activeSources.forEach(s => {{
         try {{ s.stop(); }} catch(e) {{}}
       }});
       activeSources = [];
+      isAgentSpeaking = false;
       if (audioCtxOut) nextPlayTime = audioCtxOut.currentTime;
       if (isConnected) {{
         liveOrb.className = 'orb connected';
@@ -537,7 +485,6 @@ HTML_PAGE = f"""<!DOCTYPE html>
       audioCtxIn = new (window.AudioContext || window.webkitAudioContext)();
       const source = audioCtxIn.createMediaStreamSource(micStream);
       
-      // Use ScriptProcessor to resample to 16kHz PCM
       scriptProcessor = audioCtxIn.createScriptProcessor(4096, 1, 1);
       const inSampleRate = audioCtxIn.sampleRate;
 
@@ -546,15 +493,20 @@ HTML_PAGE = f"""<!DOCTYPE html>
 
         const inputData = e.inputBuffer.getChannelData(0);
 
-        // Simple visualizer bar animation
+        // Visualizer
         let sum = 0;
         for (let i = 0; i < inputData.length; i += 64) sum += Math.abs(inputData[i]);
-        const amp = Math.min(24, Math.max(4, Math.round(sum * 4)));
+        const amp = Math.min(24, Math.max(4, Math.round(sum * 5)));
         bars.forEach((b, idx) => {{
           b.style.height = `${{Math.max(4, amp + (idx % 3) * 3)}}px`;
         }});
 
-        // Downsample inputData to 16000 Hz
+        // Acoustic Echo Guard: Do not send laptop mic sound while agent is speaking through speakers
+        if (isAgentSpeaking) {{
+          return;
+        }}
+
+        // Downsample to 16kHz
         const ratio = inSampleRate / 16000;
         const outLength = Math.round(inputData.length / ratio);
         const pcm16 = new Int16Array(outLength);
@@ -565,7 +517,6 @@ HTML_PAGE = f"""<!DOCTYPE html>
           pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
         }}
 
-        // Send raw binary PCM16 chunk directly to WebSocket
         ws.send(pcm16.buffer);
       }};
 
@@ -601,7 +552,7 @@ HTML_PAGE = f"""<!DOCTYPE html>
     async function connectLive() {{
       initPlaybackContext();
       stateTitle.textContent = 'Connecting to Gemini Live API...';
-      stateSubtitle.textContent = 'Establishing bidirectional WebSocket stream...';
+      stateSubtitle.textContent = 'Establishing bidirectional stream...';
 
       const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = `${{proto}}//${{window.location.host}}/ws/live`;
@@ -614,21 +565,21 @@ HTML_PAGE = f"""<!DOCTYPE html>
         liveOrb.className = 'orb connected';
         orbIcon.textContent = '🟢';
         stateTitle.textContent = 'I am listening... (Speak freely)';
-        stateSubtitle.textContent = 'Live continuous conversation in progress — no need to click anything';
-        appendBubble("Connected to Gemini Live API. Speak whenever you are ready!", "agent");
+        stateSubtitle.textContent = 'Continuous multi-turn live conversation active';
+        appendBubble("Connected to Gemini Live API. I'm ready, Abhi!", "agent");
 
         try {{
           await startMicCapture();
         }} catch (err) {{
           console.error("Microphone capture failed:", err);
-          appendBubble("Microphone permission denied: " + err.message, "agent");
+          appendBubble("Microphone permission error: " + err.message, "agent");
           disconnectLive();
         }}
       }};
 
       ws.onmessage = (event) => {{
         if (event.data instanceof ArrayBuffer) {{
-          // Incoming 24kHz PCM chunk from Gemini Live API!
+          // Incoming 24kHz PCM native audio chunk from Gemini Live!
           playPCMChunk(event.data);
         }} else {{
           try {{
@@ -639,14 +590,9 @@ HTML_PAGE = f"""<!DOCTYPE html>
               appendTranscriptChunk(msg.text, msg.role || 'agent');
             }} else if (msg.type === 'transcript') {{
               appendBubble(msg.text, msg.role || 'agent');
-            }} else if (msg.type === 'status') {{
-              if (msg.state === 'tool_calling') {{
-                stateTitle.textContent = `Executing: ${{msg.tool}}...`;
-                stateSubtitle.textContent = 'Looking up Google Workspace live...';
-              }}
             }}
           }} catch (err) {{
-            console.warn("WS JSON parse error:", err);
+            console.warn("WS JSON error:", err);
           }}
         }}
       }};
@@ -692,9 +638,6 @@ async def serve_live_portal(request: Request):
 async def websocket_live_stream(websocket: WebSocket):
     """
     Bidirectional WebSocket Bridge between Browser Web Audio and Gemini Live API.
-    - Browser -> Gemini: Streams 16kHz 16-bit PCM chunks.
-    - Gemini -> Browser: Streams 24kHz 16-bit PCM native audio chunks.
-    - Handles tool execution and interruption natively.
     """
     await websocket.accept()
     logger.info("Client connected to /ws/live WebSocket.")
@@ -712,6 +655,9 @@ async def websocket_live_stream(websocket: WebSocket):
         credentials=creds
     )
 
+    # Pre-inject real Google Calendar schedule into instructions
+    instructions = build_live_instructions()
+
     config = types.LiveConnectConfig(
         response_modalities=["AUDIO"],
         speech_config=types.SpeechConfig(
@@ -724,9 +670,8 @@ async def websocket_live_stream(websocket: WebSocket):
         input_audio_transcription=types.AudioTranscriptionConfig(),
         output_audio_transcription=types.AudioTranscriptionConfig(),
         system_instruction=types.Content(
-            parts=[types.Part(text=LIVE_SYSTEM_INSTRUCTION)]
-        ),
-        tools=LIVE_TOOLS
+            parts=[types.Part(text=instructions)]
+        )
     )
 
     model_name = "gemini-live-2.5-flash-native-audio"
@@ -743,7 +688,6 @@ async def websocket_live_stream(websocket: WebSocket):
                         msg = await websocket.receive()
                         if "bytes" in msg and msg["bytes"]:
                             raw_pcm = msg["bytes"]
-                            # Forward real-time audio chunk to Gemini Live API
                             await session.send_realtime_input(
                                 audio=types.Blob(data=raw_pcm, mime_type="audio/pcm;rate=16000")
                             )
@@ -761,11 +705,10 @@ async def websocket_live_stream(websocket: WebSocket):
                 except Exception as e:
                     logger.error("Error in forward_browser_to_gemini: %s", e)
 
-            # Task 2: Gemini -> Browser (Native 24kHz audio + tool execution)
+            # Task 2: Gemini -> Browser (Native 24kHz audio)
             async def forward_gemini_to_browser():
                 try:
                     async for response in session.receive():
-                        # 1. Handle native voice audio chunks and transcriptions
                         sc = response.server_content
                         if sc is not None:
                             if getattr(sc, "interrupted", False):
@@ -794,43 +737,6 @@ async def websocket_live_stream(websocket: WebSocket):
                                     if part.inline_data and part.inline_data.data:
                                         # Send raw 24kHz PCM chunk as binary to browser!
                                         await websocket.send_bytes(part.inline_data.data)
-
-                        # 2. Handle Live Tool Calls
-                        if response.tool_call is not None:
-                            fcalls = response.tool_call.function_calls or []
-                            function_responses = []
-                            for fc in fcalls:
-                                call_id = fc.id
-                                call_name = fc.name
-                                call_args = fc.args or {}
-                                await websocket.send_text(json.dumps({
-                                    "type": "status",
-                                    "state": "tool_calling",
-                                    "tool": call_name
-                                }))
-                                result = execute_tool_call(call_name, call_args)
-                                function_responses.append(types.FunctionResponse(
-                                    id=call_id,
-                                    name=call_name,
-                                    response=result
-                                ))
-                                # Show summary card in chat feed
-                                if "schedule_summary" in result:
-                                    await websocket.send_text(json.dumps({
-                                        "type": "transcript",
-                                        "role": "agent",
-                                        "text": f"📅 **Checked Schedule**:\n{result['schedule_summary']}"
-                                    }))
-                                elif "event_link" in result:
-                                    await websocket.send_text(json.dumps({
-                                        "type": "transcript",
-                                        "role": "agent",
-                                        "text": f"🏢 **Room Booked!** [{result.get('room_name')}]({result.get('event_link')})"
-                                    }))
-
-                            if function_responses:
-                                logger.info("Sending tool response back to Gemini Live API...")
-                                await session.send_tool_response(function_responses=function_responses)
 
                 except WebSocketDisconnect:
                     logger.info("Browser disconnected from audio output.")

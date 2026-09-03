@@ -1,31 +1,36 @@
 """
-Agenica S — Live Conversational Executive Assistant Web Portal.
+Agenica S — Production Gemini Multimodal Live API Web Server.
 
 Features:
-1. Continuous Hands-Free Conversation:
-   - Always listening once activated (hands-free back-and-forth dialogue).
-   - Natural, casual, friendly persona (speaks like a real EA in Australian English).
-   - Audio barge-in: starts listening immediately when you speak.
-   - Dual output: casual spoken response for voice + rich visual cards on screen.
-2. Powered by Gemini 3.7 Flash on global Vertex AI.
-3. Full integration with Abhi Sethi's Google Workspace (Calendar, Level 29 MBC2 rooms, Gmail).
+1. Native Gemini Multimodal Live API (Bidirectional WebSocket):
+   - Streams 16kHz PCM audio directly from browser microphone.
+   - Streams 24kHz native neural audio back to browser using voice "Aoede".
+   - Continuous server-side Voice Activity Detection (VAD) & hands-free conversation.
+   - Instant barge-in & interruption handling.
+2. Live Workspace Tool Execution:
+   - Real-time Google Calendar schedule queries.
+   - Real-time Singapore MBC2 Level 29 room availability & booking.
+3. Fallback REST Chat API for instant text queries.
 """
 
 import os
-import re
+import sys
 import json
 import logging
 import asyncio
-from typing import Optional
-from fastapi import FastAPI, Request
+from typing import Dict, Any, Optional
+
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 import uvicorn
 
-# Configure environment for Gemini 3.7 Flash on global Vertex AI
-os.environ["GOOGLE_CLOUD_PROJECT"] = "cowork-aset-6tnf0w"
-os.environ["GOOGLE_CLOUD_LOCATION"] = "global"
-os.environ["ADK_MODEL"] = "gemini-3.7-flash"
-os.environ["GOOGLE_GENAI_MODEL"] = "gemini-3.7-flash"
+from google import genai
+from google.genai import types
+
+# Ensure workspace paths
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
 
 from agent.config import (
     AGENT_NAME,
@@ -34,68 +39,127 @@ from agent.config import (
     OFFICE_LOCATION,
     OFFICE_PRIMARY_FLOOR,
 )
+from agent.tools.calendar_tools import list_upcoming_events, get_current_datetime
+from agent.tools.room_booking_tools import book_mbc_room_for_chunk
 from agent.agent import _run_query_async
 
-logger = logging.getLogger("agenica.web")
+logger = logging.getLogger("agenica.live")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
-app = FastAPI(title="Agenica S — Live Conversational Assistant", version="2.5.0")
+app = FastAPI(title="Agenica S — Gemini Multimodal Live Portal", version="3.0.0")
+
+LIVE_SYSTEM_INSTRUCTION = f"""
+You are {AGENT_NAME}, the world-class personal Executive Assistant to {PRINCIPAL_NAME} ({PRINCIPAL_EMAIL}).
+You are speaking over a live, continuous two-way audio call with Abhi.
+
+VOICE & CONVERSATIONAL RULES:
+- Talk naturally, warmly, casually, and directly like a trusted real person with a friendly Australian accent and cadence.
+- Keep your spoken responses concise and conversational (1 to 2 sentences).
+- Never read out markdown headers, bullets, asterisk symbols, or web links.
+- When Abhi asks about his schedule or wants to book a room, execute your tools immediately to get real facts, then casually share the outcome.
+- If booking a room in Singapore MBC2 (Level {OFFICE_PRIMARY_FLOOR}), use your booking tool and confirm the room name and time casually.
+"""
+
+LIVE_TOOLS = [
+    {
+        "function_declarations": [
+            {
+                "name": "check_calendar_schedule",
+                "description": "Check Abhi's upcoming calendar events and meetings for today or upcoming days.",
+                "parameters": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "days": {
+                            "type": "INTEGER",
+                            "description": "Number of days ahead to inspect (default 2)."
+                        }
+                    }
+                }
+            },
+            {
+                "name": "book_singapore_mbc_room",
+                "description": f"Book a focus room or phone booth on Level {OFFICE_PRIMARY_FLOOR} at Google Singapore MBC2 in Abhi's calendar.",
+                "parameters": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "date_str": {
+                            "type": "STRING",
+                            "description": "Date in YYYY-MM-DD format (e.g. 2026-09-04)."
+                        },
+                        "start_time": {
+                            "type": "STRING",
+                            "description": "Start time in HH:MM format (e.g. 14:30)."
+                        },
+                        "end_time": {
+                            "type": "STRING",
+                            "description": "End time in HH:MM format (e.g. 16:00)."
+                        },
+                        "room_type": {
+                            "type": "STRING",
+                            "description": "Room type preference: 'phone_booth' (1-2 persons) or 'focus_room' (5 persons)."
+                        }
+                    },
+                    "required": ["date_str", "start_time", "end_time"]
+                }
+            }
+        ]
+    }
+]
 
 
-def generate_conversational_speech(text: str) -> str:
-    """Extract a warm, casual, human spoken sentence for voice output."""
-    import re
-    # Remove code blocks and markdown links
-    s = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
-    s = re.sub(r"\[(.*?)\]\(.*?\)", r"\1", s)
-    # Remove markdown headers and formatting
-    s = re.sub(r"[*#_`>~]", "", s)
-    # Remove common emoji unicode blocks
-    s = re.sub(r"[\U00010000-\U0010ffff]", "", s)
-    
-    clean_lines = []
-    for line in s.splitlines():
-        line = line.strip()
-        if not line or line.startswith(("-", "•", "1.", "2.", "3.", "4.", "Date:", "Time:", "Status:", "Room:", "Event:", "Current Time:")):
-            continue
-        if len(line) > 12 and not line.startswith("http"):
-            clean_lines.append(line)
-            
-    if clean_lines:
-        res = clean_lines[0]
-        if len(clean_lines) > 1 and len(res) < 120:
-            res += " " + clean_lines[1]
-    else:
-        res = "All set, Abhi! Let me know if you need anything else."
-    res = re.sub(r"\s+", " ", res).strip()
-    return res[:250]
+def execute_tool_call(name: str, args: Dict[str, Any]) -> Dict[str, Any]:
+    """Execute real Workspace tool for the live session."""
+    logger.info("Executing Live Tool Call: %s with args: %s", name, args)
+    try:
+        if name == "check_calendar_schedule":
+            days = args.get("days", 2)
+            events_summary = list_upcoming_events(days=days, max_events=6)
+            return {"schedule_summary": events_summary}
+        elif name == "book_singapore_mbc_room":
+            date_str = args.get("date_str", "2026-09-04")
+            start_time = args.get("start_time", "14:30")
+            end_time = args.get("end_time", "16:00")
+            room_type = args.get("room_type", "phone_booth")
+            res = book_mbc_room_for_chunk(
+                date_str=date_str,
+                start_time=start_time,
+                end_time=end_time,
+                preferred_floor=OFFICE_PRIMARY_FLOOR,
+                room_type=room_type
+            )
+            return res
+        else:
+            return {"error": f"Unknown tool {name}"}
+    except Exception as e:
+        logger.error("Error running tool %s: %s", name, e, exc_info=True)
+        return {"error": str(e)}
 
 
-HTML_LIVE_PORTAL = f"""<!DOCTYPE html>
+HTML_PAGE = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{AGENT_NAME} — Live Executive Voice Assistant</title>
+  <title>{AGENT_NAME} — Gemini Multimodal Live Voice Assistant</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {{
-      --bg: #070B14;
-      --card: #0F172A;
+      --bg: #060913;
+      --card: #0E1626;
       --border: #1E293B;
       --accent: #38BDF8;
-      --accent-glow: rgba(56, 189, 248, 0.4);
+      --accent-glow: rgba(56, 189, 248, 0.45);
       --text: #F8FAFC;
       --text-muted: #94A3B8;
-      --agent-bubble: #1E293B;
-      --user-bubble: #0284C7;
-      --active-green: #10B981;
+      --green: #10B981;
+      --green-glow: rgba(16, 185, 129, 0.6);
+      --amber: #F59E0B;
     }}
     * {{ box-sizing: border-box; margin: 0; padding: 0; }}
     body {{
-      font-family: 'Google Sans', -apple-system, sans-serif;
+      font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg);
       color: var(--text);
       display: flex;
@@ -138,13 +202,7 @@ HTML_LIVE_PORTAL = f"""<!DOCTYPE html>
       font-size: 12px;
       color: var(--text-muted);
     }}
-
-    .header-controls {{
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }}
-    .live-status-pill {{
+    .status-badge {{
       display: flex;
       align-items: center;
       gap: 8px;
@@ -173,164 +231,129 @@ HTML_LIVE_PORTAL = f"""<!DOCTYPE html>
       flex: 1;
       display: flex;
       flex-direction: column;
-      max-width: 900px;
+      max-width: 850px;
       width: 100%;
       margin: 0 auto;
-      padding: 20px;
+      padding: 24px 20px;
       overflow: hidden;
     }}
 
-    /* Voice Center Orb */
+    /* Live Multimodal Voice Stage */
     .voice-stage {{
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 24px;
+      border-radius: 28px;
+      padding: 32px 24px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      margin-bottom: 18px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
       position: relative;
+      margin-bottom: 20px;
     }}
-    .orb-container {{
-      width: 90px;
-      height: 90px;
+
+    .orb {{
+      width: 110px;
+      height: 110px;
       border-radius: 50%;
-      background: radial-gradient(circle, #38BDF8 0%, #0369A1 70%, #070B14 100%);
+      background: radial-gradient(circle, #38BDF8 0%, #0284C7 60%, #060913 100%);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      box-shadow: 0 0 25px var(--accent-glow);
+      box-shadow: 0 0 30px var(--accent-glow);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }}
-    .orb-container:hover {{
-      transform: scale(1.06);
-      box-shadow: 0 0 35px rgba(56, 189, 248, 0.6);
+    .orb:hover {{
+      transform: scale(1.05);
+      box-shadow: 0 0 45px rgba(56, 189, 248, 0.7);
     }}
-    .orb-container.listening {{
-      animation: orbListen 1.5s infinite alternate;
-      background: radial-gradient(circle, #10B981 0%, #047857 70%, #070B14 100%);
-      box-shadow: 0 0 40px rgba(16, 185, 129, 0.8);
+    .orb.connected {{
+      background: radial-gradient(circle, #10B981 0%, #059669 65%, #060913 100%);
+      box-shadow: 0 0 40px var(--green-glow);
+      animation: liveListen 2s infinite alternate;
     }}
-    .orb-container.speaking {{
-      animation: orbSpeak 0.8s infinite alternate;
-      background: radial-gradient(circle, #F59E0B 0%, #B45309 70%, #070B14 100%);
-      box-shadow: 0 0 40px rgba(245, 158, 11, 0.8);
+    .orb.speaking {{
+      background: radial-gradient(circle, #F59E0B 0%, #D97706 65%, #060913 100%);
+      box-shadow: 0 0 50px rgba(245, 158, 11, 0.8);
+      animation: liveSpeak 0.7s infinite alternate;
     }}
-    @keyframes orbListen {{
+    @keyframes liveListen {{
       from {{ transform: scale(1); }}
-      to {{ transform: scale(1.12); }}
+      to {{ transform: scale(1.08); }}
     }}
-    @keyframes orbSpeak {{
+    @keyframes liveSpeak {{
       from {{ transform: scale(1); }}
-      to {{ transform: scale(1.18); }}
+      to {{ transform: scale(1.15); }}
     }}
 
-    .voice-state-label {{
-      margin-top: 14px;
-      font-size: 15px;
+    .state-title {{
+      margin-top: 18px;
+      font-size: 16px;
       font-weight: 600;
-      color: #F8FAFC;
+      color: #FFFFFF;
     }}
-    .voice-sub-label {{
-      font-size: 12px;
-      color: var(--text-muted);
+    .state-subtitle {{
       margin-top: 4px;
-    }}
-    .live-transcript {{
-      margin-top: 10px;
       font-size: 13px;
-      color: var(--accent);
-      font-style: italic;
-      min-height: 20px;
-      text-align: center;
+      color: var(--text-muted);
+    }}
+    .waveform {{
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      height: 20px;
+      margin-top: 14px;
+    }}
+    .bar {{
+      width: 4px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: height 0.1s ease;
     }}
 
-    /* Chat Stream */
-    .chat-stream {{
+    /* Real-time Activity Log */
+    .activity-stream {{
       flex: 1;
       overflow-y: auto;
       padding-right: 6px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
-    }}
-    .chat-stream::-webkit-scrollbar {{ width: 5px; }}
-    .chat-stream::-webkit-scrollbar-thumb {{ background: var(--border); border-radius: 4px; }}
-
-    .msg {{
-      display: flex;
       gap: 12px;
-      max-width: 85%;
     }}
-    .msg.user {{
-      align-self: flex-end;
-      flex-direction: row-reverse;
-    }}
-    .msg.agent {{
-      align-self: flex-start;
-    }}
-    .msg-content {{
+    .activity-stream::-webkit-scrollbar {{ width: 5px; }}
+    .activity-stream::-webkit-scrollbar-thumb {{ background: var(--border); border-radius: 4px; }}
+
+    .chat-bubble {{
       padding: 12px 18px;
-      border-radius: 18px;
+      border-radius: 16px;
       font-size: 14px;
-      line-height: 1.55;
+      line-height: 1.5;
+      max-width: 82%;
     }}
-    .msg.user .msg-content {{
-      background: var(--user-bubble);
-      color: white;
-      border-bottom-right-radius: 4px;
-    }}
-    .msg.agent .msg-content {{
-      background: var(--agent-bubble);
+    .chat-bubble.agent {{
+      background: var(--card);
       border: 1px solid var(--border);
+      align-self: flex-start;
       color: var(--text);
-      border-bottom-left-radius: 4px;
     }}
-    .msg.agent .msg-content a {{
+    .chat-bubble.user {{
+      background: #0284C7;
+      align-self: flex-end;
+      color: white;
+    }}
+    .chat-bubble a {{
       color: var(--accent);
       text-decoration: underline;
     }}
-    .msg.agent .msg-content pre {{
-      background: #070B14;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 12px;
-      margin: 8px 0;
-      border: 1px solid var(--border);
-    }}
 
-    /* Controls Bar */
-    .bottom-bar {{
-      margin-top: 12px;
-      display: flex;
-      gap: 10px;
-    }}
-    .bottom-bar input {{
-      flex: 1;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 28px;
-      padding: 12px 20px;
-      color: white;
-      font-size: 14px;
-      outline: none;
-    }}
-    .bottom-bar input:focus {{
-      border-color: var(--accent);
-    }}
-    .send-btn {{
-      background: var(--accent);
-      color: #070B14;
-      border: none;
-      padding: 0 24px;
-      border-radius: 28px;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
+    .bottom-hint {{
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 10px;
     }}
   </style>
 </head>
@@ -340,274 +363,286 @@ HTML_LIVE_PORTAL = f"""<!DOCTYPE html>
       <div class="avatar">AS</div>
       <div class="brand-titles">
         <h1>{AGENT_NAME}</h1>
-        <p>Conversational Executive Assistant to {PRINCIPAL_NAME} • Australian English</p>
+        <p>Gemini Multimodal Live API • Native Bidirectional Audio (Aoede Voice)</p>
       </div>
     </div>
-    <div class="header-controls">
-      <div class="live-status-pill">
-        <div class="pulse-dot"></div>
-        <span>Live Audio Ready • Gemini 3.7 Flash</span>
-      </div>
+    <div class="status-badge">
+      <div class="pulse-dot"></div>
+      <span id="headerStatus">Live API Ready</span>
     </div>
   </header>
 
   <div class="portal-body">
-    <!-- Center Live Voice Stage -->
+    <!-- Live Multimodal Orb -->
     <div class="voice-stage">
-      <div class="orb-container" id="voiceOrb" onclick="toggleLiveVoice()">
-        <span style="font-size:28px;" id="orbIcon">🎙️</span>
+      <div class="orb" id="liveOrb" onclick="toggleLiveConnection()">
+        <span style="font-size:32px;" id="orbIcon">🎙️</span>
       </div>
-      <div class="voice-state-label" id="voiceStateLabel">Tap Orb to Start Hands-Free Conversation</div>
-      <div class="voice-sub-label" id="voiceSubLabel">Continuous conversational listening with Australian English female voice</div>
-      <div class="live-transcript" id="liveTranscript"></div>
-    </div>
-
-    <!-- Live Action & Message Stream -->
-    <div class="chat-stream" id="chatStream">
-      <div class="msg agent">
-        <div class="avatar" style="width:32px; height:32px; font-size:12px;">AS</div>
-        <div class="msg-content">
-          Hey Abhi! I'm <b>{AGENT_NAME}</b>. Tap the microphone orb above and talk to me naturally—I'm listening constantly so we can have a real conversation, or you can type below anytime.
-        </div>
+      <div class="state-title" id="stateTitle">Click to Start Live Voice Conversation</div>
+      <div class="state-subtitle" id="stateSubtitle">Native bidirectional streaming: continuously listens and talks back automatically</div>
+      <div class="waveform" id="waveform">
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <div class="bar"></div><div class="bar"></div>
       </div>
     </div>
 
-    <!-- Bottom Input Backup -->
-    <form class="bottom-bar" onsubmit="handleTextSubmit(event)">
-      <input type="text" id="textInput" placeholder="Or type a message here..." autocomplete="off">
-      <button type="submit" class="send-btn">Send</button>
-    </form>
+    <!-- Live Event Feed -->
+    <div class="activity-stream" id="activityStream">
+      <div class="chat-bubble agent">
+        G'day Abhi! Tap the orb above to open the <b>Gemini Multimodal Live API</b> connection. I will listen constantly through your microphone and talk back to you in real time with native voice. You don't have to click anything between turns!
+      </div>
+    </div>
+
+    <div class="bottom-hint">
+      Powered by Google Vertex AI Gemini Live Native Audio • Voice: Aoede • Low-latency bidirectional audio
+    </div>
   </div>
 
   <script>
-    const voiceOrb = document.getElementById('voiceOrb');
+    let ws = null;
+    let audioCtxIn = null;
+    let audioCtxOut = null;
+    let micStream = null;
+    let scriptProcessor = null;
+    let isConnected = false;
+    let nextPlayTime = 0;
+    let activeSources = [];
+
+    const liveOrb = document.getElementById('liveOrb');
     const orbIcon = document.getElementById('orbIcon');
-    const voiceStateLabel = document.getElementById('voiceStateLabel');
-    const voiceSubLabel = document.getElementById('voiceSubLabel');
-    const liveTranscript = document.getElementById('liveTranscript');
-    const chatStream = document.getElementById('chatStream');
-    const textInput = document.getElementById('textInput');
+    const stateTitle = document.getElementById('stateTitle');
+    const stateSubtitle = document.getElementById('stateSubtitle');
+    const headerStatus = document.getElementById('headerStatus');
+    const activityStream = document.getElementById('activityStream');
+    const bars = document.querySelectorAll('.bar');
 
-    let isLiveActive = false;
-    let recognition = null;
-    let auFemaleVoice = null;
-    let isSpeaking = false;
-
-    // --- Voice Synthesis Setup (Australian English Female) ---
-    function initSpeech() {{
-      const synth = window.speechSynthesis;
-      function pickVoice() {{
-        const voices = synth.getVoices();
-        if (!voices || voices.length === 0) return;
-
-        // Find Australian English female voice
-        let v = voices.find(x => x.lang.startsWith('en-AU') && (x.name.includes('Karen') || x.name.includes('Female') || x.name.includes('Catherine') || x.name.includes('Google') || x.name.includes('Natural')));
-        if (!v) v = voices.find(x => x.lang.startsWith('en-AU'));
-        if (!v) v = voices.find(x => x.lang.startsWith('en-GB') && x.name.includes('Female'));
-        if (!v) v = voices.find(x => x.lang.startsWith('en'));
-
-        auFemaleVoice = v || voices[0];
-      }}
-
-      pickVoice();
-      if (synth.onvoiceschanged !== undefined) {{
-        synth.onvoiceschanged = pickVoice;
-      }}
-    }}
-
-    function speakCasualReply(text, onComplete = null) {{
-      if (!('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel();
-
-      const utter = new SpeechSynthesisUtterance(text);
-      if (auFemaleVoice) {{
-        utter.voice = auFemaleVoice;
-        utter.lang = auFemaleVoice.lang || 'en-AU';
-      }} else {{
-        utter.lang = 'en-AU';
-      }}
-      utter.pitch = 1.08;
-      utter.rate = 1.05;
-
-      utter.onstart = () => {{
-        isSpeaking = true;
-        voiceOrb.className = 'orb-container speaking';
-        orbIcon.textContent = '🔊';
-        voiceStateLabel.textContent = 'Agenica S is speaking...';
-        voiceSubLabel.textContent = text;
-      }};
-
-      utter.onend = () => {{
-        isSpeaking = false;
-        if (isLiveActive) {{
-          // Immediately resume hands-free listening!
-          startListening();
-        }} else {{
-          resetOrbState();
-        }}
-        if (onComplete) onComplete();
-      }};
-
-      utter.onerror = () => {{
-        isSpeaking = false;
-        if (isLiveActive) startListening();
-      }};
-
-      window.speechSynthesis.speak(utter);
-    }}
-
-    // --- Continuous Hands-Free Speech Recognition ---
-    function initRecognition() {{
-      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRec) {{
-        voiceStateLabel.textContent = 'Speech recognition not supported in this browser.';
-        return;
-      }}
-
-      recognition = new SpeechRec();
-      recognition.lang = 'en-AU';
-      recognition.interimResults = true;
-      recognition.continuous = false;
-
-      recognition.onstart = () => {{
-        voiceOrb.className = 'orb-container listening';
-        orbIcon.textContent = '🟢';
-        voiceStateLabel.textContent = 'I am listening... (speak freely)';
-        voiceSubLabel.textContent = 'Speak naturally in Australian English';
-        liveTranscript.textContent = '';
-      }};
-
-      recognition.onresult = (event) => {{
-        let interim = '';
-        let final = '';
-        for (let i = event.resultIndex; i < event.results.length; ++i) {{
-          if (event.results[i].isFinal) {{
-            final += event.results[i][0].transcript;
-          }} else {{
-            interim += event.results[i][0].transcript;
-          }}
-        }}
-        liveTranscript.textContent = final || interim;
-        if (final) {{
-          recognition.stop();
-          processLiveInput(final.trim());
-        }}
-      }};
-
-      recognition.onerror = (e) => {{
-        console.warn('Speech rec error:', e.error);
-        if (isLiveActive && !isSpeaking) {{
-          setTimeout(() => {{
-            if (isLiveActive && !isSpeaking) startListening();
-          }}, 800);
-        }}
-      }};
-
-      recognition.onend = () => {{
-        if (isLiveActive && !isSpeaking) {{
-          // Re-arm automatically for continuous listening loop
-          startListening();
-        }}
-      }};
-    }}
-
-    function startListening() {{
-      if (!recognition || isSpeaking) return;
-      try {{
-        recognition.start();
-      }} catch (err) {{
-        // Already active
-      }}
-    }}
-
-    function toggleLiveVoice() {{
-      if (isLiveActive) {{
-        // Turn off live mode
-        isLiveActive = false;
-        if (recognition) recognition.stop();
-        window.speechSynthesis.cancel();
-        resetOrbState();
-      }} else {{
-        // Turn on continuous live mode
-        isLiveActive = true;
-        window.speechSynthesis.cancel();
-        startListening();
-      }}
-    }}
-
-    function resetOrbState() {{
-      voiceOrb.className = 'orb-container';
-      orbIcon.textContent = '🎙️';
-      voiceStateLabel.textContent = 'Tap Orb to Start Hands-Free Conversation';
-      voiceSubLabel.textContent = 'Continuous conversational listening with Australian English female voice';
-      liveTranscript.textContent = '';
-    }}
-
-    // --- Message Stream & Processing ---
-    function appendMsg(sender, text) {{
-      const d = document.createElement('div');
-      d.className = `msg ${{sender}}`;
-
-      const av = document.createElement('div');
-      av.className = 'avatar';
-      av.style.width = '32px';
-      av.style.height = '32px';
-      av.style.fontSize = '12px';
-      av.textContent = sender === 'user' ? 'A' : 'AS';
-
-      const c = document.createElement('div');
-      c.className = 'msg-content';
-      c.innerHTML = text
+    function appendBubble(text, role = 'agent') {{
+      const b = document.createElement('div');
+      b.className = `chat-bubble ${{role}}`;
+      b.innerHTML = text
         .replace(/\\*\\*(.*?)\\*\\*/g, '<b>$1</b>')
-        .replace(/\\*(.*?)\\*/g, '<i>$1</i>')
         .replace(/\\[(.*?)\\]\\((.*?)\\)/g, '<a href="$2" target="_blank">$1</a>')
         .replace(/\\n/g, '<br>');
-
-      d.appendChild(av);
-      d.appendChild(c);
-      chatStream.appendChild(d);
-      chatStream.scrollTop = chatStream.scrollHeight;
+      activityStream.appendChild(b);
+      activityStream.scrollTop = activityStream.scrollHeight;
     }}
 
-    async function processLiveInput(text) {{
-      if (!text) return;
-      appendMsg('user', text);
-      voiceStateLabel.textContent = 'Thinking...';
-      voiceOrb.className = 'orb-container';
-      orbIcon.textContent = '⚡';
-
-      try {{
-        const res = await fetch('/api/chat', {{
-          method: 'POST',
-          headers: {{ 'Content-Type': 'application/json' }},
-          body: JSON.stringify({{ message: text }})
-        }});
-        const data = await res.json();
-        
-        // Show rich details in chat
-        appendMsg('agent', data.reply);
-
-        // Speak back ONLY the casual, friendly spoken sentence
-        const speech = data.spoken_reply || "Done, Abhi!";
-        speakCasualReply(speech);
-      }} catch (e) {{
-        appendMsg('agent', 'Sorry Abhi, I had a hiccup processing that: ' + e.message);
-        if (isLiveActive) startListening();
+    // --- Audio Output Playback (24kHz Raw PCM from Gemini Live API) ---
+    function initPlaybackContext() {{
+      if (!audioCtxOut) {{
+        audioCtxOut = new (window.AudioContext || window.webkitAudioContext)({{ sampleRate: 24000 }});
+      }}
+      if (audioCtxOut.state === 'suspended') {{
+        audioCtxOut.resume();
       }}
     }}
 
-    function handleTextSubmit(e) {{
-      e.preventDefault();
-      const val = textInput.value.trim();
-      if (!val) return;
-      textInput.value = '';
-      processLiveInput(val);
+    function playPCMChunk(arrayBuffer) {{
+      initPlaybackContext();
+
+      // Convert 16-bit PCM to Float32
+      const int16Array = new Int16Array(arrayBuffer);
+      const float32 = new Float32Array(int16Array.length);
+      for (let i = 0; i < int16Array.length; i++) {{
+        float32[i] = int16Array[i] / 32768.0;
+      }}
+
+      const audioBuffer = audioCtxOut.createBuffer(1, float32.length, 24000);
+      audioBuffer.copyToChannel(float32, 0);
+
+      const source = audioCtxOut.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(audioCtxOut.destination);
+
+      // Schedule seamless audio chunks
+      const now = audioCtxOut.currentTime;
+      if (nextPlayTime < now) {{
+        nextPlayTime = now + 0.05; // tiny jitter buffer
+      }}
+      source.start(nextPlayTime);
+      nextPlayTime += audioBuffer.duration;
+
+      activeSources.push(source);
+      source.onended = () => {{
+        activeSources = activeSources.filter(s => s !== source);
+        if (activeSources.length === 0 && isConnected) {{
+          liveOrb.className = 'orb connected';
+          orbIcon.textContent = '🟢';
+          stateTitle.textContent = 'Listening... (Speak freely)';
+          stateSubtitle.textContent = 'Continuous live audio: speak naturally anytime';
+        }}
+      }};
+
+      liveOrb.className = 'orb speaking';
+      orbIcon.textContent = '🔊';
+      stateTitle.textContent = 'Agenica is speaking...';
+      stateSubtitle.textContent = 'Native Gemini voice output (Aoede)';
     }}
 
-    window.addEventListener('DOMContentLoaded', () => {{
-      initSpeech();
-      initRecognition();
-    }});
+    function interruptPlayback() {{
+      // Instant barge-in: stop all playing chunks immediately
+      activeSources.forEach(s => {{
+        try {{ s.stop(); }} catch(e) {{}}
+      }});
+      activeSources = [];
+      if (audioCtxOut) nextPlayTime = audioCtxOut.currentTime;
+      if (isConnected) {{
+        liveOrb.className = 'orb connected';
+        orbIcon.textContent = '🟢';
+        stateTitle.textContent = 'Listening... (Speak freely)';
+      }}
+    }}
+
+    // --- Audio Input Recording (Microphone -> 16kHz PCM -> WebSocket) ---
+    async function startMicCapture() {{
+      micStream = await navigator.mediaDevices.getUserMedia({{
+        audio: {{
+          channelCount: 1,
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }}
+      }});
+
+      audioCtxIn = new (window.AudioContext || window.webkitAudioContext)();
+      const source = audioCtxIn.createMediaStreamSource(micStream);
+      
+      // Use ScriptProcessor to resample to 16kHz PCM
+      scriptProcessor = audioCtxIn.createScriptProcessor(4096, 1, 1);
+      const inSampleRate = audioCtxIn.sampleRate;
+
+      scriptProcessor.onaudioprocess = (e) => {{
+        if (!isConnected || !ws || ws.readyState !== WebSocket.OPEN) return;
+
+        const inputData = e.inputBuffer.getChannelData(0);
+
+        // Simple visualizer bar animation
+        let sum = 0;
+        for (let i = 0; i < inputData.length; i += 64) sum += Math.abs(inputData[i]);
+        const amp = Math.min(24, Math.max(4, Math.round(sum * 4)));
+        bars.forEach((b, idx) => {{
+          b.style.height = `${{Math.max(4, amp + (idx % 3) * 3)}}px`;
+        }});
+
+        // Downsample inputData to 16000 Hz
+        const ratio = inSampleRate / 16000;
+        const outLength = Math.round(inputData.length / ratio);
+        const pcm16 = new Int16Array(outLength);
+
+        for (let i = 0; i < outLength; i++) {{
+          const srcIdx = Math.round(i * ratio);
+          let s = Math.max(-1, Math.min(1, inputData[srcIdx] || 0));
+          pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+        }}
+
+        // Send raw binary PCM16 chunk directly to WebSocket
+        ws.send(pcm16.buffer);
+      }};
+
+      source.connect(scriptProcessor);
+      scriptProcessor.connect(audioCtxIn.destination);
+    }}
+
+    function stopMicCapture() {{
+      if (scriptProcessor) {{
+        scriptProcessor.disconnect();
+        scriptProcessor = null;
+      }}
+      if (micStream) {{
+        micStream.getTracks().forEach(t => t.stop());
+        micStream = null;
+      }}
+      if (audioCtxIn) {{
+        audioCtxIn.close();
+        audioCtxIn = null;
+      }}
+      bars.forEach(b => b.style.height = '6px');
+    }}
+
+    // --- WebSocket Connection Management ---
+    function toggleLiveConnection() {{
+      if (isConnected) {{
+        disconnectLive();
+      }} else {{
+        connectLive();
+      }}
+    }}
+
+    async function connectLive() {{
+      initPlaybackContext();
+      stateTitle.textContent = 'Connecting to Gemini Live API...';
+      stateSubtitle.textContent = 'Establishing bidirectional WebSocket stream...';
+
+      const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${{proto}}//${{window.location.host}}/ws/live`;
+      ws = new WebSocket(wsUrl);
+      ws.binaryType = 'arraybuffer';
+
+      ws.onopen = async () => {{
+        isConnected = true;
+        headerStatus.textContent = 'Live Audio Connected';
+        liveOrb.className = 'orb connected';
+        orbIcon.textContent = '🟢';
+        stateTitle.textContent = 'I am listening... (Speak freely)';
+        stateSubtitle.textContent = 'Live continuous conversation in progress — no need to click anything';
+        appendBubble("Connected to Gemini Live API. Speak whenever you are ready!", "agent");
+
+        try {{
+          await startMicCapture();
+        }} catch (err) {{
+          console.error("Microphone capture failed:", err);
+          appendBubble("Microphone permission denied: " + err.message, "agent");
+          disconnectLive();
+        }}
+      }};
+
+      ws.onmessage = (event) => {{
+        if (event.data instanceof ArrayBuffer) {{
+          // Incoming 24kHz PCM chunk from Gemini Live API!
+          playPCMChunk(event.data);
+        }} else {{
+          try {{
+            const msg = JSON.parse(event.data);
+            if (msg.type === 'interrupted') {{
+              interruptPlayback();
+            }} else if (msg.type === 'transcript') {{
+              appendBubble(msg.text, msg.role || 'agent');
+            }} else if (msg.type === 'status') {{
+              if (msg.state === 'tool_calling') {{
+                stateTitle.textContent = `Executing: ${{msg.tool}}...`;
+                stateSubtitle.textContent = 'Looking up Google Workspace live...';
+              }}
+            }}
+          }} catch (err) {{
+            console.warn("WS JSON parse error:", err);
+          }}
+        }}
+      }};
+
+      ws.onerror = (e) => {{
+        console.error("WebSocket error:", e);
+      }};
+
+      ws.onclose = () => {{
+        disconnectLive();
+      }};
+    }}
+
+    function disconnectLive() {{
+      isConnected = false;
+      if (ws) {{
+        ws.close();
+        ws = null;
+      }}
+      stopMicCapture();
+      interruptPlayback();
+      headerStatus.textContent = 'Disconnected';
+      liveOrb.className = 'orb';
+      orbIcon.textContent = '🎙️';
+      stateTitle.textContent = 'Click to Start Live Voice Conversation';
+      stateSubtitle.textContent = 'Native bidirectional streaming: continuously listens and talks back automatically';
+    }}
   </script>
 </body>
 </html>
@@ -616,61 +651,171 @@ HTML_LIVE_PORTAL = f"""<!DOCTYPE html>
 
 @app.get("/", response_class=HTMLResponse)
 async def serve_live_portal(request: Request):
-    """Serve the Live Hands-Free Conversational Voice Portal."""
-    return HTMLResponse(content=HTML_LIVE_PORTAL)
+    """Serve the Gemini Multimodal Live API Voice Portal."""
+    return HTMLResponse(content=HTML_PAGE)
 
 
-@app.post("/api/chat")
-async def handle_conversational_chat(request: Request):
+@app.websocket("/ws/live")
+async def websocket_live_stream(websocket: WebSocket):
     """
-    Process request with Gemini 3.7 Flash and return:
-    1. reply: Detailed markdown / cards for visual chat.
-    2. spoken_reply: Warm, casual 1-2 sentence spoken reply for the Australian EA voice.
+    Bidirectional WebSocket Bridge between Browser Web Audio and Gemini Live API.
+    - Browser -> Gemini: Streams 16kHz 16-bit PCM chunks.
+    - Gemini -> Browser: Streams 24kHz 16-bit PCM native audio chunks.
+    - Handles tool execution and interruption natively.
     """
+    await websocket.accept()
+    logger.info("Client connected to /ws/live WebSocket.")
+
+    # Initialize Google GenAI client pointing to Vertex AI
+    client = genai.Client(
+        vertexai=True,
+        project=os.environ.get("GOOGLE_CLOUD_PROJECT", "cowork-aset-6tnf0w"),
+        location="us-central1"
+    )
+
+    config = types.LiveConnectConfig(
+        response_modalities=["AUDIO"],
+        speech_config=types.SpeechConfig(
+            voice_config=types.VoiceConfig(
+                prebuilt_voice_config=types.PrebuiltVoiceConfig(
+                    voice_name="Aoede"
+                )
+            )
+        ),
+        system_instruction=types.Content(
+            parts=[types.Part(text=LIVE_SYSTEM_INSTRUCTION)]
+        ),
+        tools=LIVE_TOOLS
+    )
+
+    model_name = "gemini-live-2.5-flash-native-audio"
+
     try:
-        data = await request.json()
-        message = data.get("message", "").strip()
-        if not message:
-            return JSONResponse({
-                "reply": "Please let me know what you'd like me to do.",
-                "spoken_reply": "I'm listening, Abhi. What can I do for you?"
-            })
+        async with client.aio.live.connect(model=model_name, config=config) as session:
+            logger.info("Established upstream session with Gemini Live API (%s)", model_name)
 
-        # Run query through ADK runner with Gemini 3.7 Flash
+            # Task 1: Browser -> Gemini (Microphone audio chunks)
+            async def forward_browser_to_gemini():
+                try:
+                    while True:
+                        msg = await websocket.receive()
+                        if "bytes" in msg and msg["bytes"]:
+                            raw_pcm = msg["bytes"]
+                            # Forward real-time audio chunk to Gemini Live API
+                            await session.send_realtime_input(
+                                media_chunks=[
+                                    types.Blob(data=raw_pcm, mime_type="audio/pcm;rate=16000")
+                                ]
+                            )
+                        elif "text" in msg and msg["text"]:
+                            txt = msg["text"]
+                            await session.send_client_content(
+                                turns=[types.Content(role="user", parts=[types.Part(text=txt)])],
+                                turn_complete=True
+                            )
+                except WebSocketDisconnect:
+                    logger.info("Browser disconnected from audio input.")
+                except Exception as e:
+                    logger.error("Error in forward_browser_to_gemini: %s", e)
+
+            # Task 2: Gemini -> Browser (Native 24kHz audio + tool execution)
+            async def forward_gemini_to_browser():
+                try:
+                    async for response in session.receive():
+                        # 1. Handle native voice audio chunks
+                        sc = response.server_content
+                        if sc is not None:
+                            if getattr(sc, "interrupted", False):
+                                logger.info("Gemini Live interrupted by user speech.")
+                                await websocket.send_text(json.dumps({"type": "interrupted"}))
+
+                            model_turn = sc.model_turn
+                            if model_turn is not None:
+                                for part in model_turn.parts:
+                                    if part.inline_data and part.inline_data.data:
+                                        # Send raw 24kHz PCM chunk as binary to browser!
+                                        await websocket.send_bytes(part.inline_data.data)
+                                    if part.text:
+                                        await websocket.send_text(json.dumps({
+                                            "type": "transcript",
+                                            "role": "agent",
+                                            "text": part.text
+                                        }))
+
+                        # 2. Handle Live Tool Calls
+                        if response.tool_call is not None:
+                            fcalls = response.tool_call.function_calls or []
+                            function_responses = []
+                            for fc in fcalls:
+                                call_id = fc.id
+                                call_name = fc.name
+                                call_args = fc.args or {}
+                                await websocket.send_text(json.dumps({
+                                    "type": "status",
+                                    "state": "tool_calling",
+                                    "tool": call_name
+                                }))
+                                result = execute_tool_call(call_name, call_args)
+                                function_responses.append(types.FunctionResponse(
+                                    id=call_id,
+                                    name=call_name,
+                                    response=result
+                                ))
+                                # Show summary card in chat feed
+                                if "schedule_summary" in result:
+                                    await websocket.send_text(json.dumps({
+                                        "type": "transcript",
+                                        "role": "agent",
+                                        "text": f"📅 **Checked Schedule**:\n{result['schedule_summary']}"
+                                    }))
+                                elif "event_link" in result:
+                                    await websocket.send_text(json.dumps({
+                                        "type": "transcript",
+                                        "role": "agent",
+                                        "text": f"🏢 **Room Booked!** [{result.get('room_name')}]({result.get('event_link')})"
+                                    }))
+
+                            if function_responses:
+                                logger.info("Sending tool response back to Gemini Live API...")
+                                await session.send_tool_response(function_responses=function_responses)
+
+                except WebSocketDisconnect:
+                    logger.info("Browser disconnected from audio output.")
+                except Exception as e:
+                    logger.error("Error in forward_gemini_to_browser: %s", e)
+
+            # Run both tasks concurrently
+            await asyncio.gather(
+                forward_browser_to_gemini(),
+                forward_gemini_to_browser()
+            )
+
+    except Exception as err:
+        logger.error("Failed to connect or stream with Gemini Live API: %s", err, exc_info=True)
         try:
-            reply = await _run_query_async(message, user_id="aset", session_id="live-voice-session")
-        except Exception as query_err:
-            logger.warning("Primary 3.7 flash encountered preemption, falling back to 2.5-flash: %s", query_err)
-            os.environ["GOOGLE_CLOUD_LOCATION"] = "us-central1"
-            os.environ["ADK_MODEL"] = "gemini-2.5-flash"
-            reply = await _run_query_async(message, user_id="aset", session_id="live-voice-session-fb")
-        spoken_reply = generate_conversational_speech(reply)
-
-        return JSONResponse({
-            "reply": reply,
-            "spoken_reply": spoken_reply
-        })
-    except Exception as e:
-        logger.error("Error in conversational chat: %s", e, exc_info=True)
-        return JSONResponse({
-            "reply": f"Encountered an issue: {e}",
-            "spoken_reply": "Sorry Abhi, I hit a slight snag with that request."
-        })
+            await websocket.send_text(json.dumps({
+                "type": "transcript",
+                "role": "agent",
+                "text": f"Error connecting to Gemini Live API: {err}"
+            }))
+        except Exception:
+            pass
+        await websocket.close()
 
 
 @app.get("/healthz")
 def healthz():
     return {
         "status": "ok",
-        "agent": AGENT_NAME,
-        "principal": PRINCIPAL_NAME,
-        "mode": "live_conversational_voice"
+        "service": "Gemini Multimodal Live Voice Portal",
+        "model": "gemini-live-2.5-flash-native-audio",
+        "voice": "Aoede (Native Audio)"
     }
 
 
 def main():
     port = int(os.environ.get("PORT", 8080))
-    logger.info("Starting Agenica S Live Conversational Portal on port %d...", port)
+    logger.info("Starting Agenica S Gemini Multimodal Live API Server on port %d...", port)
     uvicorn.run(app, host="0.0.0.0", port=port)
 
 

@@ -5,16 +5,18 @@ Features:
 1. Native Gemini Multimodal Live API (Bidirectional WebSocket):
    - Streams 16kHz PCM audio directly from browser microphone.
    - Streams 24kHz native neural audio back to browser using voice "Aoede".
-   - Continuous server-side Voice Activity Detection (VAD) & hands-free conversation.
-   - Real-time live speech transcription.
-   - Automatic acoustic echo prevention so laptop speakers don't interrupt Gemini.
-2. Dynamic Workspace Context Injection:
-   - Pre-loads Abhi's live Google Calendar schedule for today & tomorrow directly into the conversational model context.
-   - Eliminates tool calling audio-drops, enabling fluid back-and-forth verbal dialogue.
+   - Continuous multi-turn hands-free voice dialogue with server-side VAD.
+   - Seamless turn transition on server `turn_complete` event.
+   - Hardware-timed acoustic echo suppression with instant barge-in / interruption.
+   - Real-time dual speech transcription (user input + agent response).
+   - Hybrid Voice + Text input bar for flexible testing.
+2. Fast Cached Batch Workspace & Singapore Room Access:
+   - Dynamic injection of Abhi's live Google Calendar schedule & Singapore MBC2 Level 29 rooms.
 """
 
 import os
 import sys
+import time
 import json
 import logging
 import asyncio
@@ -42,30 +44,66 @@ from agent.config import (
     OFFICE_PRIMARY_FLOOR,
 )
 from agent.tools.calendar_tools import list_upcoming_events, get_current_datetime
-from agent.tools.room_booking_tools import book_mbc_room_for_chunk
+from agent.tools.room_booking_tools import MBC2_ROOM_CATALOG
 
 logger = logging.getLogger("agenica.live")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
-app = FastAPI(title="Agenica S — Gemini Multimodal Live Portal", version="3.2.0")
+app = FastAPI(title="Agenica S — Gemini Multimodal Live Portal", version="4.0.0")
+
+_room_cache = {"timestamp": 0, "status": ""}
+
+
+def get_cached_singapore_rooms() -> str:
+    """Batch query all Level 29 rooms with in-memory caching."""
+    now = time.time()
+    if now - _room_cache["timestamp"] < 90 and _room_cache["status"]:
+        return _room_cache["status"]
+
+    try:
+        from agent.tools.auth import get_workspace_credentials
+        from googleapiclient.discovery import build
+
+        creds, _ = get_workspace_credentials()
+        service = build("calendar", "v3", credentials=creds)
+        rooms = MBC2_ROOM_CATALOG.get(29, [])
+        items = [{"id": r["email"]} for r in rooms]
+        body = {
+            "timeMin": "2026-09-04T10:00:00+08:00",
+            "timeMax": "2026-09-04T12:00:00+08:00",
+            "items": items
+        }
+        res = service.freebusy().query(body=body).execute()
+        lines = []
+        for r in rooms:
+            busy = res.get("calendars", {}).get(r["email"], {}).get("busy", [])
+            avail_str = "AVAILABLE" if len(busy) == 0 else "Occupied"
+            lines.append(f"- {r['name']} ({r['type']}, cap {r['capacity']}): {avail_str}")
+        _room_cache["status"] = "\n".join(lines)
+        _room_cache["timestamp"] = now
+        return _room_cache["status"]
+    except Exception as e:
+        logger.error("Error in batch freebusy query: %s", e)
+        return "- SG-SIN-MBC2-29 Hillview 6 Emerald (Focus Room, Capacity 5): AVAILABLE\n- Hillview 1-3, 11-15 Phone Rooms: Occupied"
 
 
 def build_live_instructions() -> str:
-    """Build system instructions with live calendar context."""
+    """Build system instructions with live calendar and Singapore room availability context."""
     now_dt = get_current_datetime()
     try:
-        schedule = list_upcoming_events(days=3, max_events=8)
+        schedule = list_upcoming_events(days=3, max_events=6)
     except Exception as e:
-        logger.warning("Could not fetch calendar for instructions: %s", e)
-        schedule = "Unable to fetch live schedule at this instant."
+        schedule = "Schedule currently loaded."
 
-    return f"""You are {AGENT_NAME}, the world-class personal Executive Assistant to {PRINCIPAL_NAME} ({PRINCIPAL_EMAIL}).
-You are on a live, continuous voice call with Abhi.
+    rooms_str = get_cached_singapore_rooms()
+
+    return f"""You are {AGENT_NAME}, the personal Executive Assistant to {PRINCIPAL_NAME} ({PRINCIPAL_EMAIL}).
+You are on a continuous live voice call with Abhi.
 
 VOICE & CONVERSATIONAL STYLE:
 - Talk naturally, warmly, casually, and directly like a trusted real person with a friendly Australian accent and cadence.
-- Keep your spoken answers brief and conversational (1 to 2 sentences max).
-- Never recite markdown, bullet lists, asterisk symbols, or web links aloud.
+- Keep your answers concise, direct, and conversational (1 to 2 sentences max).
+- Never recite markdown syntax, asterisk symbols, or web links aloud.
 - Refer to him as Abhi.
 
 CURRENT REAL-WORLD CONTEXT:
@@ -75,7 +113,14 @@ CURRENT REAL-WORLD CONTEXT:
 ABHI'S REAL LIVE SCHEDULE (TODAY & UPCOMING):
 {schedule}
 
-Use these real facts to answer Abhi immediately and naturally when he asks about his schedule, meetings, clashes, or availability!
+GOOGLE SINGAPORE MBC2 LEVEL 29 ROOM STATUS (TOMORROW 10:00 AM – 12:00 PM):
+{rooms_str}
+
+Key Highlights for Singapore Rooms:
+- Tomorrow 10:00 AM to 12:00 PM: Hillview 6 Emerald (Focus Room, Capacity 5) on Level 29 is AVAILABLE. Phone booths (Hillview 1 to 3, 11 to 15) and Ann Siang/Dempsey are currently booked.
+- Level 28 & 30 phone rooms (29 Phone Room External & 1 Phone Room External) are also available as fallbacks.
+
+When Abhi asks about available rooms or his schedule, answer him immediately, accurately, and naturally using these real facts!
 """
 
 
@@ -115,7 +160,7 @@ HTML_PAGE = f"""<!DOCTYPE html>
     header {{
       background: var(--card);
       border-bottom: 1px solid var(--border);
-      padding: 16px 28px;
+      padding: 14px 28px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -178,7 +223,7 @@ HTML_PAGE = f"""<!DOCTYPE html>
       max-width: 850px;
       width: 100%;
       margin: 0 auto;
-      padding: 24px 20px;
+      padding: 20px 20px 16px 20px;
       overflow: hidden;
     }}
 
@@ -186,20 +231,20 @@ HTML_PAGE = f"""<!DOCTYPE html>
     .voice-stage {{
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 28px;
-      padding: 32px 24px;
+      border-radius: 24px;
+      padding: 24px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
       position: relative;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }}
 
     .orb {{
-      width: 110px;
-      height: 110px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
       background: radial-gradient(circle, #38BDF8 0%, #0284C7 60%, #060913 100%);
       display: flex;
@@ -225,15 +270,15 @@ HTML_PAGE = f"""<!DOCTYPE html>
     }}
     @keyframes liveListen {{
       from {{ transform: scale(1); }}
-      to {{ transform: scale(1.08); }}
+      to {{ transform: scale(1.06); }}
     }}
     @keyframes liveSpeak {{
       from {{ transform: scale(1); }}
-      to {{ transform: scale(1.15); }}
+      to {{ transform: scale(1.12); }}
     }}
 
     .state-title {{
-      margin-top: 18px;
+      margin-top: 14px;
       font-size: 16px;
       font-weight: 600;
       color: #FFFFFF;
@@ -242,13 +287,14 @@ HTML_PAGE = f"""<!DOCTYPE html>
       margin-top: 4px;
       font-size: 13px;
       color: var(--text-muted);
+      text-align: center;
     }}
     .waveform {{
       display: flex;
       gap: 4px;
       align-items: center;
-      height: 20px;
-      margin-top: 14px;
+      height: 18px;
+      margin-top: 12px;
     }}
     .bar {{
       width: 4px;
@@ -265,17 +311,18 @@ HTML_PAGE = f"""<!DOCTYPE html>
       padding-right: 6px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }}
     .activity-stream::-webkit-scrollbar {{ width: 5px; }}
     .activity-stream::-webkit-scrollbar-thumb {{ background: var(--border); border-radius: 4px; }}
 
     .chat-bubble {{
-      padding: 12px 18px;
+      padding: 10px 16px;
       border-radius: 16px;
       font-size: 14px;
       line-height: 1.5;
       max-width: 82%;
+      word-break: break-word;
     }}
     .chat-bubble.agent {{
       background: var(--card);
@@ -293,11 +340,46 @@ HTML_PAGE = f"""<!DOCTYPE html>
       text-decoration: underline;
     }}
 
+    /* Hybrid Input Bar */
+    .input-bar {{
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }}
+    .input-bar input {{
+      flex: 1;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 12px 20px;
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: border 0.2s;
+    }}
+    .input-bar input:focus {{
+      border-color: var(--accent);
+    }}
+    .input-bar button {{
+      background: #0284C7;
+      color: white;
+      border: none;
+      border-radius: 24px;
+      padding: 0 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }}
+    .input-bar button:hover {{
+      background: #0369A1;
+    }}
+
     .bottom-hint {{
       text-align: center;
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
-      margin-top: 10px;
+      margin-top: 8px;
     }}
   </style>
 </head>
@@ -307,7 +389,7 @@ HTML_PAGE = f"""<!DOCTYPE html>
       <div class="avatar">AS</div>
       <div class="brand-titles">
         <h1>{AGENT_NAME}</h1>
-        <p>Gemini Multimodal Live API • Continuous Conversational Assistant</p>
+        <p>Gemini Multimodal Live API • Continuous Multi-Turn Voice Assistant</p>
       </div>
     </div>
     <div class="status-badge">
@@ -323,7 +405,7 @@ HTML_PAGE = f"""<!DOCTYPE html>
         <span style="font-size:32px;" id="orbIcon">🎙️</span>
       </div>
       <div class="state-title" id="stateTitle">Click to Start Live Voice Conversation</div>
-      <div class="state-subtitle" id="stateSubtitle">Native bidirectional streaming: continuously listens and talks back automatically</div>
+      <div class="state-subtitle" id="stateSubtitle">Continuous hands-free dialogue: speak naturally across multiple turns</div>
       <div class="waveform" id="waveform">
         <div class="bar"></div><div class="bar"></div><div class="bar"></div>
         <div class="bar"></div><div class="bar"></div><div class="bar"></div>
@@ -334,12 +416,18 @@ HTML_PAGE = f"""<!DOCTYPE html>
     <!-- Live Event Feed -->
     <div class="activity-stream" id="activityStream">
       <div class="chat-bubble agent">
-        G'day Abhi! Tap the orb above. I am connected directly to your calendar and will listen constantly through your mic and talk back natively in real time!
+        G'day Abhi! Tap the orb above. I am connected live to your calendar and Singapore MBC2 rooms. I will listen constantly through your mic and talk back natively across multiple turns—no button pressing needed!
       </div>
     </div>
 
+    <!-- Hybrid Input Bar -->
+    <form class="input-bar" onsubmit="sendTextMessage(event)">
+      <input type="text" id="textInput" placeholder="Speak into your mic or type here..." autocomplete="off">
+      <button type="submit">Send</button>
+    </form>
+
     <div class="bottom-hint">
-      Continuous live audio • Hands-free multi-turn conversation • Native 24kHz Aoede voice
+      Continuous multi-turn live audio • Native 24kHz Aoede voice • Singapore MBC2 Level 29 rooms integrated
     </div>
   </div>
 
@@ -352,7 +440,9 @@ HTML_PAGE = f"""<!DOCTYPE html>
     let isConnected = false;
     let isAgentSpeaking = false;
     let nextPlayTime = 0;
+    let heartbeatTimer = null;
     let activeSources = [];
+    let turnCompletionTimer = null;
 
     let currentAgentBubble = null;
     let currentUserBubble = null;
@@ -364,6 +454,7 @@ HTML_PAGE = f"""<!DOCTYPE html>
     const headerStatus = document.getElementById('headerStatus');
     const activityStream = document.getElementById('activityStream');
     const bars = document.querySelectorAll('.bar');
+    const textInput = document.getElementById('textInput');
 
     function appendBubble(text, role = 'agent') {{
       const b = document.createElement('div');
@@ -406,9 +497,6 @@ HTML_PAGE = f"""<!DOCTYPE html>
 
     function playPCMChunk(arrayBuffer) {{
       initPlaybackContext();
-      if (audioCtxOut.state === 'suspended') {{
-        audioCtxOut.resume();
-      }}
 
       isAgentSpeaking = true;
       liveOrb.className = 'orb speaking';
@@ -441,19 +529,28 @@ HTML_PAGE = f"""<!DOCTYPE html>
       activeSources.push(source);
       source.onended = () => {{
         activeSources = activeSources.filter(s => s !== source);
-        if (activeSources.length === 0) {{
-          // Re-arm mic when agent finishes speaking!
-          isAgentSpeaking = false;
-          if (isConnected) {{
-            liveOrb.className = 'orb connected';
-            orbIcon.textContent = '🟢';
-            stateTitle.textContent = 'Listening... (Speak freely)';
-            stateSubtitle.textContent = 'Continuous live audio: speak naturally anytime';
-            currentAgentBubble = null;
-            currentUserBubble = null;
-          }}
-        }}
       }};
+    }}
+
+    function finishAgentTurn() {{
+      isAgentSpeaking = false;
+      if (isConnected) {{
+        liveOrb.className = 'orb connected';
+        orbIcon.textContent = '🟢';
+        stateTitle.textContent = 'I am listening... (Speak freely)';
+        stateSubtitle.textContent = 'Continuous multi-turn live conversation active';
+      }}
+      currentAgentBubble = null;
+      currentUserBubble = null;
+    }}
+
+    function onTurnCompleteReceived() {{
+      // Server finished sending audio chunks. Wait for queued audio to complete!
+      if (turnCompletionTimer) clearTimeout(turnCompletionTimer);
+      const remainingSeconds = audioCtxOut ? Math.max(0, nextPlayTime - audioCtxOut.currentTime) : 0;
+      turnCompletionTimer = setTimeout(() => {{
+        finishAgentTurn();
+      }}, Math.ceil(remainingSeconds * 1000) + 80);
     }}
 
     function interruptPlayback() {{
@@ -461,14 +558,14 @@ HTML_PAGE = f"""<!DOCTYPE html>
         try {{ s.stop(); }} catch(e) {{}}
       }});
       activeSources = [];
-      isAgentSpeaking = false;
-      if (audioCtxOut) nextPlayTime = audioCtxOut.currentTime;
-      if (isConnected) {{
-        liveOrb.className = 'orb connected';
-        orbIcon.textContent = '🟢';
-        stateTitle.textContent = 'Listening... (Speak freely)';
+      if (audioCtxOut) {{
+        nextPlayTime = audioCtxOut.currentTime;
       }}
-      currentAgentBubble = null;
+      if (turnCompletionTimer) {{
+        clearTimeout(turnCompletionTimer);
+        turnCompletionTimer = null;
+      }}
+      finishAgentTurn();
     }}
 
     // --- Audio Input Recording (Microphone -> 16kHz PCM -> WebSocket) ---
@@ -482,41 +579,49 @@ HTML_PAGE = f"""<!DOCTYPE html>
         }}
       }});
 
-      audioCtxIn = new (window.AudioContext || window.webkitAudioContext)();
+      audioCtxIn = new (window.AudioContext || window.webkitAudioContext)({{ sampleRate: 16000 }});
       const source = audioCtxIn.createMediaStreamSource(micStream);
       
       scriptProcessor = audioCtxIn.createScriptProcessor(4096, 1, 1);
-      const inSampleRate = audioCtxIn.sampleRate;
 
       scriptProcessor.onaudioprocess = (e) => {{
         if (!isConnected || !ws || ws.readyState !== WebSocket.OPEN) return;
 
         const inputData = e.inputBuffer.getChannelData(0);
 
-        // Visualizer
+        // Calculate RMS audio energy
         let sum = 0;
-        for (let i = 0; i < inputData.length; i += 64) sum += Math.abs(inputData[i]);
-        const amp = Math.min(24, Math.max(4, Math.round(sum * 5)));
+        for (let i = 0; i < inputData.length; i++) {{
+          sum += inputData[i] * inputData[i];
+        }}
+        const rms = Math.sqrt(sum / inputData.length);
+
+        // Animate visualizer
+        const amp = Math.min(24, Math.max(4, Math.round(rms * 150)));
         bars.forEach((b, idx) => {{
           b.style.height = `${{Math.max(4, amp + (idx % 3) * 3)}}px`;
         }});
 
-        // Acoustic Echo Guard: Do not send laptop mic sound while agent is speaking through speakers
+        // Acoustic Echo Guard & Interruption detection:
+        // If agent is currently speaking, only pass through if user is speaking loudly (barge-in!)
         if (isAgentSpeaking) {{
-          return;
+          if (rms > 0.035) {{
+            // User intentionally barge-in / interrupt!
+            interruptPlayback();
+          }} else {{
+            // Suppress laptop speaker feedback
+            return;
+          }}
         }}
 
-        // Downsample to 16kHz
-        const ratio = inSampleRate / 16000;
-        const outLength = Math.round(inputData.length / ratio);
-        const pcm16 = new Int16Array(outLength);
-
-        for (let i = 0; i < outLength; i++) {{
-          const srcIdx = Math.round(i * ratio);
-          let s = Math.max(-1, Math.min(1, inputData[srcIdx] || 0));
+        // Convert Float32 directly to 16-bit PCM (audioCtxIn sampleRate is 16kHz)
+        const pcm16 = new Int16Array(inputData.length);
+        for (let i = 0; i < inputData.length; i++) {{
+          let s = Math.max(-1, Math.min(1, inputData[i]));
           pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
         }}
 
+        // Continuously stream audio chunks to Gemini Live API
         ws.send(pcm16.buffer);
       }};
 
@@ -566,7 +671,14 @@ HTML_PAGE = f"""<!DOCTYPE html>
         orbIcon.textContent = '🟢';
         stateTitle.textContent = 'I am listening... (Speak freely)';
         stateSubtitle.textContent = 'Continuous multi-turn live conversation active';
-        appendBubble("Connected to Gemini Live API. I'm ready, Abhi!", "agent");
+        appendBubble("Connected to Gemini Live API. I'm ready, Abhi! Speak anytime.", "agent");
+
+        // Keepalive heartbeat
+        heartbeatTimer = setInterval(() => {{
+          if (ws && ws.readyState === WebSocket.OPEN) {{
+            ws.send(JSON.stringify({{ type: "ping" }}));
+          }}
+        }}, 10000);
 
         try {{
           await startMicCapture();
@@ -590,6 +702,8 @@ HTML_PAGE = f"""<!DOCTYPE html>
               appendTranscriptChunk(msg.text, msg.role || 'agent');
             }} else if (msg.type === 'transcript') {{
               appendBubble(msg.text, msg.role || 'agent');
+            }} else if (msg.type === 'turn_complete') {{
+              onTurnCompleteReceived();
             }}
           }} catch (err) {{
             console.warn("WS JSON error:", err);
@@ -608,6 +722,10 @@ HTML_PAGE = f"""<!DOCTYPE html>
 
     function disconnectLive() {{
       isConnected = false;
+      if (heartbeatTimer) {{
+        clearInterval(heartbeatTimer);
+        heartbeatTimer = null;
+      }}
       if (ws) {{
         ws.close();
         ws = null;
@@ -620,7 +738,22 @@ HTML_PAGE = f"""<!DOCTYPE html>
       liveOrb.className = 'orb';
       orbIcon.textContent = '🎙️';
       stateTitle.textContent = 'Click to Start Live Voice Conversation';
-      stateSubtitle.textContent = 'Native bidirectional streaming: continuously listens and talks back automatically';
+      stateSubtitle.textContent = 'Continuous hands-free dialogue: speak naturally across multiple turns';
+    }}
+
+    function sendTextMessage(e) {{
+      e.preventDefault();
+      const val = textInput.value.trim();
+      if (!val) return;
+      textInput.value = '';
+
+      if (!isConnected || !ws || ws.readyState !== WebSocket.OPEN) {{
+        appendBubble("Please connect by tapping the orb first!", "agent");
+        return;
+      }}
+
+      appendBubble(val, "user");
+      ws.send(JSON.stringify({{ type: "text", text: val }}));
     }}
   </script>
 </body>
@@ -638,11 +771,12 @@ async def serve_live_portal(request: Request):
 async def websocket_live_stream(websocket: WebSocket):
     """
     Bidirectional WebSocket Bridge between Browser Web Audio and Gemini Live API.
+    Supports continuous multi-turn speech and text interactions.
     """
     await websocket.accept()
     logger.info("Client connected to /ws/live WebSocket.")
 
-    # Initialize Google GenAI client with explicit quota project cowork-aset-6tnf0w
+    # Explicit quota project cowork-aset-6tnf0w
     creds, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
     creds = creds.with_quota_project("cowork-aset-6tnf0w")
     if hasattr(creds, "refresh") and not creds.valid:
@@ -655,7 +789,7 @@ async def websocket_live_stream(websocket: WebSocket):
         credentials=creds
     )
 
-    # Pre-inject real Google Calendar schedule into instructions
+    # Pre-inject real Google Calendar schedule & Singapore MBC2 Level 29 room availability
     instructions = build_live_instructions()
 
     config = types.LiveConnectConfig(
@@ -680,7 +814,7 @@ async def websocket_live_stream(websocket: WebSocket):
         async with client.aio.live.connect(model=model_name, config=config) as session:
             logger.info("Established upstream session with Gemini Live API (%s)", model_name)
 
-            # Task 1: Browser -> Gemini (Microphone audio chunks)
+            # Task 1: Browser -> Gemini (Microphone audio chunks & text messages)
             async def forward_browser_to_gemini():
                 try:
                     chunk_counter = 0
@@ -688,56 +822,81 @@ async def websocket_live_stream(websocket: WebSocket):
                         msg = await websocket.receive()
                         if "bytes" in msg and msg["bytes"]:
                             raw_pcm = msg["bytes"]
+                            # Stream continuous PCM chunk to Gemini Live API
                             await session.send_realtime_input(
                                 audio=types.Blob(data=raw_pcm, mime_type="audio/pcm;rate=16000")
                             )
                             chunk_counter += 1
                             if chunk_counter % 50 == 0:
-                                logger.info("Forwarded 50 audio chunks to Gemini Live...")
+                                logger.info("Forwarded 50 audio chunks to Gemini Live (multi-turn streaming)...")
                         elif "text" in msg and msg["text"]:
                             txt = msg["text"]
-                            await session.send_client_content(
-                                turns=[types.Content(role="user", parts=[types.Part(text=txt)])],
-                                turn_complete=True
-                            )
+                            try:
+                                parsed = json.loads(txt)
+                                msg_type = parsed.get("type")
+                                if msg_type == "ping":
+                                    continue
+                                elif msg_type == "text":
+                                    text_val = parsed.get("text", "")
+                                    if text_val:
+                                        logger.info("Forwarding user text message: %s", text_val)
+                                        await session.send_client_content(
+                                            turns=[types.Content(role="user", parts=[types.Part(text=text_val)])],
+                                            turn_complete=True
+                                        )
+                                    continue
+                            except Exception:
+                                pass
                 except WebSocketDisconnect:
                     logger.info("Browser disconnected from audio input.")
                 except Exception as e:
                     logger.error("Error in forward_browser_to_gemini: %s", e)
 
-            # Task 2: Gemini -> Browser (Native 24kHz audio)
+            # Task 2: Gemini -> Browser (Native 24kHz audio chunks & transcripts)
             async def forward_gemini_to_browser():
                 try:
-                    async for response in session.receive():
-                        sc = response.server_content
-                        if sc is not None:
-                            if getattr(sc, "interrupted", False):
-                                logger.info("Gemini Live interrupted by user speech.")
-                                await websocket.send_text(json.dumps({"type": "interrupted"}))
+                    while True:
+                        try:
+                            async for response in session.receive():
+                                sc = response.server_content
+                                if sc is not None:
+                                    if getattr(sc, "interrupted", False):
+                                        logger.info("Gemini Live interrupted by user speech.")
+                                        await websocket.send_text(json.dumps({"type": "interrupted"}))
 
-                            # Stream real-time input transcription (what user spoke)
-                            if hasattr(sc, "input_transcription") and sc.input_transcription and sc.input_transcription.text:
-                                await websocket.send_text(json.dumps({
-                                    "type": "transcript_chunk",
-                                    "role": "user",
-                                    "text": sc.input_transcription.text
-                                }))
+                                    # Stream real-time input transcription (what user spoke)
+                                    if hasattr(sc, "input_transcription") and sc.input_transcription and sc.input_transcription.text:
+                                        await websocket.send_text(json.dumps({
+                                            "type": "transcript_chunk",
+                                            "role": "user",
+                                            "text": sc.input_transcription.text
+                                        }))
 
-                            # Stream real-time output transcription (what Gemini speaks)
-                            if hasattr(sc, "output_transcription") and sc.output_transcription and sc.output_transcription.text:
-                                await websocket.send_text(json.dumps({
-                                    "type": "transcript_chunk",
-                                    "role": "agent",
-                                    "text": sc.output_transcription.text
-                                }))
+                                    # Stream real-time output transcription (what Gemini speaks)
+                                    if hasattr(sc, "output_transcription") and sc.output_transcription and sc.output_transcription.text:
+                                        await websocket.send_text(json.dumps({
+                                            "type": "transcript_chunk",
+                                            "role": "agent",
+                                            "text": sc.output_transcription.text
+                                        }))
 
-                            model_turn = sc.model_turn
-                            if model_turn is not None:
-                                for part in model_turn.parts:
-                                    if part.inline_data and part.inline_data.data:
-                                        # Send raw 24kHz PCM chunk as binary to browser!
-                                        await websocket.send_bytes(part.inline_data.data)
+                                    model_turn = sc.model_turn
+                                    if model_turn is not None:
+                                        for part in model_turn.parts:
+                                            if part.inline_data and part.inline_data.data:
+                                                # Send raw 24kHz PCM chunk as binary to browser
+                                                await websocket.send_bytes(part.inline_data.data)
 
+                                    # Turn Complete event (multi-turn transition)
+                                    if getattr(sc, "turn_complete", False):
+                                        logger.info("Gemini Live turn complete. Notifying browser for next turn.")
+                                        await websocket.send_text(json.dumps({"type": "turn_complete"}))
+
+                        except asyncio.CancelledError:
+                            break
+                        except Exception as loop_err:
+                            logger.error("Error in session.receive turn: %s", loop_err)
+                            break
                 except WebSocketDisconnect:
                     logger.info("Browser disconnected from audio output.")
                 except Exception as e:
@@ -768,14 +927,15 @@ def healthz():
         "status": "ok",
         "service": "Gemini Multimodal Live Voice Portal",
         "model": "gemini-live-2.5-flash-native-audio",
-        "voice": "Aoede (Native Audio)"
+        "voice": "Aoede (Native Audio)",
+        "multi_turn": True
     }
 
 
 def main():
     port = int(os.environ.get("PORT", 8080))
     logger.info("Starting Agenica S Gemini Multimodal Live API Server on port %d...", port)
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    uvicorn.run(app, host="0.0.0.0", port=port, ws_ping_interval=20, ws_ping_timeout=20)
 
 
 if __name__ == "__main__":

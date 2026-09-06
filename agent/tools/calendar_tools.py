@@ -40,6 +40,12 @@ def _to_rfc3339(date_or_time_str: str, default_date: Optional[str] = None) -> st
 
     # If only HH:MM was passed
     normalized = normalize_time_str(s)
+    try:
+        h = int(normalized.split(":")[0])
+        if 1 <= h <= 6 and "am" not in s.lower():
+            normalized = f"{h + 12:02d}:{normalized.split(':')[1]}"
+    except Exception:
+        pass
     base_date = default_date or datetime.now(SGT_TZ).strftime("%Y-%m-%d")
     return f"{base_date}T{normalized}:00+08:00"
 

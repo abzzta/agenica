@@ -7,11 +7,16 @@ Features:
    - Streams 24kHz native neural audio back to browser using voice "Aoede".
    - Continuous multi-turn hands-free voice dialogue with server-side VAD.
    - Seamless turn transition on server `turn_complete` event.
-   - Hardware-timed acoustic echo suppression with instant barge-in / interruption.
+   - Immediate barge-in / interruption handling.
    - Real-time dual speech transcription (user input + agent response).
-   - Hybrid Voice + Text input bar for flexible testing.
-2. Fast Cached Batch Workspace & Singapore Room Access:
-   - Dynamic injection of Abhi's live Google Calendar schedule & Singapore MBC2 Level 29 rooms.
+   - Instant single-click Orb activation with synchronous AudioContext & mic initialization.
+2. Full Real Workspace & Singapore Room Booking Tool Calling:
+   - Tool declarations registered with Gemini Live API:
+     * `book_singapore_room`: Checks availability & books MBC2 Level 28/29/30 room resource on primary calendar.
+     * `create_calendar_event`: Dispatches real Google Calendar invite with Google Meet.
+     * `check_calendar_availability`: Checks free/busy intervals on aset@google.com.
+     * `list_upcoming_events`: Retrieves Abhi's real schedule.
+   - Interactive visual action cards in web UI with direct Google Calendar links.
 """
 
 import os
@@ -20,7 +25,9 @@ import time
 import json
 import logging
 import asyncio
-from typing import Dict, Any, Optional
+from datetime import datetime, timedelta
+import zoneinfo
+from typing import Dict, Any, Optional, List
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -40,22 +47,35 @@ from agent.config import (
     AGENT_NAME,
     PRINCIPAL_NAME,
     PRINCIPAL_EMAIL,
+    DEFAULT_TIMEZONE,
     OFFICE_LOCATION,
     OFFICE_PRIMARY_FLOOR,
 )
-from agent.tools.calendar_tools import list_upcoming_events, get_current_datetime
-from agent.tools.room_booking_tools import MBC2_ROOM_CATALOG
+from agent.tools.calendar_tools import (
+    list_upcoming_events,
+    get_current_datetime,
+    create_calendar_event,
+    check_calendar_availability,
+    _to_rfc3339,
+)
+from agent.tools.room_booking_tools import (
+    MBC2_ROOM_CATALOG,
+    book_mbc_room_for_chunk,
+    find_available_mbc_room,
+)
+from agent.tools.hitl_tools import normalize_time_str
 
 logger = logging.getLogger("agenica.live")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
-app = FastAPI(title="Agenica S — Gemini Multimodal Live Portal", version="4.0.0")
+app = FastAPI(title="Agenica S — Gemini Multimodal Live Portal", version="4.1.0")
 
+SGT_TZ = zoneinfo.ZoneInfo(DEFAULT_TIMEZONE)
 _room_cache = {"timestamp": 0, "status": ""}
 
 
 def get_cached_singapore_rooms() -> str:
-    """Batch query all Level 29 rooms with in-memory caching."""
+    """Batch query all Level 29 rooms for tomorrow with in-memory caching."""
     now = time.time()
     if now - _room_cache["timestamp"] < 90 and _room_cache["status"]:
         return _room_cache["status"]
@@ -68,10 +88,15 @@ def get_cached_singapore_rooms() -> str:
         service = build("calendar", "v3", credentials=creds)
         rooms = MBC2_ROOM_CATALOG.get(29, [])
         items = [{"id": r["email"]} for r in rooms]
+
+        today = datetime.now(SGT_TZ)
+        tomorrow = today + timedelta(days=1)
+        tmrw_str = tomorrow.strftime("%Y-%m-%d")
+
         body = {
-            "timeMin": "2026-09-04T10:00:00+08:00",
-            "timeMax": "2026-09-04T12:00:00+08:00",
-            "items": items
+            "timeMin": f"{tmrw_str}T10:00:00+08:00",
+            "timeMax": f"{tmrw_str}T12:00:00+08:00",
+            "items": items,
         }
         res = service.freebusy().query(body=body).execute()
         lines = []
@@ -85,6 +110,228 @@ def get_cached_singapore_rooms() -> str:
     except Exception as e:
         logger.error("Error in batch freebusy query: %s", e)
         return "- SG-SIN-MBC2-29 Hillview 6 Emerald (Focus Room, Capacity 5): AVAILABLE\n- Hillview 1-3, 11-15 Phone Rooms: Occupied"
+
+
+LIVE_TOOLS = [
+    {
+        "function_declarations": [
+            {
+                "name": "book_singapore_room",
+                "description": (
+                    "Verify availability and directly book a meeting room or phone booth in Google Singapore MBC2 "
+                    "(Level 28, 29, or 30) for Abhi Sethi, automatically creating the Google Calendar event on "
+                    "Abhi's primary calendar with the room resource attached."
+                ),
+                "parameters": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "date_str": {
+                            "type": "STRING",
+                            "description": "Date of booking in YYYY-MM-DD format (e.g. '2026-09-04'), or 'today', 'tomorrow'.",
+                        },
+                        "start_time": {
+                            "type": "STRING",
+                            "description": "Start time in Singapore SGT (e.g. '13:30', '1:30 PM', '14:00').",
+                        },
+                        "end_time": {
+                            "type": "STRING",
+                            "description": "End time in Singapore SGT (e.g. '14:30', '2:30 PM', '15:00').",
+                        },
+                        "floor": {
+                            "type": "INTEGER",
+                            "description": "Preferred floor in MBC2: 28, 29, or 30 (default 29).",
+                        },
+                        "room_type": {
+                            "type": "STRING",
+                            "description": "Room type: 'phone_booth' (default) or 'focus_room'.",
+                        },
+                    },
+                    "required": ["date_str", "start_time", "end_time"],
+                },
+            },
+            {
+                "name": "create_calendar_event",
+                "description": (
+                    "Create an actual Google Calendar event on Abhi Sethi's primary calendar (aset@google.com) "
+                    "with optional attendees and Google Meet link."
+                ),
+                "parameters": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "summary": {
+                            "type": "STRING",
+                            "description": "Title or topic of the meeting.",
+                        },
+                        "date_str": {
+                            "type": "STRING",
+                            "description": "Date of event in YYYY-MM-DD format, or 'today', 'tomorrow'.",
+                        },
+                        "start_time": {
+                            "type": "STRING",
+                            "description": "Start time in Singapore SGT (e.g. '14:00', '2:00 PM').",
+                        },
+                        "end_time": {
+                            "type": "STRING",
+                            "description": "End time in Singapore SGT (e.g. '15:00', '3:00 PM').",
+                        },
+                        "attendees": {
+                            "type": "ARRAY",
+                            "items": {"type": "STRING"},
+                            "description": "List of attendee email addresses to invite.",
+                        },
+                        "description": {
+                            "type": "STRING",
+                            "description": "Meeting agenda or notes.",
+                        },
+                        "add_meet": {
+                            "type": "BOOLEAN",
+                            "description": "Whether to attach a Google Meet link (default true).",
+                        },
+                    },
+                    "required": ["summary", "date_str", "start_time", "end_time"],
+                },
+            },
+            {
+                "name": "check_calendar_availability",
+                "description": "Check if Abhi Sethi is free or busy during a specific time interval on his Google Calendar.",
+                "parameters": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "date_str": {
+                            "type": "STRING",
+                            "description": "Date in YYYY-MM-DD format, or 'today', 'tomorrow'.",
+                        },
+                        "start_time": {
+                            "type": "STRING",
+                            "description": "Start time in Singapore SGT (e.g. '13:30', '1:30 PM').",
+                        },
+                        "end_time": {
+                            "type": "STRING",
+                            "description": "End time in Singapore SGT (e.g. '14:30', '2:30 PM').",
+                        },
+                    },
+                    "required": ["date_str", "start_time", "end_time"],
+                },
+            },
+            {
+                "name": "list_upcoming_events",
+                "description": "List upcoming events from Abhi Sethi's real Google Calendar.",
+                "parameters": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "days": {
+                            "type": "INTEGER",
+                            "description": "Number of days ahead to look (default 3).",
+                        }
+                    },
+                },
+            },
+        ]
+    }
+]
+
+
+def execute_live_tool(name: str, args: Dict[str, Any]) -> Dict[str, Any]:
+    """Execute real Google Calendar and Singapore Room Booking actions."""
+    today_str = datetime.now(SGT_TZ).strftime("%Y-%m-%d")
+    tomorrow_str = (datetime.now(SGT_TZ) + timedelta(days=1)).strftime("%Y-%m-%d")
+
+    def resolve_date(d: Optional[str]) -> str:
+        if not d or str(d).lower() in ("today", "now"):
+            return today_str
+        if str(d).lower() == "tomorrow":
+            return tomorrow_str
+        return str(d)
+
+    try:
+        if name == "book_singapore_room":
+            date_str = resolve_date(args.get("date_str"))
+            start_time = str(args.get("start_time", "13:30"))
+            end_time = str(args.get("end_time", "14:30"))
+            floor = int(args.get("floor", 29))
+            room_type = str(args.get("room_type", "phone_booth"))
+            res = book_mbc_room_for_chunk(
+                date_str=date_str,
+                start_time=start_time,
+                end_time=end_time,
+                preferred_floor=floor,
+                room_type=room_type,
+            )
+            return res
+
+        elif name == "create_calendar_event":
+            summary = str(args.get("summary", "New Meeting"))
+            date_str = resolve_date(args.get("date_str"))
+            start_time = str(args.get("start_time", "14:00"))
+            end_time = str(args.get("end_time", "15:00"))
+            attendees = args.get("attendees", [])
+            if isinstance(attendees, str):
+                attendees = [attendees]
+            description = str(args.get("description", ""))
+            add_meet = bool(args.get("add_meet", True))
+
+            st_norm = normalize_time_str(start_time)
+            et_norm = normalize_time_str(end_time)
+            try:
+                st_h = int(st_norm.split(":")[0])
+                et_h = int(et_norm.split(":")[0])
+                if 1 <= st_h <= 6 and "am" not in str(start_time).lower():
+                    st_norm = f"{st_h + 12:02d}:{st_norm.split(':')[1]}"
+                if 1 <= et_h <= 6 and "am" not in str(end_time).lower():
+                    et_norm = f"{et_h + 12:02d}:{et_norm.split(':')[1]}"
+            except Exception:
+                pass
+            start_iso = f"{date_str}T{st_norm}:00+08:00"
+            end_iso = f"{date_str}T{et_norm}:00+08:00"
+
+            res_str = create_calendar_event(
+                summary=summary,
+                start_time=start_iso,
+                end_time=end_iso,
+                attendees=attendees,
+                description=description,
+                add_meet=add_meet,
+            )
+            try:
+                return json.loads(res_str)
+            except Exception:
+                return {"status": "SUCCESS", "message": res_str}
+
+        elif name == "check_calendar_availability":
+            date_str = resolve_date(args.get("date_str"))
+            start_time = str(args.get("start_time", "13:30"))
+            end_time = str(args.get("end_time", "14:30"))
+            st_norm = normalize_time_str(start_time)
+            et_norm = normalize_time_str(end_time)
+            try:
+                st_h = int(st_norm.split(":")[0])
+                et_h = int(et_norm.split(":")[0])
+                if 1 <= st_h <= 6 and "am" not in str(start_time).lower():
+                    st_norm = f"{st_h + 12:02d}:{st_norm.split(':')[1]}"
+                if 1 <= et_h <= 6 and "am" not in str(end_time).lower():
+                    et_norm = f"{et_h + 12:02d}:{et_norm.split(':')[1]}"
+            except Exception:
+                pass
+            start_iso = f"{date_str}T{st_norm}:00+08:00"
+            end_iso = f"{date_str}T{et_norm}:00+08:00"
+            res_str = check_calendar_availability(start_time=start_iso, end_time=end_iso)
+            try:
+                return json.loads(res_str)
+            except Exception:
+                return {"status": "SUCCESS", "message": res_str}
+
+        elif name == "list_upcoming_events":
+            days = int(args.get("days", 3))
+            res_str = list_upcoming_events(days=days, max_events=6)
+            try:
+                return json.loads(res_str)
+            except Exception:
+                return {"status": "SUCCESS", "message": res_str}
+
+        return {"status": "ERROR", "message": f"Unknown tool: {name}"}
+    except Exception as e:
+        logger.error("Error executing tool %s: %s", name, e, exc_info=True)
+        return {"status": "ERROR", "message": str(e)}
 
 
 def build_live_instructions() -> str:
@@ -120,7 +367,14 @@ Key Highlights for Singapore Rooms:
 - Tomorrow 10:00 AM to 12:00 PM: Hillview 6 Emerald (Focus Room, Capacity 5) on Level 29 is AVAILABLE. Phone booths (Hillview 1 to 3, 11 to 15) and Ann Siang/Dempsey are currently booked.
 - Level 28 & 30 phone rooms (29 Phone Room External & 1 Phone Room External) are also available as fallbacks.
 
-When Abhi asks about available rooms or his schedule, answer him immediately, accurately, and naturally using these real facts!
+CRITICAL TOOL CALLING RULES:
+- You have access to real tools:
+  1. `book_singapore_room`: Call this whenever Abhi asks to book a room or phone booth in Google Singapore MBC2 (Level 28, 29, or 30).
+  2. `create_calendar_event`: Call this whenever Abhi asks to schedule a meeting or send a calendar invite.
+  3. `check_calendar_availability`: Call this to check Abhi's free/busy intervals.
+  4. `list_upcoming_events`: Call this to inspect upcoming calendar events.
+- MANDATORY: When Abhi asks you to book a room or schedule an event, YOU MUST INVOKE THE APPROPRIATE TOOL! NEVER claim or pretend that a room is booked or an invite is sent without calling the tool first!
+- When the tool returns with the reservation confirmation, speak the real confirmation naturally to Abhi, stating the booked room name and time block.
 """
 
 
@@ -253,10 +507,21 @@ HTML_PAGE = f"""<!DOCTYPE html>
       cursor: pointer;
       box-shadow: 0 0 30px var(--accent-glow);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
     }}
     .orb:hover {{
       transform: scale(1.05);
       box-shadow: 0 0 45px rgba(56, 189, 248, 0.7);
+    }}
+    .orb.connecting {{
+      background: radial-gradient(circle, #38BDF8 0%, #0284C7 60%, #060913 100%);
+      box-shadow: 0 0 40px var(--accent-glow);
+      animation: liveConnecting 0.8s infinite alternate;
+      cursor: wait;
+    }}
+    @keyframes liveConnecting {{
+      from {{ transform: scale(0.96); opacity: 0.8; }}
+      to {{ transform: scale(1.06); opacity: 1; }}
     }}
     .orb.connected {{
       background: radial-gradient(circle, #10B981 0%, #059669 65%, #060913 100%);
@@ -321,7 +586,7 @@ HTML_PAGE = f"""<!DOCTYPE html>
       border-radius: 16px;
       font-size: 14px;
       line-height: 1.5;
-      max-width: 82%;
+      max-width: 84%;
       word-break: break-word;
     }}
     .chat-bubble.agent {{
@@ -338,6 +603,29 @@ HTML_PAGE = f"""<!DOCTYPE html>
     .chat-bubble a {{
       color: var(--accent);
       text-decoration: underline;
+    }}
+
+    /* Action Result Cards */
+    .chat-bubble.action-card {{
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #F8FAFC;
+      border-radius: 16px;
+      padding: 12px 18px;
+      font-size: 13px;
+      line-height: 1.6;
+      max-width: 88%;
+      align-self: flex-start;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }}
+    .action-card-header {{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      color: #34D399;
+      margin-bottom: 4px;
     }}
 
     /* Hybrid Input Bar */
@@ -427,7 +715,7 @@ HTML_PAGE = f"""<!DOCTYPE html>
     </form>
 
     <div class="bottom-hint">
-      Continuous multi-turn live audio • Native 24kHz Aoede voice • Singapore MBC2 Level 29 rooms integrated
+      Instant single-click activation • Continuous multi-turn audio • Google Calendar & MBC2 Rooms integrated
     </div>
   </div>
 
@@ -438,6 +726,7 @@ HTML_PAGE = f"""<!DOCTYPE html>
     let micStream = null;
     let scriptProcessor = null;
     let isConnected = false;
+    let isConnecting = false;
     let isAgentSpeaking = false;
     let nextPlayTime = 0;
     let heartbeatTimer = null;
@@ -466,6 +755,21 @@ HTML_PAGE = f"""<!DOCTYPE html>
       activityStream.appendChild(b);
       activityStream.scrollTop = activityStream.scrollHeight;
       return b;
+    }}
+
+    function appendActionCard(msg) {{
+      const card = document.createElement('div');
+      card.className = 'chat-bubble action-card';
+      let html = `<div class="action-card-header"><span>${{msg.icon || '📅'}}</span><span>${{msg.title}}</span></div>`;
+      if (msg.details) {{
+        html += `<div style="margin-top:4px;">${{msg.details.replace(/\\n/g, '<br>')}}</div>`;
+      }}
+      if (msg.link) {{
+        html += `<div style="margin-top:8px;"><a href="${{msg.link}}" target="_blank" style="color:var(--accent);font-weight:600;text-decoration:underline;">View in Google Calendar ↗</a></div>`;
+      }}
+      card.innerHTML = html;
+      activityStream.appendChild(card);
+      activityStream.scrollTop = activityStream.scrollHeight;
     }}
 
     function appendTranscriptChunk(text, role = 'agent') {{
@@ -545,7 +849,6 @@ HTML_PAGE = f"""<!DOCTYPE html>
     }}
 
     function onTurnCompleteReceived() {{
-      // Server finished sending audio chunks. Wait for queued audio to complete!
       if (turnCompletionTimer) clearTimeout(turnCompletionTimer);
       const remainingSeconds = audioCtxOut ? Math.max(0, nextPlayTime - audioCtxOut.currentTime) : 0;
       turnCompletionTimer = setTimeout(() => {{
@@ -568,20 +871,15 @@ HTML_PAGE = f"""<!DOCTYPE html>
       finishAgentTurn();
     }}
 
-    // --- Audio Input Recording (Microphone -> 16kHz PCM -> WebSocket) ---
-    async function startMicCapture() {{
-      micStream = await navigator.mediaDevices.getUserMedia({{
-        audio: {{
-          channelCount: 1,
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true
-        }}
-      }});
+    // --- Audio Input Processing (Microphone -> 16kHz PCM -> WebSocket) ---
+    function startAudioProcessing() {{
+      if (!micStream || !audioCtxIn) return;
 
-      audioCtxIn = new (window.AudioContext || window.webkitAudioContext)({{ sampleRate: 16000 }});
+      if (audioCtxIn.state === 'suspended') {{
+        audioCtxIn.resume();
+      }}
+
       const source = audioCtxIn.createMediaStreamSource(micStream);
-      
       scriptProcessor = audioCtxIn.createScriptProcessor(4096, 1, 1);
 
       scriptProcessor.onaudioprocess = (e) => {{
@@ -602,14 +900,11 @@ HTML_PAGE = f"""<!DOCTYPE html>
           b.style.height = `${{Math.max(4, amp + (idx % 3) * 3)}}px`;
         }});
 
-        // Acoustic Echo Guard & Interruption detection:
-        // If agent is currently speaking, only pass through if user is speaking loudly (barge-in!)
+        // Echo Guard & Interruption detection:
         if (isAgentSpeaking) {{
           if (rms > 0.035) {{
-            // User intentionally barge-in / interrupt!
             interruptPlayback();
           }} else {{
-            // Suppress laptop speaker feedback
             return;
           }}
         }}
@@ -621,7 +916,6 @@ HTML_PAGE = f"""<!DOCTYPE html>
           pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
         }}
 
-        // Continuously stream audio chunks to Gemini Live API
         ws.send(pcm16.buffer);
       }};
 
@@ -631,40 +925,74 @@ HTML_PAGE = f"""<!DOCTYPE html>
 
     function stopMicCapture() {{
       if (scriptProcessor) {{
-        scriptProcessor.disconnect();
+        try {{ scriptProcessor.disconnect(); }} catch (e) {{}}
         scriptProcessor = null;
       }}
       if (micStream) {{
-        micStream.getTracks().forEach(t => t.stop());
+        try {{ micStream.getTracks().forEach(t => t.stop()); }} catch (e) {{}}
         micStream = null;
       }}
       if (audioCtxIn) {{
-        audioCtxIn.close();
+        try {{ audioCtxIn.close(); }} catch (e) {{}}
         audioCtxIn = null;
       }}
       bars.forEach(b => b.style.height = '6px');
     }}
 
     // --- WebSocket Connection Management ---
-    function toggleLiveConnection() {{
+    async function toggleLiveConnection() {{
+      if (isConnecting) return;
       if (isConnected) {{
         disconnectLive();
       }} else {{
-        connectLive();
+        await connectLive();
       }}
     }}
 
     async function connectLive() {{
-      initPlaybackContext();
+      if (isConnecting || isConnected) return;
+      isConnecting = true;
+
+      // 1. Critical: Initialize & resume AudioContexts directly in the user click gesture!
+      try {{
+        initPlaybackContext();
+        if (!audioCtxIn) {{
+          audioCtxIn = new (window.AudioContext || window.webkitAudioContext)({{ sampleRate: 16000 }});
+        }}
+        if (audioCtxIn.state === 'suspended') {{
+          await audioCtxIn.resume();
+        }}
+
+        if (!micStream) {{
+          micStream = await navigator.mediaDevices.getUserMedia({{
+            audio: {{
+              channelCount: 1,
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true
+            }}
+          }});
+        }}
+      }} catch (err) {{
+        console.error("Microphone or AudioContext initialization failed:", err);
+        appendBubble("Microphone permission or audio error: " + err.message, "agent");
+        isConnecting = false;
+        return;
+      }}
+
+      liveOrb.className = 'orb connecting';
+      orbIcon.textContent = '⏳';
       stateTitle.textContent = 'Connecting to Gemini Live API...';
-      stateSubtitle.textContent = 'Establishing bidirectional stream...';
+      stateSubtitle.textContent = 'Activating microphone and neural stream...';
+      headerStatus.textContent = 'Connecting...';
 
       const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = `${{proto}}//${{window.location.host}}/ws/live`;
       ws = new WebSocket(wsUrl);
       ws.binaryType = 'arraybuffer';
 
-      ws.onopen = async () => {{
+      ws.onopen = () => {{
+        isConnecting = false;
         isConnected = true;
         headerStatus.textContent = 'Live Audio Connected';
         liveOrb.className = 'orb connected';
@@ -673,25 +1001,17 @@ HTML_PAGE = f"""<!DOCTYPE html>
         stateSubtitle.textContent = 'Continuous multi-turn live conversation active';
         appendBubble("Connected to Gemini Live API. I'm ready, Abhi! Speak anytime.", "agent");
 
-        // Keepalive heartbeat
         heartbeatTimer = setInterval(() => {{
           if (ws && ws.readyState === WebSocket.OPEN) {{
             ws.send(JSON.stringify({{ type: "ping" }}));
           }}
         }}, 10000);
 
-        try {{
-          await startMicCapture();
-        }} catch (err) {{
-          console.error("Microphone capture failed:", err);
-          appendBubble("Microphone permission error: " + err.message, "agent");
-          disconnectLive();
-        }}
+        startAudioProcessing();
       }};
 
       ws.onmessage = (event) => {{
         if (event.data instanceof ArrayBuffer) {{
-          // Incoming 24kHz PCM native audio chunk from Gemini Live!
           playPCMChunk(event.data);
         }} else {{
           try {{
@@ -702,6 +1022,8 @@ HTML_PAGE = f"""<!DOCTYPE html>
               appendTranscriptChunk(msg.text, msg.role || 'agent');
             }} else if (msg.type === 'transcript') {{
               appendBubble(msg.text, msg.role || 'agent');
+            }} else if (msg.type === 'tool_action') {{
+              appendActionCard(msg);
             }} else if (msg.type === 'turn_complete') {{
               onTurnCompleteReceived();
             }}
@@ -713,14 +1035,17 @@ HTML_PAGE = f"""<!DOCTYPE html>
 
       ws.onerror = (e) => {{
         console.error("WebSocket error:", e);
+        isConnecting = false;
       }};
 
       ws.onclose = () => {{
+        isConnecting = false;
         disconnectLive();
       }};
     }}
 
     function disconnectLive() {{
+      isConnecting = false;
       isConnected = false;
       if (heartbeatTimer) {{
         clearInterval(heartbeatTimer);
@@ -771,7 +1096,7 @@ async def serve_live_portal(request: Request):
 async def websocket_live_stream(websocket: WebSocket):
     """
     Bidirectional WebSocket Bridge between Browser Web Audio and Gemini Live API.
-    Supports continuous multi-turn speech and text interactions.
+    Supports continuous multi-turn speech, text input, and full tool calling.
     """
     await websocket.accept()
     logger.info("Client connected to /ws/live WebSocket.")
@@ -786,10 +1111,9 @@ async def websocket_live_stream(websocket: WebSocket):
         vertexai=True,
         project="cowork-aset-6tnf0w",
         location="us-central1",
-        credentials=creds
+        credentials=creds,
     )
 
-    # Pre-inject real Google Calendar schedule & Singapore MBC2 Level 29 room availability
     instructions = build_live_instructions()
 
     config = types.LiveConnectConfig(
@@ -805,14 +1129,15 @@ async def websocket_live_stream(websocket: WebSocket):
         output_audio_transcription=types.AudioTranscriptionConfig(),
         system_instruction=types.Content(
             parts=[types.Part(text=instructions)]
-        )
+        ),
+        tools=LIVE_TOOLS,
     )
 
     model_name = "gemini-live-2.5-flash-native-audio"
 
     try:
         async with client.aio.live.connect(model=model_name, config=config) as session:
-            logger.info("Established upstream session with Gemini Live API (%s)", model_name)
+            logger.info("Established upstream session with Gemini Live API (%s) with tools enabled", model_name)
 
             # Task 1: Browser -> Gemini (Microphone audio chunks & text messages)
             async def forward_browser_to_gemini():
@@ -822,13 +1147,12 @@ async def websocket_live_stream(websocket: WebSocket):
                         msg = await websocket.receive()
                         if "bytes" in msg and msg["bytes"]:
                             raw_pcm = msg["bytes"]
-                            # Stream continuous PCM chunk to Gemini Live API
                             await session.send_realtime_input(
                                 audio=types.Blob(data=raw_pcm, mime_type="audio/pcm;rate=16000")
                             )
                             chunk_counter += 1
                             if chunk_counter % 50 == 0:
-                                logger.info("Forwarded 50 audio chunks to Gemini Live (multi-turn streaming)...")
+                                logger.info("Forwarded 50 audio chunks to Gemini Live...")
                         elif "text" in msg and msg["text"]:
                             txt = msg["text"]
                             try:
@@ -842,7 +1166,7 @@ async def websocket_live_stream(websocket: WebSocket):
                                         logger.info("Forwarding user text message: %s", text_val)
                                         await session.send_client_content(
                                             turns=[types.Content(role="user", parts=[types.Part(text=text_val)])],
-                                            turn_complete=True
+                                            turn_complete=True,
                                         )
                                     continue
                             except Exception:
@@ -852,12 +1176,64 @@ async def websocket_live_stream(websocket: WebSocket):
                 except Exception as e:
                     logger.error("Error in forward_browser_to_gemini: %s", e)
 
-            # Task 2: Gemini -> Browser (Native 24kHz audio chunks & transcripts)
+            # Task 2: Gemini -> Browser (Native 24kHz audio chunks, transcripts, & tool calls)
             async def forward_gemini_to_browser():
                 try:
+                    tool_call_pending = False
                     while True:
                         try:
                             async for response in session.receive():
+                                # 1. Check for real tool calls
+                                if response.tool_call is not None:
+                                    logger.info("Gemini Live emitted tool_call: %s", response.tool_call)
+                                    tool_call_pending = True
+                                    function_responses = []
+                                    for fc in response.tool_call.function_calls:
+                                        call_id = fc.id
+                                        fn_name = fc.name
+                                        fn_args = fc.args or {}
+                                        logger.info("Executing tool call: %s (id=%s) with args: %s", fn_name, call_id, fn_args)
+
+                                        # Execute tool in threadpool to keep asyncio loop non-blocking
+                                        tool_result = await asyncio.to_thread(execute_live_tool, fn_name, fn_args)
+                                        logger.info("Tool %s execution completed: %s", fn_name, tool_result)
+
+                                        # Format visual action card for browser feed
+                                        action_title = "Action Completed"
+                                        icon = "⚡"
+                                        link = tool_result.get("calendar_link") or tool_result.get("html_link")
+                                        if fn_name == "book_singapore_room":
+                                            icon = "🏢"
+                                            action_title = f"Room Reserved: {tool_result.get('room_name', 'MBC2 Room')}"
+                                        elif fn_name == "create_calendar_event":
+                                            icon = "📅"
+                                            action_title = f"Calendar Event: {tool_result.get('summary', 'Meeting')}"
+                                        elif fn_name == "check_calendar_availability":
+                                            icon = "🕒"
+                                            action_title = "Calendar Availability Checked"
+                                        elif fn_name == "list_upcoming_events":
+                                            icon = "📋"
+                                            action_title = "Upcoming Schedule Retrieved"
+
+                                        details_text = tool_result.get("message") or json.dumps(tool_result, indent=2)
+                                        await websocket.send_text(json.dumps({
+                                            "type": "tool_action",
+                                            "title": action_title,
+                                            "icon": icon,
+                                            "details": details_text,
+                                            "link": link,
+                                        }))
+
+                                        function_responses.append(types.FunctionResponse(
+                                            id=call_id,
+                                            name=fn_name,
+                                            response={"result": tool_result},
+                                        ))
+
+                                    if function_responses:
+                                        logger.info("Sending %d tool response(s) back to Gemini Live", len(function_responses))
+                                        await session.send_tool_response(function_responses=function_responses)
+
                                 sc = response.server_content
                                 if sc is not None:
                                     if getattr(sc, "interrupted", False):
@@ -869,7 +1245,7 @@ async def websocket_live_stream(websocket: WebSocket):
                                         await websocket.send_text(json.dumps({
                                             "type": "transcript_chunk",
                                             "role": "user",
-                                            "text": sc.input_transcription.text
+                                            "text": sc.input_transcription.text,
                                         }))
 
                                     # Stream real-time output transcription (what Gemini speaks)
@@ -877,7 +1253,7 @@ async def websocket_live_stream(websocket: WebSocket):
                                         await websocket.send_text(json.dumps({
                                             "type": "transcript_chunk",
                                             "role": "agent",
-                                            "text": sc.output_transcription.text
+                                            "text": sc.output_transcription.text,
                                         }))
 
                                     model_turn = sc.model_turn
@@ -889,13 +1265,17 @@ async def websocket_live_stream(websocket: WebSocket):
 
                                     # Turn Complete event (multi-turn transition)
                                     if getattr(sc, "turn_complete", False):
-                                        logger.info("Gemini Live turn complete. Notifying browser for next turn.")
-                                        await websocket.send_text(json.dumps({"type": "turn_complete"}))
+                                        if tool_call_pending:
+                                            logger.info("Tool invocation turn complete. Waiting for Gemini's spoken response turn...")
+                                            tool_call_pending = False
+                                        else:
+                                            logger.info("Gemini Live spoken turn complete. Ready for next turn.")
+                                            await websocket.send_text(json.dumps({"type": "turn_complete"}))
 
                         except asyncio.CancelledError:
                             break
                         except Exception as loop_err:
-                            logger.error("Error in session.receive turn: %s", loop_err)
+                            logger.error("Error in session.receive turn: %s", loop_err, exc_info=True)
                             break
                 except WebSocketDisconnect:
                     logger.info("Browser disconnected from audio output.")
@@ -905,16 +1285,16 @@ async def websocket_live_stream(websocket: WebSocket):
             # Run both tasks concurrently
             await asyncio.gather(
                 forward_browser_to_gemini(),
-                forward_gemini_to_browser()
+                forward_gemini_to_browser(),
             )
 
     except Exception as err:
-        logger.error("Failed to connect or stream with Gemini Live API: %s", err, exc_info=True)
+        logger.error("Failed in live session: %s", err, exc_info=True)
         try:
             await websocket.send_text(json.dumps({
                 "type": "transcript",
                 "role": "agent",
-                "text": f"Error connecting to Gemini Live API: {err}"
+                "text": f"Connection error: {err}",
             }))
         except Exception:
             pass
@@ -928,7 +1308,8 @@ def healthz():
         "service": "Gemini Multimodal Live Voice Portal",
         "model": "gemini-live-2.5-flash-native-audio",
         "voice": "Aoede (Native Audio)",
-        "multi_turn": True
+        "multi_turn": True,
+        "tools_enabled": True,
     }
 
 

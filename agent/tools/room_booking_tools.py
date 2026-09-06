@@ -26,6 +26,7 @@ from ..config import (
 )
 from .auth import get_calendar_service
 from .calendar_tools import _to_rfc3339
+from .hitl_tools import normalize_time_str
 
 logger = logging.getLogger("agenica.rooms")
 SGT_TZ = zoneinfo.ZoneInfo(DEFAULT_TIMEZONE)
@@ -278,18 +279,30 @@ def book_mbc_room_for_chunk(
     Verify room availability and directly book a verified room in Google Singapore MBC2
     by creating an event on Abhi Sethi's primary Google Calendar with the room resource attached.
     """
-    if "T" in start_time:
+    # Normalize date
+    if not date_str or str(date_str).lower() in ("today", "now"):
+        date_str = datetime.now(SGT_TZ).strftime("%Y-%m-%d")
+    elif str(date_str).lower() == "tomorrow":
+        date_str = (datetime.now(SGT_TZ) + timedelta(days=1)).strftime("%Y-%m-%d")
+
+    if "T" in str(start_time):
         start_iso = _to_rfc3339(start_time)
         end_iso = _to_rfc3339(end_time)
         st_label = start_iso.split("T")[1][:5]
         et_label = end_iso.split("T")[1][:5]
     else:
-        st_norm = start_time if ":" in start_time else f"{start_time}:00"
-        et_norm = end_time if ":" in end_time else f"{end_time}:00"
-        if len(st_norm) == 4 and st_norm[1] == ":":
-            st_norm = "0" + st_norm
-        if len(et_norm) == 4 and et_norm[1] == ":":
-            et_norm = "0" + et_norm
+        st_norm = normalize_time_str(start_time)
+        et_norm = normalize_time_str(end_time)
+        # In business hours, hour 1..6 defaults to PM unless AM explicitly stated
+        try:
+            st_h = int(st_norm.split(":")[0])
+            et_h = int(et_norm.split(":")[0])
+            if 1 <= st_h <= 6 and "am" not in str(start_time).lower():
+                st_norm = f"{st_h + 12:02d}:{st_norm.split(':')[1]}"
+            if 1 <= et_h <= 6 and "am" not in str(end_time).lower():
+                et_norm = f"{et_h + 12:02d}:{et_norm.split(':')[1]}"
+        except Exception:
+            pass
         start_iso = f"{date_str}T{st_norm}:00+08:00"
         end_iso = f"{date_str}T{et_norm}:00+08:00"
         st_label = st_norm

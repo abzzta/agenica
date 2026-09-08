@@ -1,0 +1,2855 @@
+{
+  "c_1883oo2nddi8egudn9s34kug10uug4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270oj0c8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 38 Zhangjiajie - External (7)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 38 Zhangjiajie - External (7) [GVC, Not Wheelchair Accessible]",
+    "email": "c_1883oo2nddi8egudn9s34kug10uug4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270oj0c8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "google.com_726f6f6d5f6d795f6b756c5f71696c375f32305f32303230@resource.calendar.google.com": {
+    "name": "MY-KUL-QIL7-20-2-Rilek Ah (6)",
+    "full_name": "MY-KUL-QIL7-20-2-Rilek Ah (6) [GVC, Phone]",
+    "email": "google.com_726f6f6d5f6d795f6b756c5f71696c375f32305f32303230@resource.calendar.google.com",
+    "building": "MY-KUL-QIL7",
+    "floor": 20,
+    "type": "phone_booth",
+    "capacity": 6
+  },
+  "c_1884v2g527neqga4mtp1a76qnd8t04gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ic8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Hillview 5 Dempsey (5)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Hillview 5 Dempsey (5) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_1884v2g527neqga4mtp1a76qnd8t04gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ic8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "focus_room",
+    "capacity": 5
+  },
+  "google.com_726f6f6d5f73675f73696e5f6d6263325f31305f31306238303237@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-10-B-B80 Fort Canning 11 Phone Room (1)",
+    "full_name": "SG-SIN-MBC2-10-B-B80 Fort Canning 11 Phone Room (1) [GVC, No External Guests, Phone]",
+    "email": "google.com_726f6f6d5f73675f73696e5f6d6263325f31305f31306238303237@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 10,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f73675f73696e5f6d6263325f31305f31306238303432@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-10-B-B80 Fort Canning 4 Battlebox (9)",
+    "full_name": "SG-SIN-MBC2-10-B-B80 Fort Canning 4 Battlebox (9) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f73675f73696e5f6d6263325f31305f31306238303432@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 10,
+    "type": "meeting_room",
+    "capacity": 9
+  },
+  "google.com_726f6f6d5f756b5f6c6f6e5f6373675f345f343864@resource.calendar.google.com": {
+    "name": "UK-LON-CSG-4-8-Cedar (1)",
+    "full_name": "UK-LON-CSG-4-8-Cedar (1) [GVC, Not Wheelchair Accessible, Phone]",
+    "email": "google.com_726f6f6d5f756b5f6c6f6e5f6373675f345f343864@resource.calendar.google.com",
+    "building": "UK-LON-CSG",
+    "floor": 4,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "c_1880698i1vcauiorl3r46l9og48di4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ec8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Hillview 10 Serapong (9)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Hillview 10 Serapong (9) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_1880698i1vcauiorl3r46l9og48di4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ec8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "meeting_room",
+    "capacity": 9
+  },
+  "c_188ch6d7p3iiigi1nasft588hvlji@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-4-2-Philosoraptor (3)",
+    "full_name": "AU-SYD-PIR-4-2-Philosoraptor (3) [GVC]",
+    "email": "c_188ch6d7p3iiigi1nasft588hvlji@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 3
+  },
+  "c_18843jrrvcerig09lbgbab7ashdn84gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npj61fj6c3270o32c0@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-30-B-B80 8 Lyonesse - External",
+    "full_name": "SG-SIN-MBC2-30-B-B80 8 Lyonesse - External [GVC, Not Wheelchair Accessible]",
+    "email": "c_18843jrrvcerig09lbgbab7ashdn84gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npj61fj6c3270o32c0@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 30,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "c_1880blmoco28qi9bj2b2ilujsmirs4gactnmuprcckn66rrd@resource.calendar.google.com": {
+    "name": "MY-KUL-QIL7-20-4-Kinabalu (1)",
+    "full_name": "MY-KUL-QIL7-20-4-Kinabalu (1) [GVC, No External Guests, Phone]",
+    "email": "c_1880blmoco28qi9bj2b2ilujsmirs4gactnmuprcckn66rrd@resource.calendar.google.com",
+    "building": "MY-KUL-QIL7",
+    "floor": 20,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f73675f73696e5f6d6263325f31305f31306238303337@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-10-B-B80 Fort Canning 9 Command (9)",
+    "full_name": "SG-SIN-MBC2-10-B-B80 Fort Canning 9 Command (9) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f73675f73696e5f6d6263325f31305f31306238303337@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 10,
+    "type": "meeting_room",
+    "capacity": 9
+  },
+  "c_18856fcc0p4r4hf8mppdftvom0oi0@resource.calendar.google.com": {
+    "name": "IN-BLR-BCPWK-5-0-508 Enigma (8)",
+    "full_name": "IN-BLR-BCPWK-5-0-508 Enigma (8) [GVC]",
+    "email": "c_18856fcc0p4r4hf8mppdftvom0oi0@resource.calendar.google.com",
+    "building": "IN-BLR-BCPWK",
+    "floor": 5,
+    "type": "meeting_room",
+    "capacity": 8
+  },
+  "c_188anj14shn9mid3jr2mkpq8pimgc4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ed8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Hillview 8 Faber (5)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Hillview 8 Faber (5) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_188anj14shn9mid3jr2mkpq8pimgc4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ed8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "focus_room",
+    "capacity": 5
+  },
+  "c_188fsf5p1406ehctjon6fa366aa2g@resource.calendar.google.com": {
+    "name": "IN-MUM-FIFC-3-0-Harnai Port (2)",
+    "full_name": "IN-MUM-FIFC-3-0-Harnai Port (2)",
+    "email": "c_188fsf5p1406ehctjon6fa366aa2g@resource.calendar.google.com",
+    "building": "IN-MUM-FIFC",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "c_188eemhj4kc18io3l5qsqkil7ar1g@resource.calendar.google.com": {
+    "name": "IN-MUM-FIFC-3-0-Sindhudurg Fort (1)",
+    "full_name": "IN-MUM-FIFC-3-0-Sindhudurg Fort (1)",
+    "email": "c_188eemhj4kc18io3l5qsqkil7ar1g@resource.calendar.google.com",
+    "building": "IN-MUM-FIFC",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_1885rq59hj5a4juamlcfvi6ns8ntq@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-32-F-Flavour You Can See (1)",
+    "full_name": "AU-MEL-MQT-32-F-Flavour You Can See (1)",
+    "email": "c_1885rq59hj5a4juamlcfvi6ns8ntq@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 32,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_188ciju6aqc6ognaj2g9pmo180fla@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-32-B-Yuruga (4)",
+    "full_name": "AU-MEL-MQT-32-B-Yuruga (4)",
+    "email": "c_188ciju6aqc6ognaj2g9pmo180fla@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 32,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_1888s5koa5kt2g1ahdauopktrs5nu@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-32-A-Binak (4)",
+    "full_name": "AU-MEL-MQT-32-A-Binak (4) [GVC]",
+    "email": "c_1888s5koa5kt2g1ahdauopktrs5nu@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 32,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_188fv1nimue46i59kfrjkv94i493u4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o36cg@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 21 Phone Room (2)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 21 Phone Room (2) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_188fv1nimue46i59kfrjkv94i493u4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o36cg@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_188cnq3cst8dkihvlmje67irqs9ui@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-32-B-Yawa (4)",
+    "full_name": "AU-MEL-MQT-32-B-Yawa (4) [GVC]",
+    "email": "c_188cnq3cst8dkihvlmje67irqs9ui@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 32,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "google.com_726f6f6d5f73675f73696e5f6d6263325f31305f31306238303434@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-10-B-B80 Buona Vista 3 Phone Room (1)",
+    "full_name": "SG-SIN-MBC2-10-B-B80 Buona Vista 3 Phone Room (1) [GVC, No External Guests, Phone]",
+    "email": "google.com_726f6f6d5f73675f73696e5f6d6263325f31305f31306238303434@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 10,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "c_1884ip40l9924ghliunep9utshtsq@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-32-F-Fried Or Steamed (1)",
+    "full_name": "AU-MEL-MQT-32-F-Fried Or Steamed (1) [GVC]",
+    "email": "c_1884ip40l9924ghliunep9utshtsq@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 32,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_188creg0npmg6gk8l02mehc3mc5n64gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o38dg@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 17 Phone Room (2)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 17 Phone Room (2) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_188creg0npmg6gk8l02mehc3mc5n64gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o38dg@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_1886le8luk554h1ogs29su5f2ntnm4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3icg@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Hillview 6 Emerald (5)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Hillview 6 Emerald (5) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_1886le8luk554h1ogs29su5f2ntnm4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3icg@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "focus_room",
+    "capacity": 5
+  },
+  "c_18812hj4c1ejui0gm0dt30vkd44k44gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ecg@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Hillview 9 Imbiah",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Hillview 9 Imbiah [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_18812hj4c1ejui0gm0dt30vkd44k44gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ecg@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "c_188bcijmdjcqegmajod7lj73p5sr8@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-34-C-Zzzoooom (4)",
+    "full_name": "AU-MEL-MQT-34-C-Zzzoooom (4) [GVC]",
+    "email": "c_188bcijmdjcqegmajod7lj73p5sr8@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 34,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_1883apli6skaki7egg7rj46kumpo8@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-32-F-Little Audrey (1)",
+    "full_name": "AU-MEL-MQT-32-F-Little Audrey (1)",
+    "email": "c_1883apli6skaki7egg7rj46kumpo8@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 32,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_1886q1t4bamcqgluiccj4ckftn56u@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-32-C-Right Turn From Left (4)",
+    "full_name": "AU-MEL-MQT-32-C-Right Turn From Left (4) [GVC]",
+    "email": "c_1886q1t4bamcqgluiccj4ckftn56u@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 32,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f365f36613063@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-Hamilton (4)",
+    "full_name": "AU-SYD-PIR-6-A-Hamilton (4) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f365f36613063@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_18828fo968lt4ivmmd583r2ghbifa@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-32-F-Just Call Me Freddo (1)",
+    "full_name": "AU-MEL-MQT-32-F-Just Call Me Freddo (1) [GVC]",
+    "email": "c_18828fo968lt4ivmmd583r2ghbifa@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 32,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_18861vfqde38ihe9hfb66tqbufmdm@resource.calendar.google.com": {
+    "name": "AU-CBR-NORTHB-5-A-Yuuma (9)",
+    "full_name": "AU-CBR-NORTHB-5-A-Yuuma (9)",
+    "email": "c_18861vfqde38ihe9hfb66tqbufmdm@resource.calendar.google.com",
+    "building": "AU-CBR-NORTHB",
+    "floor": 5,
+    "type": "meeting_room",
+    "capacity": 9
+  },
+  "c_1888eh4ls95bai87h35m4hbto2lte@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGD-10-0-Velankanni (1)",
+    "full_name": "IN-GUR-SIGD-10-0-Velankanni (1)",
+    "email": "c_1888eh4ls95bai87h35m4hbto2lte@resource.calendar.google.com",
+    "building": "IN-GUR-SIGD",
+    "floor": 10,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f696e5f6775725f7369675f335f333231@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGB-3-2-Mach 1 (6)",
+    "full_name": "IN-GUR-SIGB-3-2-Mach 1 (6) [GVC]",
+    "email": "google.com_726f6f6d5f696e5f6775725f7369675f335f333231@resource.calendar.google.com",
+    "building": "IN-GUR-SIGB",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "c_18837e0606hdihhpluq5hn1pvk490@resource.calendar.google.com": {
+    "name": "AU-CBR-NORTHB-5-A-Ken Behrens (1)",
+    "full_name": "AU-CBR-NORTHB-5-A-Ken Behrens (1)",
+    "email": "c_18837e0606hdihhpluq5hn1pvk490@resource.calendar.google.com",
+    "building": "AU-CBR-NORTHB",
+    "floor": 5,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_1889m094g6kaqjj2juunpi8mtalms@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-32-A-Burt-Burt (4)",
+    "full_name": "AU-MEL-MQT-32-A-Burt-Burt (4) [GVC]",
+    "email": "c_1889m094g6kaqjj2juunpi8mtalms@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 32,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_188fkgd1shqfuhb6jlemodne1s2gk@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-32-E-Parwill (1)",
+    "full_name": "AU-MEL-MQT-32-E-Parwill (1)",
+    "email": "c_188fkgd1shqfuhb6jlemodne1s2gk@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 32,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_1889l2kt4mp18jlgg2cmh9refi8p0@resource.calendar.google.com": {
+    "name": "AU-CBR-NORTHB-5-A-The Bus Stop (4)",
+    "full_name": "AU-CBR-NORTHB-5-A-The Bus Stop (4)",
+    "email": "c_1889l2kt4mp18jlgg2cmh9refi8p0@resource.calendar.google.com",
+    "building": "AU-CBR-NORTHB",
+    "floor": 5,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f365f36613766@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-GBR (9)",
+    "full_name": "AU-SYD-PIR-6-A-GBR (9) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f365f36613766@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 9
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f365f36613764@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-Deewhy (7)",
+    "full_name": "AU-SYD-PIR-6-A-Deewhy (7) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f365f36613764@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "c_1888ppmhfsupqh2nndjd067smcvjs4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o36c8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 22 Jelapang",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 22 Jelapang [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_1888ppmhfsupqh2nndjd067smcvjs4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o36c8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "c_1889f8o4sn0uiifgmofi9v8tv9fk44gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ad8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Hillview 13 Phone Room (2)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Hillview 13 Phone Room (2) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_1889f8o4sn0uiifgmofi9v8tv9fk44gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ad8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_1886dh112hvkejk3mdltahg63d3iu4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o34d0@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 25 Segar (7)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 25 Segar (7) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_1886dh112hvkejk3mdltahg63d3iu4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o34d0@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "google.com_726f6f6d5f73675f73696e5f6d6263325f31305f31306238303431@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-10-B-B80 Fort Canning 5 Artillery (5)",
+    "full_name": "SG-SIN-MBC2-10-B-B80 Fort Canning 5 Artillery (5) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f73675f73696e5f6d6263325f31305f31306238303431@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 10,
+    "type": "meeting_room",
+    "capacity": 5
+  },
+  "c_1884mptc43oskh9kgmini3d8arame4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npj61fj6c3270o32c8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-30-B-B80 6 Camelot - External (5)",
+    "full_name": "SG-SIN-MBC2-30-B-B80 6 Camelot - External (5) [GVC, Not Wheelchair Accessible]",
+    "email": "c_1884mptc43oskh9kgmini3d8arame4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npj61fj6c3270o32c8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 30,
+    "type": "meeting_room",
+    "capacity": 5
+  },
+  "c_1883cq7bf7fvmgg9m3hri2smsn5na4gactnmuprcckn66rrd@resource.calendar.google.com": {
+    "name": "MY-KUL-QIL7-28-1-Maju (8)",
+    "full_name": "MY-KUL-QIL7-28-1-Maju (8) [GVC, No External Guests]",
+    "email": "c_1883cq7bf7fvmgg9m3hri2smsn5na4gactnmuprcckn66rrd@resource.calendar.google.com",
+    "building": "MY-KUL-QIL7",
+    "floor": 28,
+    "type": "meeting_room",
+    "capacity": 8
+  },
+  "google.com_726f6f6d5f6d795f6b756c5f71696c375f32305f32303434@resource.calendar.google.com": {
+    "name": "MY-KUL-QIL7-20-4-Zeta Bar (4)",
+    "full_name": "MY-KUL-QIL7-20-4-Zeta Bar (4) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f6d795f6b756c5f71696c375f32305f32303434@resource.calendar.google.com",
+    "building": "MY-KUL-QIL7",
+    "floor": 20,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_188265jlovv30ivngajpiso7r3b46@resource.calendar.google.com": {
+    "name": "UK-LON-6PS-2-C-Nook E3 - No Externals (2)",
+    "full_name": "UK-LON-6PS-2-C-Nook E3 - No Externals (2)",
+    "email": "c_188265jlovv30ivngajpiso7r3b46@resource.calendar.google.com",
+    "building": "UK-LON-6PS",
+    "floor": 2,
+    "type": "focus_room",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f756b5f6c6f6e5f3670735f345f346138@resource.calendar.google.com": {
+    "name": "UK-LON-6PS-4-A-Back To The Future - No Externals (28)",
+    "full_name": "UK-LON-6PS-4-A-Back To The Future - No Externals (28) [GVC, Jamboard, No External Guests]",
+    "email": "google.com_726f6f6d5f756b5f6c6f6e5f3670735f345f346138@resource.calendar.google.com",
+    "building": "UK-LON-6PS",
+    "floor": 4,
+    "type": "conference_room",
+    "capacity": 28
+  },
+  "google.com_726f6f6d5f69645f63676b5f7063705f34355f34353332@resource.calendar.google.com": {
+    "name": "ID-CGK-PCP-45-3-5 Merah Putih (2)",
+    "full_name": "ID-CGK-PCP-45-3-5 Merah Putih (2) [GVC, No External Guests, Phone]",
+    "email": "google.com_726f6f6d5f69645f63676b5f7063705f34355f34353332@resource.calendar.google.com",
+    "building": "ID-CGK-PCP",
+    "floor": 45,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_18884jq9i1icaic3mhvt16vmvp5k8@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-34-A-Mr Moon (4)",
+    "full_name": "AU-MEL-MQT-34-A-Mr Moon (4) [GVC]",
+    "email": "c_18884jq9i1icaic3mhvt16vmvp5k8@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 34,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_1882nugn1cg06ju1j4qmklgm0nqhs@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-34-C-You're An Ideas Man, Steve (4)",
+    "full_name": "AU-MEL-MQT-34-C-You're An Ideas Man, Steve (4) [GVC]",
+    "email": "c_1882nugn1cg06ju1j4qmklgm0nqhs@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 34,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_188bfoh8pleu6gm2nd3lrc09h8d9e4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi71fj4e3270o3icg@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-28-B-B80 34 Maya - External (7)",
+    "full_name": "SG-SIN-MBC2-28-B-B80 34 Maya - External (7) [GVC, Not Wheelchair Accessible]",
+    "email": "c_188bfoh8pleu6gm2nd3lrc09h8d9e4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi71fj4e3270o3icg@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 28,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "c_1881n61td3po4jpbhjs1ep0ogsuc8@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-34-A-Quiet Please (4)",
+    "full_name": "AU-MEL-MQT-34-A-Quiet Please (4)",
+    "email": "c_1881n61td3po4jpbhjs1ep0ogsuc8@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 34,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_188bn2d0lg2nei8bmmljqb65t4kmi@resource.calendar.google.com": {
+    "name": "TH-BKK-PVE-14-0-Koh Ta Pu (17)",
+    "full_name": "TH-BKK-PVE-14-0-Koh Ta Pu (17) [GVC]",
+    "email": "c_188bn2d0lg2nei8bmmljqb65t4kmi@resource.calendar.google.com",
+    "building": "TH-BKK-PVE",
+    "floor": 14,
+    "type": "conference_room",
+    "capacity": 17
+  },
+  "c_188a88s8pnbjqhp7ijvc9jrgpv1gs@resource.calendar.google.com": {
+    "name": "TH-BKK-PVE-14-0-Pla Kad (6)",
+    "full_name": "TH-BKK-PVE-14-0-Pla Kad (6) [GVC]",
+    "email": "c_188a88s8pnbjqhp7ijvc9jrgpv1gs@resource.calendar.google.com",
+    "building": "TH-BKK-PVE",
+    "floor": 14,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "c_188034uutue7chdqldd1uausbf6c0@resource.calendar.google.com": {
+    "name": "US-WAS-NYA-7-H-Howard (3)",
+    "full_name": "US-WAS-NYA-7-H-Howard (3) [GVC]",
+    "email": "c_188034uutue7chdqldd1uausbf6c0@resource.calendar.google.com",
+    "building": "US-WAS-NYA",
+    "floor": 7,
+    "type": "meeting_room",
+    "capacity": 3
+  },
+  "c_188208of379r6gtlnu3pltr6mn4pg@resource.calendar.google.com": {
+    "name": "UK-LON-CSG-5-7-Phonebooth T1 (1)",
+    "full_name": "UK-LON-CSG-5-7-Phonebooth T1 (1) [Not Wheelchair Accessible]",
+    "email": "c_188208of379r6gtlnu3pltr6mn4pg@resource.calendar.google.com",
+    "building": "UK-LON-CSG",
+    "floor": 5,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "c_1886ahrdu7p1igk5hfe8379ln6eic@resource.calendar.google.com": {
+    "name": "US-RES-REST1900-11-5-Phone Room 11D (1)",
+    "full_name": "US-RES-REST1900-11-5-Phone Room 11D (1) [GVC]",
+    "email": "c_1886ahrdu7p1igk5hfe8379ln6eic@resource.calendar.google.com",
+    "building": "US-RES-REST1900",
+    "floor": 11,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "c_1886si2q4agjoghqkkrvvjtacjhki@resource.calendar.google.com": {
+    "name": "CA-TOR-KING65-9-G-Gulf Islands (1)",
+    "full_name": "CA-TOR-KING65-9-G-Gulf Islands (1) [GVC]",
+    "email": "c_1886si2q4agjoghqkkrvvjtacjhki@resource.calendar.google.com",
+    "building": "CA-TOR-KING65",
+    "floor": 9,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_1888apsglm7oujvklkt4mjjvdpfp4@resource.calendar.google.com": {
+    "name": "US-NYC-9TH-6-D-202-Mouse In The Maze (4)",
+    "full_name": "US-NYC-9TH-6-D-202-Mouse In The Maze (4) [GVC]",
+    "email": "c_1888apsglm7oujvklkt4mjjvdpfp4@resource.calendar.google.com",
+    "building": "US-NYC-9TH",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_188d23lhtm206jnskc06qg7teqfta@resource.calendar.google.com": {
+    "name": "CH-ZRH-EURD-2-B-Rom (14)",
+    "full_name": "CH-ZRH-EURD-2-B-Rom (14) [GVC]",
+    "email": "c_188d23lhtm206jnskc06qg7teqfta@resource.calendar.google.com",
+    "building": "CH-ZRH-EURD",
+    "floor": 2,
+    "type": "conference_room",
+    "capacity": 14
+  },
+  "google.com_726f6f6d5f75735f6368695f666c6d6b5f31305f3130623238@resource.calendar.google.com": {
+    "name": "US-CHI-FLMK-10-B-Cloud Gate (5)",
+    "full_name": "US-CHI-FLMK-10-B-Cloud Gate (5) [GVC, Jamboard]",
+    "email": "google.com_726f6f6d5f75735f6368695f666c6d6b5f31305f3130623238@resource.calendar.google.com",
+    "building": "US-CHI-FLMK",
+    "floor": 10,
+    "type": "meeting_room",
+    "capacity": 5
+  },
+  "c_1888cnm5c03f0i2gm0d3he1d9h6co4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi71fj4e3270o3gdg@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-28-B-B80 27 Phone Room - External (2)",
+    "full_name": "SG-SIN-MBC2-28-B-B80 27 Phone Room - External (2) [GVC, Not Wheelchair Accessible]",
+    "email": "c_1888cnm5c03f0i2gm0d3he1d9h6co4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi71fj4e3270o3gdg@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 28,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_188fijdou8g0gj0vislkhi84djlto4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o30d8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 28 Teck Whye (9)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 28 Teck Whye (9) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_188fijdou8g0gj0vislkhi84djlto4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o30d8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "meeting_room",
+    "capacity": 9
+  },
+  "c_188bju082q2oci34njdb89fs8vg0o4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3gdo@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Hillview 3 Phone Room (2)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Hillview 3 Phone Room (2) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_188bju082q2oci34njdb89fs8vg0o4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3gdo@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f365f3661366d@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-Coogee (2)",
+    "full_name": "AU-SYD-PIR-6-A-Coogee (2) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f365f3661366d@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "c_18808tb4frj0qhsjiplnommq3g4em@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGD-8-4-Pondicherry (4)",
+    "full_name": "IN-GUR-SIGD-8-4-Pondicherry (4)",
+    "email": "c_18808tb4frj0qhsjiplnommq3g4em@resource.calendar.google.com",
+    "building": "IN-GUR-SIGD",
+    "floor": 8,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_18838p60436kghj7nr903stcq4hie@resource.calendar.google.com": {
+    "name": "UK-LON-CSG-7-8-Weigela (6)",
+    "full_name": "UK-LON-CSG-7-8-Weigela (6) [GVC]",
+    "email": "c_18838p60436kghj7nr903stcq4hie@resource.calendar.google.com",
+    "building": "UK-LON-CSG",
+    "floor": 7,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "c_1888k6t0gkkl8j5ghlkulj8fhsaus@resource.calendar.google.com": {
+    "name": "IN-BLR-ANANTA-1-D-UDDIPTA (5)",
+    "full_name": "IN-BLR-ANANTA-1-D-UDDIPTA (5) [GVC]",
+    "email": "c_1888k6t0gkkl8j5ghlkulj8fhsaus@resource.calendar.google.com",
+    "building": "IN-BLR-ANANTA",
+    "floor": 1,
+    "type": "meeting_room",
+    "capacity": 5
+  },
+  "google.com_726f6f6d5f69655f6475625f646f635f31305f31303535@resource.calendar.google.com": {
+    "name": "IE-DUB-DOC-10-5-Brainstorm (1)",
+    "full_name": "IE-DUB-DOC-10-5-Brainstorm (1) [GVC, Phone]",
+    "email": "google.com_726f6f6d5f69655f6475625f646f635f31305f31303535@resource.calendar.google.com",
+    "building": "IE-DUB-DOC",
+    "floor": 10,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f696e5f6775725f7369675f325f323438@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGB-2-4-Grand Prix (8)",
+    "full_name": "IN-GUR-SIGB-2-4-Grand Prix (8) [GVC]",
+    "email": "google.com_726f6f6d5f696e5f6775725f7369675f325f323438@resource.calendar.google.com",
+    "building": "IN-GUR-SIGB",
+    "floor": 2,
+    "type": "meeting_room",
+    "capacity": 8
+  },
+  "google.com_726f6f6d5f73675f73696e5f6d6263325f345f346236303139@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-4-B-B60 38 Gold Coast-External (6)",
+    "full_name": "SG-SIN-MBC2-4-B-B60 38 Gold Coast-External (6) [GVC]",
+    "email": "google.com_726f6f6d5f73675f73696e5f6d6263325f345f346236303139@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "c_1884ac54ieor8il7g95b4r5vul4fi@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGD-8-5-Rameshwaram (8)",
+    "full_name": "IN-GUR-SIGD-8-5-Rameshwaram (8)",
+    "email": "c_1884ac54ieor8il7g95b4r5vul4fi@resource.calendar.google.com",
+    "building": "IN-GUR-SIGD",
+    "floor": 8,
+    "type": "meeting_room",
+    "capacity": 8
+  },
+  "google.com_726f6f6d5f696e5f626c725f726d7a5f355f35393574@resource.calendar.google.com": {
+    "name": "IN-BLR-RMZ-5-9-The Martian (2)",
+    "full_name": "IN-BLR-RMZ-5-9-The Martian (2) [GVC, Phone]",
+    "email": "google.com_726f6f6d5f696e5f626c725f726d7a5f355f35393574@resource.calendar.google.com",
+    "building": "IN-BLR-RMZ",
+    "floor": 5,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f696e5f6775725f7369675f345f343231@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGB-4-2-Tetris (6)",
+    "full_name": "IN-GUR-SIGB-4-2-Tetris (6) [GVC]",
+    "email": "google.com_726f6f6d5f696e5f6775725f7369675f345f343231@resource.calendar.google.com",
+    "building": "IN-GUR-SIGB",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "google.com_726f6f6d5f73675f73696e5f6d6263325f355f356236303138@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-5-B-B60 34 Taipei 101-External (7)",
+    "full_name": "SG-SIN-MBC2-5-B-B60 34 Taipei 101-External (7) [GVC]",
+    "email": "google.com_726f6f6d5f73675f73696e5f6d6263325f355f356236303138@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 5,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "google.com_188ah3pqv3r3qjrbjs9gub4voueto6gpe9nmuravedjlusr9dpfmqoj369fjanplc8s30cpg@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-5-B-B80 Canberra 17 Cherpen (7)",
+    "full_name": "SG-SIN-MBC2-5-B-B80 Canberra 17 Cherpen (7) [GVC, No External Guests]",
+    "email": "google.com_188ah3pqv3r3qjrbjs9gub4voueto6gpe9nmuravedjlusr9dpfmqoj369fjanplc8s30cpg@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 5,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "google.com_726f6f6d5f696e5f626c725f726d7a5f355f35393577@resource.calendar.google.com": {
+    "name": "IN-BLR-RMZ-5-9-Aquaman (4)",
+    "full_name": "IN-BLR-RMZ-5-9-Aquaman (4) [GVC]",
+    "email": "google.com_726f6f6d5f696e5f626c725f726d7a5f355f35393577@resource.calendar.google.com",
+    "building": "IN-BLR-RMZ",
+    "floor": 5,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_1883odbrio622ijtmss3g0bnm3rpe@resource.calendar.google.com": {
+    "name": "US-MTV-CE-1-B-Albacore (Seshu's Huddle) - 5th Ave (4)",
+    "full_name": "US-MTV-CE-1-B-Albacore (Seshu's Huddle) - 5th Ave (4) [GVC]",
+    "email": "c_1883odbrio622ijtmss3g0bnm3rpe@resource.calendar.google.com",
+    "building": "US-MTV-CE",
+    "floor": 1,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_1888sb0hovsokh9tkcsf1art85up4@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGD-5-5-Jammu (6)",
+    "full_name": "IN-GUR-SIGD-5-5-Jammu (6)",
+    "email": "c_1888sb0hovsokh9tkcsf1art85up4@resource.calendar.google.com",
+    "building": "IN-GUR-SIGD",
+    "floor": 5,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "google.com_18830t3h070hggh9glquoag8vn41m6gne9nmuravd5n5urbldlfmcqb6cdfjenpn60s3e@resource.calendar.google.com": {
+    "name": "IN-MUM-FIFC-7-0-Grand Prismatic Spring (1)",
+    "full_name": "IN-MUM-FIFC-7-0-Grand Prismatic Spring (1) [GVC, Not Wheelchair Accessible]",
+    "email": "google.com_18830t3h070hggh9glquoag8vn41m6gne9nmuravd5n5urbldlfmcqb6cdfjenpn60s3e@resource.calendar.google.com",
+    "building": "IN-MUM-FIFC",
+    "floor": 7,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f696e5f6775725f7369675f345f343331@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGB-4-3-Qo'nos (4)",
+    "full_name": "IN-GUR-SIGB-4-3-Qo'nos (4) [GVC]",
+    "email": "google.com_726f6f6d5f696e5f6775725f7369675f345f343331@resource.calendar.google.com",
+    "building": "IN-GUR-SIGB",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_188aai4363c4cgl9jk6gqf8fsiv72@resource.calendar.google.com": {
+    "name": "US-SFO-188E-4-G-NOG-Nogales (3)",
+    "full_name": "US-SFO-188E-4-G-NOG-Nogales (3) [GVC]",
+    "email": "c_188aai4363c4cgl9jk6gqf8fsiv72@resource.calendar.google.com",
+    "building": "US-SFO-188E",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 3
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f365f36613366@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-Kosciuszko (1)",
+    "full_name": "AU-SYD-PIR-6-A-Kosciuszko (1) [GVC, No External Guests, Phone]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f365f36613366@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f365f36613761@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-Bronte (8)",
+    "full_name": "AU-SYD-PIR-6-A-Bronte (8) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f365f36613761@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 8
+  },
+  "c_18895551k7brcilun9cbevqaphbla4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o38d0@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 18 Phone Room (2)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 18 Phone Room (2) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_18895551k7brcilun9cbevqaphbla4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o38d0@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_1881loql7r7hoh14ile1vbgq91cae@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGD-4-0-Gwalior (4)",
+    "full_name": "IN-GUR-SIGD-4-0-Gwalior (4)",
+    "email": "c_1881loql7r7hoh14ile1vbgq91cae@resource.calendar.google.com",
+    "building": "IN-GUR-SIGD",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f365f36613365@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-Mawson & McClintock (1)",
+    "full_name": "AU-SYD-PIR-6-A-Mawson & McClintock (1) [GVC, No External Guests, Phone]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f365f36613365@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "c_1882aoktme87egh9k1nt95rh7ns9u@resource.calendar.google.com": {
+    "name": "IN-MUM-FIFC-3-0-Barren Island Volcano (3)",
+    "full_name": "IN-MUM-FIFC-3-0-Barren Island Volcano (3) [GVC]",
+    "email": "c_1882aoktme87egh9k1nt95rh7ns9u@resource.calendar.google.com",
+    "building": "IN-MUM-FIFC",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 3
+  },
+  "c_1885achkb06jqhlljkcejfjp4ttm24gactnmuprcckn66rrd@resource.calendar.google.com": {
+    "name": "JP-TOK-STRM-28-0-14 Shinnyo-Internal (5)",
+    "full_name": "JP-TOK-STRM-28-0-14 Shinnyo-Internal (5) [GVC, No External Guests]",
+    "email": "c_1885achkb06jqhlljkcejfjp4ttm24gactnmuprcckn66rrd@resource.calendar.google.com",
+    "building": "JP-TOK-STRM",
+    "floor": 28,
+    "type": "meeting_room",
+    "capacity": 5
+  },
+  "c_1886usq5c63b6i7cm414ekml93hm64gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3idg@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 32 Cliffs of Moher - External (9)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 32 Cliffs of Moher - External (9) [GVC, Not Wheelchair Accessible]",
+    "email": "c_1886usq5c63b6i7cm414ekml93hm64gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3idg@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "meeting_room",
+    "capacity": 9
+  },
+  "google.com_726f6f6d5f686b5f686b675f7477325f31395f31393630@resource.calendar.google.com": {
+    "name": "HK-HKG-TW2-19-6-03 Wing Chun (13)",
+    "full_name": "HK-HKG-TW2-19-6-03 Wing Chun (13) [GVC]",
+    "email": "google.com_726f6f6d5f686b5f686b675f7477325f31395f31393630@resource.calendar.google.com",
+    "building": "HK-HKG-TW2",
+    "floor": 19,
+    "type": "conference_room",
+    "capacity": 13
+  },
+  "google.com_726f6f6d5f6b725f73656f5f6766635f32305f32303730@resource.calendar.google.com": {
+    "name": "KR-SEO-GFC-20-7-20N-12-Flower Shop (6)",
+    "full_name": "KR-SEO-GFC-20-7-20N-12-Flower Shop (6) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f6b725f73656f5f6766635f32305f32303730@resource.calendar.google.com",
+    "building": "KR-SEO-GFC",
+    "floor": 20,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "google.com_726f6f6d5f6d795f6b756c5f71696c375f32305f32303234@resource.calendar.google.com": {
+    "name": "MY-KUL-QIL7-20-2-Ikan Bilis (2)",
+    "full_name": "MY-KUL-QIL7-20-2-Ikan Bilis (2) [GVC, No External Guests, Phone]",
+    "email": "google.com_726f6f6d5f6d795f6b756c5f71696c375f32305f32303234@resource.calendar.google.com",
+    "building": "MY-KUL-QIL7",
+    "floor": 20,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f73675f73696e5f6d6263325f31305f31306238303831@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-10-B-B80 31 Equinox-External (9)",
+    "full_name": "SG-SIN-MBC2-10-B-B80 31 Equinox-External (9) [GVC]",
+    "email": "google.com_726f6f6d5f73675f73696e5f6d6263325f31305f31306238303831@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 10,
+    "type": "meeting_room",
+    "capacity": 9
+  },
+  "c_1880djrtntnesgehgge89m528h1824gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o30cg@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 36 Pamukkale - External (7)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 36 Pamukkale - External (7) [GVC, Not Wheelchair Accessible]",
+    "email": "c_1880djrtntnesgehgge89m528h1824gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o30cg@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "c_18826t8a6ilbsimaint14phr9pa6a4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ad0@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Hillview 14 Phone Room (2)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Hillview 14 Phone Room (2) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_18826t8a6ilbsimaint14phr9pa6a4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ad0@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f6d795f6b756c5f71696c375f32305f32303736@resource.calendar.google.com": {
+    "name": "MY-KUL-QIL7-20-7-Macha (4)",
+    "full_name": "MY-KUL-QIL7-20-7-Macha (4) [GVC]",
+    "email": "google.com_726f6f6d5f6d795f6b756c5f71696c375f32305f32303736@resource.calendar.google.com",
+    "building": "MY-KUL-QIL7",
+    "floor": 20,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "google.com_726f6f6d5f69645f63676b5f7063705f34355f34353235@resource.calendar.google.com": {
+    "name": "ID-CGK-PCP-45-2-9 Tokecang (4)",
+    "full_name": "ID-CGK-PCP-45-2-9 Tokecang (4) [GVC, No External Guests, Phone]",
+    "email": "google.com_726f6f6d5f69645f63676b5f7063705f34355f34353235@resource.calendar.google.com",
+    "building": "ID-CGK-PCP",
+    "floor": 45,
+    "type": "phone_booth",
+    "capacity": 4
+  },
+  "google.com_726f6f6d5f69645f63676b5f7063705f34355f34353535@resource.calendar.google.com": {
+    "name": "ID-CGK-PCP-45-5-5 Ular Tangga (4)",
+    "full_name": "ID-CGK-PCP-45-5-5 Ular Tangga (4) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f69645f63676b5f7063705f34355f34353535@resource.calendar.google.com",
+    "building": "ID-CGK-PCP",
+    "floor": 45,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_18822s9j9k6h0h7vkgpcrgb6ivp4g4gactnmuprcckn66rrd@resource.calendar.google.com": {
+    "name": "MY-KUL-QIL7-28-1-Transformasi (1)",
+    "full_name": "MY-KUL-QIL7-28-1-Transformasi (1) [GVC, No External Guests]",
+    "email": "c_18822s9j9k6h0h7vkgpcrgb6ivp4g4gactnmuprcckn66rrd@resource.calendar.google.com",
+    "building": "MY-KUL-QIL7",
+    "floor": 28,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f345f3461306a@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-4-A-Just In... (2)",
+    "full_name": "AU-SYD-PIR-4-A-Just In... (2) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f345f3461306a@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "c_1886vpi1kqt22girn4nq71ojvhr7e@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGD-9-3-Saputara (2)",
+    "full_name": "IN-GUR-SIGD-9-3-Saputara (2)",
+    "email": "c_1886vpi1kqt22girn4nq71ojvhr7e@resource.calendar.google.com",
+    "building": "IN-GUR-SIGD",
+    "floor": 9,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f365f36613062@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-Heron (7)",
+    "full_name": "AU-SYD-PIR-6-A-Heron (7) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f365f36613062@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "c_188c5um6026g6gojle8gn1bshog3c@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGD-10-1-Vapi (1)",
+    "full_name": "IN-GUR-SIGD-10-1-Vapi (1)",
+    "email": "c_188c5um6026g6gojle8gn1bshog3c@resource.calendar.google.com",
+    "building": "IN-GUR-SIGD",
+    "floor": 10,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f6d795f6b756c5f71696c375f32305f32303032@resource.calendar.google.com": {
+    "name": "MY-KUL-QIL7-20-0-Nasi Lemak (4)",
+    "full_name": "MY-KUL-QIL7-20-0-Nasi Lemak (4) [GVC]",
+    "email": "google.com_726f6f6d5f6d795f6b756c5f71696c375f32305f32303032@resource.calendar.google.com",
+    "building": "MY-KUL-QIL7",
+    "floor": 20,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_188cjlqda11osinvjfrug27kdjh3e@resource.calendar.google.com": {
+    "name": "IN-BLR-BCPWK-2-0-216 Breathe (2)",
+    "full_name": "IN-BLR-BCPWK-2-0-216 Breathe (2) [GVC]",
+    "email": "c_188cjlqda11osinvjfrug27kdjh3e@resource.calendar.google.com",
+    "building": "IN-BLR-BCPWK",
+    "floor": 2,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f345f3461306c@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-4-A-Kerning (4)",
+    "full_name": "AU-SYD-PIR-4-A-Kerning (4) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f345f3461306c@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_188ftvjd1gkiqhlnhsq2iegg565r64gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ec0@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Hillview 11 Phone Room (2)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Hillview 11 Phone Room (2) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_188ftvjd1gkiqhlnhsq2iegg565r64gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ec0@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_1881rqgb7m6gsi24iikvi97mv65qi4gactnmuprcckn66rrd38cn4rrfdlfnasqvcdk6inr3c5p70chh61fjenpn64rg@resource.calendar.google.com": {
+    "name": "US-CHI-CARP210-7-1-Cactus (1)",
+    "full_name": "US-CHI-CARP210-7-1-Cactus (1) [GVC, Phone]",
+    "email": "c_1881rqgb7m6gsi24iikvi97mv65qi4gactnmuprcckn66rrd38cn4rrfdlfnasqvcdk6inr3c5p70chh61fjenpn64rg@resource.calendar.google.com",
+    "building": "US-CHI-CARP210",
+    "floor": 7,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "c_188elbvd30t6mitcjj87h0gbkhrkc@resource.calendar.google.com": {
+    "name": "BR-SAO-SPCT-15-E-Pedra Grande (2)",
+    "full_name": "BR-SAO-SPCT-15-E-Pedra Grande (2) [GVC, No External Guests]",
+    "email": "c_188elbvd30t6mitcjj87h0gbkhrkc@resource.calendar.google.com",
+    "building": "BR-SAO-SPCT",
+    "floor": 15,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f69655f6475625f67726371315f355f353330@resource.calendar.google.com": {
+    "name": "IE-DUB-GRCQ1-5-3-Space Odyssey (3)",
+    "full_name": "IE-DUB-GRCQ1-5-3-Space Odyssey (3) [GVC, No External Guests, Preview]",
+    "email": "google.com_726f6f6d5f69655f6475625f67726371315f355f353330@resource.calendar.google.com",
+    "building": "IE-DUB-GRCQ1",
+    "floor": 5,
+    "type": "meeting_room",
+    "capacity": 3
+  },
+  "c_188ae8it5va6ijlanna95a2ne023q4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ic0@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Hillview 4 Ann Siang (5)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Hillview 4 Ann Siang (5) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_188ae8it5va6ijlanna95a2ne023q4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ic0@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "focus_room",
+    "capacity": 5
+  },
+  "c_18821fgjhdqkmh1sndvjj87j9cl7i4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270oj0d0@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 34 Grand Canyon - External (15)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 34 Grand Canyon - External (15) [GVC, Not Wheelchair Accessible]",
+    "email": "c_18821fgjhdqkmh1sndvjj87j9cl7i4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270oj0d0@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "conference_room",
+    "capacity": 15
+  },
+  "c_1881esq64u1nqgrlm7udmogkubsp2@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-Bondi (4)",
+    "full_name": "AU-SYD-PIR-6-A-Bondi (4) [GVC, No External Guests]",
+    "email": "c_1881esq64u1nqgrlm7udmogkubsp2@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_188eqcqgu29j2g29jj3er5akksk764gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npj61fj6c3270o32d8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-30-B-B80 4 Atlantis - External (13)",
+    "full_name": "SG-SIN-MBC2-30-B-B80 4 Atlantis - External (13) [GVC, Not Wheelchair Accessible]",
+    "email": "c_188eqcqgu29j2g29jj3er5akksk764gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npj61fj6c3270o32d8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 30,
+    "type": "conference_room",
+    "capacity": 13
+  },
+  "c_188fghgcjumm4iqdhkeaq97l2b9he4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o36c0@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 23 Keat Hong (7)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 23 Keat Hong (7) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_188fghgcjumm4iqdhkeaq97l2b9he4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o36c0@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "c_18827ffkf05qahi2jcbct9mb3ftm04gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270oj2c0@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 33 Dolomites- External (7)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 33 Dolomites- External (7) [GVC, Not Wheelchair Accessible]",
+    "email": "c_18827ffkf05qahi2jcbct9mb3ftm04gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270oj2c0@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f365f3661336b@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-Twynam (4)",
+    "full_name": "AU-SYD-PIR-6-A-Twynam (4) [GVC]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f365f3661336b@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_1886jiupqc3dsilbnh5qsjo3n4dc24gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3gd8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Hillview 1 Phone Room (1)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Hillview 1 Phone Room (1) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_1886jiupqc3dsilbnh5qsjo3n4dc24gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3gd8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "c_188096hp35cqagjojc0m886inejqa@resource.calendar.google.com": {
+    "name": "PH-MNL-NETP-38-4-Katha (6)",
+    "full_name": "PH-MNL-NETP-38-4-Katha (6) [GVC]",
+    "email": "c_188096hp35cqagjojc0m886inejqa@resource.calendar.google.com",
+    "building": "PH-MNL-NETP",
+    "floor": 38,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "c_1880sva6d66ishnci1g8qt8erj3a8@resource.calendar.google.com": {
+    "name": "PH-MNL-NETP-38-4-Padayon (6)",
+    "full_name": "PH-MNL-NETP-38-4-Padayon (6) [GVC]",
+    "email": "c_1880sva6d66ishnci1g8qt8erj3a8@resource.calendar.google.com",
+    "building": "PH-MNL-NETP",
+    "floor": 38,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "c_1889sma28n6ecgr0jmai9sjmhl9so4gactnmuprcckn66rrd@resource.calendar.google.com": {
+    "name": "UK-LON-S2-7-2-Ride (12)",
+    "full_name": "UK-LON-S2-7-2-Ride (12) [GVC]",
+    "email": "c_1889sma28n6ecgr0jmai9sjmhl9so4gactnmuprcckn66rrd@resource.calendar.google.com",
+    "building": "UK-LON-S2",
+    "floor": 7,
+    "type": "conference_room",
+    "capacity": 12
+  },
+  "c_188c72kdngruggp4h0tqh3pj0i3kg@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGD-10-5-Vadodara (8)",
+    "full_name": "IN-GUR-SIGD-10-5-Vadodara (8)",
+    "email": "c_188c72kdngruggp4h0tqh3pj0i3kg@resource.calendar.google.com",
+    "building": "IN-GUR-SIGD",
+    "floor": 10,
+    "type": "meeting_room",
+    "capacity": 8
+  },
+  "google.com_726f6f6d5f73675f73696e5f6d6263325f395f396238303431@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-9-B-B80 29 Galaxy-External (13)",
+    "full_name": "SG-SIN-MBC2-9-B-B80 29 Galaxy-External (13) [GVC]",
+    "email": "google.com_726f6f6d5f73675f73696e5f6d6263325f395f396238303431@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 9,
+    "type": "conference_room",
+    "capacity": 13
+  },
+  "c_188ellk5l1lf2i4ejrgbsqkj3vr0c@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGD-10-4-Visakhapatnam (8)",
+    "full_name": "IN-GUR-SIGD-10-4-Visakhapatnam (8)",
+    "email": "c_188ellk5l1lf2i4ejrgbsqkj3vr0c@resource.calendar.google.com",
+    "building": "IN-GUR-SIGD",
+    "floor": 10,
+    "type": "meeting_room",
+    "capacity": 8
+  },
+  "c_188b7i7fff4bij9vmttb2vh7mrlo6@resource.calendar.google.com": {
+    "name": "FI-HEL-ARK6-3-E-Phone Room (2)",
+    "full_name": "FI-HEL-ARK6-3-E-Phone Room (2) [GVC]",
+    "email": "c_188b7i7fff4bij9vmttb2vh7mrlo6@resource.calendar.google.com",
+    "building": "FI-HEL-ARK6",
+    "floor": 3,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f365f36613463@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-Unnamed Peak SW of Abbott Peak (3)",
+    "full_name": "AU-SYD-PIR-6-A-Unnamed Peak SW of Abbott Peak (3) [GVC]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f365f36613463@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 3
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f365f3661336c@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-Rams Head (4)",
+    "full_name": "AU-SYD-PIR-6-A-Rams Head (4) [GVC]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f365f3661336c@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f345f3461336e@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-4-A-Yottabyte (2)",
+    "full_name": "AU-SYD-PIR-4-A-Yottabyte (2) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f345f3461336e@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "c_1882l2e0a34rqhu4m2jbkrjmq497e@resource.calendar.google.com": {
+    "name": "IN-BLR-BCPWK-2-0-202 Back in Black (1)",
+    "full_name": "IN-BLR-BCPWK-2-0-202 Back in Black (1) [GVC]",
+    "email": "c_1882l2e0a34rqhu4m2jbkrjmq497e@resource.calendar.google.com",
+    "building": "IN-BLR-BCPWK",
+    "floor": 2,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_188cra9rm1s7ghf4il9ibe4kubotg@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGD-10-0-Veraval (1)",
+    "full_name": "IN-GUR-SIGD-10-0-Veraval (1)",
+    "email": "c_188cra9rm1s7ghf4il9ibe4kubotg@resource.calendar.google.com",
+    "building": "IN-GUR-SIGD",
+    "floor": 10,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f365f36613369@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-Terrain (13)",
+    "full_name": "AU-SYD-PIR-6-A-Terrain (13) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f365f36613369@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "conference_room",
+    "capacity": 13
+  },
+  "c_18885omp626h0hnuhgeusp5gin86q@resource.calendar.google.com": {
+    "name": "KR-SEO-GFC-20-5-20S-15-Phone G (1)",
+    "full_name": "KR-SEO-GFC-20-5-20S-15-Phone G (1) [GVC, No External Guests]",
+    "email": "c_18885omp626h0hnuhgeusp5gin86q@resource.calendar.google.com",
+    "building": "KR-SEO-GFC",
+    "floor": 20,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f335f333938@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-3-9-Just Waiting For A Mate (7)",
+    "full_name": "AU-SYD-PIR-3-9-Just Waiting For A Mate (7) [GVC, No External Guests, Phone]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f335f333938@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 3,
+    "type": "phone_booth",
+    "capacity": 7
+  },
+  "google.com_726f6f6d5f6d795f6b756c5f71696c375f32305f32303232@resource.calendar.google.com": {
+    "name": "MY-KUL-QIL7-20-2-Atas (12)",
+    "full_name": "MY-KUL-QIL7-20-2-Atas (12) [GVC, Phone]",
+    "email": "google.com_726f6f6d5f6d795f6b756c5f71696c375f32305f32303232@resource.calendar.google.com",
+    "building": "MY-KUL-QIL7",
+    "floor": 20,
+    "type": "phone_booth",
+    "capacity": 12
+  },
+  "google.com_726f6f6d5f756b5f6c6f6e5f3670735f355f356536@resource.calendar.google.com": {
+    "name": "UK-LON-6PS-5-E-Loaf - No Externals (2)",
+    "full_name": "UK-LON-6PS-5-E-Loaf - No Externals (2) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f756b5f6c6f6e5f3670735f355f356536@resource.calendar.google.com",
+    "building": "UK-LON-6PS",
+    "floor": 5,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "c_188d2sih71agshskj8tvfpdffitnq4gactnmuprcckn66rrd@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-5-B-B70 Orchard 7 Phone Room (1)",
+    "full_name": "SG-SIN-MBC2-5-B-B70 Orchard 7 Phone Room (1) [GVC, No External Guests, Phone]",
+    "email": "c_188d2sih71agshskj8tvfpdffitnq4gactnmuprcckn66rrd@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 5,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "c_1889djoip8500j5pj9p7164joedle@resource.calendar.google.com": {
+    "name": "KR-SEO-GFC-12-2-12N-13-Glade (6)",
+    "full_name": "KR-SEO-GFC-12-2-12N-13-Glade (6) [GVC]",
+    "email": "c_1889djoip8500j5pj9p7164joedle@resource.calendar.google.com",
+    "building": "KR-SEO-GFC",
+    "floor": 12,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f345f34613466@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-4-A-Akzidenz Grotesk (1)",
+    "full_name": "AU-SYD-PIR-4-A-Akzidenz Grotesk (1) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f345f34613466@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_1884h0bc58tpkgg5neoc7bsl8o78c4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi71fj4e3270o3id8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-28-B-B80 31 Indus Valley - External (15)",
+    "full_name": "SG-SIN-MBC2-28-B-B80 31 Indus Valley - External (15) [GVC, Not Wheelchair Accessible]",
+    "email": "c_1884h0bc58tpkgg5neoc7bsl8o78c4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi71fj4e3270o3id8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 28,
+    "type": "conference_room",
+    "capacity": 15
+  },
+  "c_188bbllv8rsb6hn9ku2igto8g1vu24gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o30c0@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 35 Iguazu Falls - External (7)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 35 Iguazu Falls - External (7) [GVC, Not Wheelchair Accessible]",
+    "email": "c_188bbllv8rsb6hn9ku2igto8g1vu24gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o30c0@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "c_1887k232b2ohohc6jsn1rri45us2o@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-28-B-William Farquhar (4)",
+    "full_name": "SG-SIN-MBC2-28-B-William Farquhar (4)",
+    "email": "c_1887k232b2ohohc6jsn1rri45us2o@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 28,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_188bk81ercensg76glsd1a49hf5j0@resource.calendar.google.com": {
+    "name": "CA-TOR-KING65-9-E-Terra Nova (1)",
+    "full_name": "CA-TOR-KING65-9-E-Terra Nova (1) [GVC]",
+    "email": "c_188bk81ercensg76glsd1a49hf5j0@resource.calendar.google.com",
+    "building": "CA-TOR-KING65",
+    "floor": 9,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_1883hqlh6gu8sj89kpa0g3aooqu1c@resource.calendar.google.com": {
+    "name": "CA-OTT-QUEEN222-10-1-The Hill (12)",
+    "full_name": "CA-OTT-QUEEN222-10-1-The Hill (12)",
+    "email": "c_1883hqlh6gu8sj89kpa0g3aooqu1c@resource.calendar.google.com",
+    "building": "CA-OTT-QUEEN222",
+    "floor": 10,
+    "type": "conference_room",
+    "capacity": 12
+  },
+  "google.com_726f6f6d5f64655f6265725f74736b79325f315f3162313036@resource.calendar.google.com": {
+    "name": "DE-BER-TSKY2-1-B-Achtung Baby (2)",
+    "full_name": "DE-BER-TSKY2-1-B-Achtung Baby (2) [GVC, Phone]",
+    "email": "google.com_726f6f6d5f64655f6265725f74736b79325f315f3162313036@resource.calendar.google.com",
+    "building": "DE-BER-TSKY2",
+    "floor": 1,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_18857kqfpo76ogmbj4r40fl7bhtcu4gactnmuprcckn66rrd@resource.calendar.google.com": {
+    "name": "MY-KUL-QIL7-20-7-Borak Borak (4)",
+    "full_name": "MY-KUL-QIL7-20-7-Borak Borak (4) [GVC, Phone]",
+    "email": "c_18857kqfpo76ogmbj4r40fl7bhtcu4gactnmuprcckn66rrd@resource.calendar.google.com",
+    "building": "MY-KUL-QIL7",
+    "floor": 20,
+    "type": "phone_booth",
+    "capacity": 4
+  },
+  "c_188elqqnosca2hu3nof89mu5f6od84gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npj61fj6c3270o30e0@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-30-B-B80 9 Zerzura - External (7)",
+    "full_name": "SG-SIN-MBC2-30-B-B80 9 Zerzura - External (7) [GVC, Not Wheelchair Accessible]",
+    "email": "c_188elqqnosca2hu3nof89mu5f6od84gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npj61fj6c3270o30e0@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 30,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "google.com_726f6f6d5f69655f6475625f67726371315f355f353230@resource.calendar.google.com": {
+    "name": "IE-DUB-GRCQ1-5-2-AT-AT (2)",
+    "full_name": "IE-DUB-GRCQ1-5-2-AT-AT (2) [GVC, Phone]",
+    "email": "google.com_726f6f6d5f69655f6475625f67726371315f355f353230@resource.calendar.google.com",
+    "building": "IE-DUB-GRCQ1",
+    "floor": 5,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f69655f6475625f67726371315f355f353435@resource.calendar.google.com": {
+    "name": "IE-DUB-GRCQ1-5-4-Captain Janeway (2)",
+    "full_name": "IE-DUB-GRCQ1-5-4-Captain Janeway (2) [GVC, No External Guests, Phone]",
+    "email": "google.com_726f6f6d5f69655f6475625f67726371315f355f353435@resource.calendar.google.com",
+    "building": "IE-DUB-GRCQ1",
+    "floor": 5,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_1885e8ck3vi06g4kll432sji6d51u@resource.calendar.google.com": {
+    "name": "ES-BCN-GRA-1-B-La Rambla (6)",
+    "full_name": "ES-BCN-GRA-1-B-La Rambla (6) [GVC]",
+    "email": "c_1885e8ck3vi06g4kll432sji6d51u@resource.calendar.google.com",
+    "building": "ES-BCN-GRA",
+    "floor": 1,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "google.com_726f6f6d5f756b5f6c6f6e5f6373675f365f363133@resource.calendar.google.com": {
+    "name": "UK-LON-CSG-6-1-Gooseberry (11)",
+    "full_name": "UK-LON-CSG-6-1-Gooseberry (11) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "google.com_726f6f6d5f756b5f6c6f6e5f6373675f365f363133@resource.calendar.google.com",
+    "building": "UK-LON-CSG",
+    "floor": 6,
+    "type": "conference_room",
+    "capacity": 11
+  },
+  "c_1884quj6jgdq0g17i3ooihil2d3k24gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o34d8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 24 Petir (5)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 24 Petir (5) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_1884quj6jgdq0g17i3ooihil2d3k24gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o34d8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "meeting_room",
+    "capacity": 5
+  },
+  "google.com_726f6f6d5f75735f626c645f706561726c323933305f345f34623033@resource.calendar.google.com": {
+    "name": "US-BLD-PEARL2930-4-B-High Noon (1)",
+    "full_name": "US-BLD-PEARL2930-4-B-High Noon (1) [GVC]",
+    "email": "google.com_726f6f6d5f75735f626c645f706561726c323933305f345f34623033@resource.calendar.google.com",
+    "building": "US-BLD-PEARL2930",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_1880dpfu2a7vehbsl0aqk45ja1kji4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npj61fj6c3270o32co@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-30-B-B80 5 Avalon - External (5)",
+    "full_name": "SG-SIN-MBC2-30-B-B80 5 Avalon - External (5) [GVC, Not Wheelchair Accessible]",
+    "email": "c_1880dpfu2a7vehbsl0aqk45ja1kji4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npj61fj6c3270o32co@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 30,
+    "type": "meeting_room",
+    "capacity": 5
+  },
+  "c_188c95k4qo7tejran16vpjfiqbdhi4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npj61fj6c3270o32cg@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-30-B-B80 7 El Dorado - External (7)",
+    "full_name": "SG-SIN-MBC2-30-B-B80 7 El Dorado - External (7) [GVC, Not Wheelchair Accessible]",
+    "email": "c_188c95k4qo7tejran16vpjfiqbdhi4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npj61fj6c3270o32cg@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 30,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "google.com_726f6f6d5f696e5f6775725f7369675f325f323436@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGB-2-4-Smash (4)",
+    "full_name": "IN-GUR-SIGB-2-4-Smash (4) [GVC]",
+    "email": "google.com_726f6f6d5f696e5f6775725f7369675f325f323436@resource.calendar.google.com",
+    "building": "IN-GUR-SIGB",
+    "floor": 2,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_1886e6st58cpkik1ndsj5n1vvc8r2@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGD-3-0-Cuttack (4)",
+    "full_name": "IN-GUR-SIGD-3-0-Cuttack (4)",
+    "email": "c_1886e6st58cpkik1ndsj5n1vvc8r2@resource.calendar.google.com",
+    "building": "IN-GUR-SIGD",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_1880kr2jp7j9ogr9mjt617puagnkm@resource.calendar.google.com": {
+    "name": "UK-LON-CSG-4-6-Phonebooth A3 (1)",
+    "full_name": "UK-LON-CSG-4-6-Phonebooth A3 (1) [GVC, Not Wheelchair Accessible]",
+    "email": "c_1880kr2jp7j9ogr9mjt617puagnkm@resource.calendar.google.com",
+    "building": "UK-LON-CSG",
+    "floor": 4,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "c_1886v6kusv9fuhn5m96ihmf6agf72@resource.calendar.google.com": {
+    "name": "KE-NBO-PROM-2-H-Nyali (1)",
+    "full_name": "KE-NBO-PROM-2-H-Nyali (1)",
+    "email": "c_1886v6kusv9fuhn5m96ihmf6agf72@resource.calendar.google.com",
+    "building": "KE-NBO-PROM",
+    "floor": 2,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_188bn22m1v5igg00krsudhmoee13m4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o34c0@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 27 Phone Room (2)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 27 Phone Room (2) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_188bn22m1v5igg00krsudhmoee13m4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o34c0@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "google.com_1886hnb9cfe6oj1alp5kkopsc83a66gne9nmuravd5i5uor7ddfn0orgbsq36npk6coj2@resource.calendar.google.com": {
+    "name": "ID-CGK-PCP-43-1-3 Pasar Papringan (4)",
+    "full_name": "ID-CGK-PCP-43-1-3 Pasar Papringan (4) [GVC, Not Wheelchair Accessible]",
+    "email": "google.com_1886hnb9cfe6oj1alp5kkopsc83a66gne9nmuravd5i5uor7ddfn0orgbsq36npk6coj2@resource.calendar.google.com",
+    "building": "ID-CGK-PCP",
+    "floor": 43,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_1887hdokiv386j5pljsdpliei58ca@resource.calendar.google.com": {
+    "name": "ES-BCN-GRA-1-A-Sagrada Fam\u00edlia (6)",
+    "full_name": "ES-BCN-GRA-1-A-Sagrada Fam\u00edlia (6) [GVC]",
+    "email": "c_1887hdokiv386j5pljsdpliei58ca@resource.calendar.google.com",
+    "building": "ES-BCN-GRA",
+    "floor": 1,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "google.com_726f6f6d5f6b725f73656f5f6766635f32305f32303639@resource.calendar.google.com": {
+    "name": "KR-SEO-GFC-20-6-20N-13-Cooking Studio (8)",
+    "full_name": "KR-SEO-GFC-20-6-20N-13-Cooking Studio (8) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f6b725f73656f5f6766635f32305f32303639@resource.calendar.google.com",
+    "building": "KR-SEO-GFC",
+    "floor": 20,
+    "type": "meeting_room",
+    "capacity": 8
+  },
+  "c_1889fcqmf1mgkieon468bnrqv99bg@resource.calendar.google.com": {
+    "name": "PH-MNL-NETP-38-3-Himig (4)",
+    "full_name": "PH-MNL-NETP-38-3-Himig (4) [GVC, No External Guests]",
+    "email": "c_1889fcqmf1mgkieon468bnrqv99bg@resource.calendar.google.com",
+    "building": "PH-MNL-NETP",
+    "floor": 38,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_1883bka3lr9tehppinvgammm9s84m@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGD-10-5-Varanasi (8)",
+    "full_name": "IN-GUR-SIGD-10-5-Varanasi (8) [GVC]",
+    "email": "c_1883bka3lr9tehppinvgammm9s84m@resource.calendar.google.com",
+    "building": "IN-GUR-SIGD",
+    "floor": 10,
+    "type": "meeting_room",
+    "capacity": 8
+  },
+  "c_188ei28edncjugs7jgq96cg5pqsa64gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi71fj4e3270o3ce8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-28-B-B80 Tiong Bahru 5 Phone Room (2)",
+    "full_name": "SG-SIN-MBC2-28-B-B80 Tiong Bahru 5 Phone Room (2) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_188ei28edncjugs7jgq96cg5pqsa64gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi71fj4e3270o3ce8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 28,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_188cmfr9bp4csg3tnddqmo6177lsc@resource.calendar.google.com": {
+    "name": "Block 11B-1-Level 1-Agile (10)",
+    "full_name": "Block 11B-1-Level 1-Agile (10)",
+    "email": "c_188cmfr9bp4csg3tnddqmo6177lsc@resource.calendar.google.com",
+    "building": "MY-KUL-QIL7",
+    "floor": 20,
+    "type": "conference_room",
+    "capacity": 10
+  },
+  "google.com_726f6f6d5f73675f73696e5f6d6263325f365f366236303139@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-6-B-B60 30 Tokyo Tower-External (11)",
+    "full_name": "SG-SIN-MBC2-6-B-B60 30 Tokyo Tower-External (11) [GVC]",
+    "email": "google.com_726f6f6d5f73675f73696e5f6d6263325f365f366236303139@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 6,
+    "type": "conference_room",
+    "capacity": 11
+  },
+  "c_188dj27o7851uhhujmak002qco44k4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi6tfj4dr270o3ie0@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-27-B-B80 27 Phone Room (2)",
+    "full_name": "SG-SIN-MBC2-27-B-B80 27 Phone Room (2) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_188dj27o7851uhhujmak002qco44k4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi6tfj4dr270o3ie0@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 27,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_1883jl6knqtqci31ksum6baqkd4te@resource.calendar.google.com": {
+    "name": "PH-MNL-NETP-38-2-Ugnay (2)",
+    "full_name": "PH-MNL-NETP-38-2-Ugnay (2) [No External Guests]",
+    "email": "c_1883jl6knqtqci31ksum6baqkd4te@resource.calendar.google.com",
+    "building": "PH-MNL-NETP",
+    "floor": 38,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f756b5f6c6f6e5f3670735f365f366135@resource.calendar.google.com": {
+    "name": "UK-LON-6PS-6-A-Apple Crumble - No Externals (20)",
+    "full_name": "UK-LON-6PS-6-A-Apple Crumble - No Externals (20) [GVC, Jamboard, No External Guests]",
+    "email": "google.com_726f6f6d5f756b5f6c6f6e5f3670735f365f366135@resource.calendar.google.com",
+    "building": "UK-LON-6PS",
+    "floor": 6,
+    "type": "conference_room",
+    "capacity": 20
+  },
+  "c_188b45eretu80h6picsbja83ivi2o@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-32-H-Eight Eight Eight (10)",
+    "full_name": "AU-MEL-MQT-32-H-Eight Eight Eight (10) [GVC]",
+    "email": "c_188b45eretu80h6picsbja83ivi2o@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 32,
+    "type": "conference_room",
+    "capacity": 10
+  },
+  "google.com_726f6f6d5f61755f7379645f6f64695f335f333168@resource.calendar.google.com": {
+    "name": "AU-SYD-ODI-3-417 - Expectation Failed (2)",
+    "full_name": "AU-SYD-ODI-3-417 - Expectation Failed (2) [GVC, No External Guests, Not Wheelchair Accessible, Phone]",
+    "email": "google.com_726f6f6d5f61755f7379645f6f64695f335f333168@resource.calendar.google.com",
+    "building": "AU-SYD-ODI",
+    "floor": 3,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_1880c1krn6gq8g8hnndpq9eec26i2@resource.calendar.google.com": {
+    "name": "IN-BLR-ANANTA-11-D-Thiruvalluvar (5)",
+    "full_name": "IN-BLR-ANANTA-11-D-Thiruvalluvar (5) [GVC]",
+    "email": "c_1880c1krn6gq8g8hnndpq9eec26i2@resource.calendar.google.com",
+    "building": "IN-BLR-ANANTA",
+    "floor": 11,
+    "type": "meeting_room",
+    "capacity": 5
+  },
+  "c_1883v4fnbdd50gvvhbb4btln3srpq4gactnmuprcckn66rrd@resource.calendar.google.com": {
+    "name": "UK-LON-S2-7-4-Pascal (2)",
+    "full_name": "UK-LON-S2-7-4-Pascal (2) [GVC, Phone]",
+    "email": "c_1883v4fnbdd50gvvhbb4btln3srpq4gactnmuprcckn66rrd@resource.calendar.google.com",
+    "building": "UK-LON-S2",
+    "floor": 7,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f335f333136@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-3-1-Not Available In Your Country (7)",
+    "full_name": "AU-SYD-PIR-3-1-Not Available In Your Country (7) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f335f333136@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "c_188cof2e8lsigindj12t3chq5fuu8@resource.calendar.google.com": {
+    "name": "NZ-AKL-MAD10-6-C-Blue Lake (1)",
+    "full_name": "NZ-AKL-MAD10-6-C-Blue Lake (1) [GVC]",
+    "email": "c_188cof2e8lsigindj12t3chq5fuu8@resource.calendar.google.com",
+    "building": "NZ-AKL-MAD10",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "google.com_18888vlu4vb9egi9jafq2eknvldoo6gke9nmuravelllur3fdpfn4dqv6dfj6c9m@resource.calendar.google.com": {
+    "name": "UK-LON-R7-3-1-Cunliffe (6)",
+    "full_name": "UK-LON-R7-3-1-Cunliffe (6) [GVC]",
+    "email": "google.com_18888vlu4vb9egi9jafq2eknvldoo6gke9nmuravelllur3fdpfn4dqv6dfj6c9m@resource.calendar.google.com",
+    "building": "UK-LON-R7",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "c_1885hejjju3guiq7hh4dm9oktpu0o@resource.calendar.google.com": {
+    "name": "IN-BLR-ANANTA-11-C-Swaminathan (2)",
+    "full_name": "IN-BLR-ANANTA-11-C-Swaminathan (2) [GVC]",
+    "email": "c_1885hejjju3guiq7hh4dm9oktpu0o@resource.calendar.google.com",
+    "building": "IN-BLR-ANANTA",
+    "floor": 11,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "google.com_1887u8vqkd1v6j7jgqvn6peqkh3r26gke9nmuravelllur3fdpfn4dqv6dfj6cpi@resource.calendar.google.com": {
+    "name": "UK-LON-R7-3-3-Goldman-Rakic (1)",
+    "full_name": "UK-LON-R7-3-3-Goldman-Rakic (1) [GVC, Phone]",
+    "email": "google.com_1887u8vqkd1v6j7jgqvn6peqkh3r26gke9nmuravelllur3fdpfn4dqv6dfj6cpi@resource.calendar.google.com",
+    "building": "UK-LON-R7",
+    "floor": 3,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f756b5f6c6f6e5f6373675f335f333035@resource.calendar.google.com": {
+    "name": "UK-LON-CSG-3-0-The Works 4 (2)",
+    "full_name": "UK-LON-CSG-3-0-The Works 4 (2) [GVC, Preview]",
+    "email": "google.com_726f6f6d5f756b5f6c6f6e5f6373675f335f333035@resource.calendar.google.com",
+    "building": "UK-LON-CSG",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f365f3661366b@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-Avalon (9)",
+    "full_name": "AU-SYD-PIR-6-A-Avalon (9) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f365f3661366b@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 9
+  },
+  "c_1883mbdlud37ei06liop8qprohf4i4gactnmuprcckn66rrd38dn4rrfdlfm6rivedt7gnr8eljjac1g65fj6cav6coj0c8@resource.calendar.google.com": {
+    "name": "CN-SZX-HUG5001-31-0-01 Da Ding Ling Mountain (2)",
+    "full_name": "CN-SZX-HUG5001-31-0-01 Da Ding Ling Mountain (2) [GVC]",
+    "email": "c_1883mbdlud37ei06liop8qprohf4i4gactnmuprcckn66rrd38dn4rrfdlfm6rivedt7gnr8eljjac1g65fj6cav6coj0c8@resource.calendar.google.com",
+    "building": "CN-SZX-HUG5001",
+    "floor": 31,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "c_188e4ldbco9guggqkkgjjs38be3844gactnmuprcckn66rrd38an4rrfdlfm6rive1immnricdh5ue2v70rj8@resource.calendar.google.com": {
+    "name": "CN-PEK-RCB-8-7-16 Phone Room (2)",
+    "full_name": "CN-PEK-RCB-8-7-16 Phone Room (2) [GVC, Not Wheelchair Accessible, Phone]",
+    "email": "c_188e4ldbco9guggqkkgjjs38be3844gactnmuprcckn66rrd38an4rrfdlfm6rive1immnricdh5ue2v70rj8@resource.calendar.google.com",
+    "building": "CN-PEK-RCB",
+    "floor": 8,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f69655f6475625f67726371315f345f343438@resource.calendar.google.com": {
+    "name": "IE-DUB-GRCQ1-4-4-Scotty (2)",
+    "full_name": "IE-DUB-GRCQ1-4-4-Scotty (2) [GVC, No External Guests, Phone]",
+    "email": "google.com_726f6f6d5f69655f6475625f67726371315f345f343438@resource.calendar.google.com",
+    "building": "IE-DUB-GRCQ1",
+    "floor": 4,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "google.com_1883g1t2a5liejo0g5ae4fbl3fph26goe9nmuravd9o5ut3fddfn6t3idlfj4eav68sjadg@resource.calendar.google.com": {
+    "name": "JP-TOK-STRM-29-5-07 Gosurori-Internal (10)",
+    "full_name": "JP-TOK-STRM-29-5-07 Gosurori-Internal (10) [GVC, No External Guests]",
+    "email": "google.com_1883g1t2a5liejo0g5ae4fbl3fph26goe9nmuravd9o5ut3fddfn6t3idlfj4eav68sjadg@resource.calendar.google.com",
+    "building": "JP-TOK-STRM",
+    "floor": 29,
+    "type": "conference_room",
+    "capacity": 10
+  },
+  "google.com_726f6f6d5f73675f73696e5f6d6263325f31305f31306238303336@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-10-B-B80 Fort Canning 10 Cannons (6)",
+    "full_name": "SG-SIN-MBC2-10-B-B80 Fort Canning 10 Cannons (6) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f73675f73696e5f6d6263325f31305f31306238303336@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 10,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "c_1886k9jn89cnuglji5f898uc6rdfm4gactnmuprcckn66rrd38an4rrfdlfm6rive1immnricdh5ue2v70qjg@resource.calendar.google.com": {
+    "name": "CN-PEK-RCB-8-5-13 Tabs (4)",
+    "full_name": "CN-PEK-RCB-8-5-13 Tabs (4) [GVC]",
+    "email": "c_1886k9jn89cnuglji5f898uc6rdfm4gactnmuprcckn66rrd38an4rrfdlfm6rive1immnricdh5ue2v70qjg@resource.calendar.google.com",
+    "building": "CN-PEK-RCB",
+    "floor": 8,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "google.com_726f6f6d5f74685f626b6b5f7076655f31345f31343430@resource.calendar.google.com": {
+    "name": "TH-BKK-PVE-14-4-Koh Chang (7)",
+    "full_name": "TH-BKK-PVE-14-4-Koh Chang (7) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f74685f626b6b5f7076655f31345f31343430@resource.calendar.google.com",
+    "building": "TH-BKK-PVE",
+    "floor": 14,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "google.com_18835mumprd92gccncdj5vl2ie5so6gpe9nmuravedjlusr9dpfmqoj369fjanplc8s30d1n@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-5-B-B80 Canberra 13 Jeruju (5)",
+    "full_name": "SG-SIN-MBC2-5-B-B80 Canberra 13 Jeruju (5) [GVC, No External Guests]",
+    "email": "google.com_18835mumprd92gccncdj5vl2ie5so6gpe9nmuravedjlusr9dpfmqoj369fjanplc8s30d1n@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 5,
+    "type": "meeting_room",
+    "capacity": 5
+  },
+  "c_1884jph4j2e4ahd3ip8ehgsq6d2pc@resource.calendar.google.com": {
+    "name": "PH-MNL-NETP-38-1-Visayas (4)",
+    "full_name": "PH-MNL-NETP-38-1-Visayas (4) [GVC, No External Guests]",
+    "email": "c_1884jph4j2e4ahd3ip8ehgsq6d2pc@resource.calendar.google.com",
+    "building": "PH-MNL-NETP",
+    "floor": 38,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_1883srbno3st0jdjlnj7iev1e655u4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3gdg@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Hillview 2 Phone Room (1)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Hillview 2 Phone Room (1) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_1883srbno3st0jdjlnj7iev1e655u4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3gdg@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "c_1881uj9kh3vmki0bioh1hdsdhkk6m4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npj61fj6c3270o32e8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-30-B-B80 1 Phone Room - External (2)",
+    "full_name": "SG-SIN-MBC2-30-B-B80 1 Phone Room - External (2) [GVC, Not Wheelchair Accessible]",
+    "email": "c_1881uj9kh3vmki0bioh1hdsdhkk6m4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npj61fj6c3270o32e8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 30,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_188bqdgbcjgvcj1fm60ej49c6khdg@resource.calendar.google.com": {
+    "name": "IN-GUR-TRILB-10-5-Beowawe (1)",
+    "full_name": "IN-GUR-TRILB-10-5-Beowawe (1)",
+    "email": "c_188bqdgbcjgvcj1fm60ej49c6khdg@resource.calendar.google.com",
+    "building": "IN-GUR-TRILB",
+    "floor": 10,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_188fvokgocavohijh6o05roml6hvq@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-32-F-I'd Line Up for That (1)",
+    "full_name": "AU-MEL-MQT-32-F-I'd Line Up for That (1) [GVC]",
+    "email": "c_188fvokgocavohijh6o05roml6hvq@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 32,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f6b725f73656f5f6766635f32305f32303830@resource.calendar.google.com": {
+    "name": "KR-SEO-GFC-20-8-20N-10-Glass Cube (3)",
+    "full_name": "KR-SEO-GFC-20-8-20N-10-Glass Cube (3) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f6b725f73656f5f6766635f32305f32303830@resource.calendar.google.com",
+    "building": "KR-SEO-GFC",
+    "floor": 20,
+    "type": "meeting_room",
+    "capacity": 3
+  },
+  "google.com_726f6f6d5f74775f7470655f3130315f37355f37353539@resource.calendar.google.com": {
+    "name": "TW-TPE-101-75-5-07 Cardboard (6)",
+    "full_name": "TW-TPE-101-75-5-07 Cardboard (6) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f74775f7470655f3130315f37355f37353539@resource.calendar.google.com",
+    "building": "TW-TPE-101",
+    "floor": 75,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "c_188622vpulv4khcmmdaf57c3ip42i@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGD-9-0-Solan (1)",
+    "full_name": "IN-GUR-SIGD-9-0-Solan (1)",
+    "email": "c_188622vpulv4khcmmdaf57c3ip42i@resource.calendar.google.com",
+    "building": "IN-GUR-SIGD",
+    "floor": 9,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "google.com_188f1ttp12c0uir0hv6i0koobo30i6gke9nmuravelllur3fdpfn4dqv6dfj6c9l@resource.calendar.google.com": {
+    "name": "UK-LON-R7-3-1-Clarke (6)",
+    "full_name": "UK-LON-R7-3-1-Clarke (6) [GVC]",
+    "email": "google.com_188f1ttp12c0uir0hv6i0koobo30i6gke9nmuravelllur3fdpfn4dqv6dfj6c9l@resource.calendar.google.com",
+    "building": "UK-LON-R7",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "google.com_1886vtj61p98ggdsijgq4m0b2gb286gpe9nmuravedjlusr9dpfmqoj369fjanplc8s30c1j@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-5-B-B80 26 Wetlands-External (HMR) (13)",
+    "full_name": "SG-SIN-MBC2-5-B-B80 26 Wetlands-External (HMR) (13) [GVC, Markerboard Camera]",
+    "email": "google.com_1886vtj61p98ggdsijgq4m0b2gb286gpe9nmuravedjlusr9dpfmqoj369fjanplc8s30c1j@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 5,
+    "type": "conference_room",
+    "capacity": 13
+  },
+  "c_188ck41ogghfsjgbhqq1qi6p02h6e@resource.calendar.google.com": {
+    "name": "NZ-AKL-MAD10-6-C-Kea Point (1)",
+    "full_name": "NZ-AKL-MAD10-6-C-Kea Point (1) [GVC]",
+    "email": "c_188ck41ogghfsjgbhqq1qi6p02h6e@resource.calendar.google.com",
+    "building": "NZ-AKL-MAD10",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f355f35613064@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-5-A-Men At Work (7)",
+    "full_name": "AU-SYD-PIR-5-A-Men At Work (7) [GVC]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f355f35613064@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 5,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "google.com_188anci31pjsaiq7nb2a10dr6q8lq6gme9nmuravelplusr5c5fm4sjebsp5ucj268s0@resource.calendar.google.com": {
+    "name": "US-SEA-BRN-2-B-Gibraltar (7)",
+    "full_name": "US-SEA-BRN-2-B-Gibraltar (7) [GVC]",
+    "email": "google.com_188anci31pjsaiq7nb2a10dr6q8lq6gme9nmuravelplusr5c5fm4sjebsp5ucj268s0@resource.calendar.google.com",
+    "building": "US-SEA-BRN",
+    "floor": 2,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "c_188cl5hn2je9mh42ibgbr1lo626ls@resource.calendar.google.com": {
+    "name": "NZ-AKL-MAD10-6-C-Sealy Tarns (2)",
+    "full_name": "NZ-AKL-MAD10-6-C-Sealy Tarns (2) [GVC]",
+    "email": "c_188cl5hn2je9mh42ibgbr1lo626ls@resource.calendar.google.com",
+    "building": "NZ-AKL-MAD10",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "c_1887ojd7jkpnii6vnunncs0dvuqqa@resource.calendar.google.com": {
+    "name": "NZ-AKL-MAD10-6-C-Ridge Rider (2)",
+    "full_name": "NZ-AKL-MAD10-6-C-Ridge Rider (2) [GVC]",
+    "email": "c_1887ojd7jkpnii6vnunncs0dvuqqa@resource.calendar.google.com",
+    "building": "NZ-AKL-MAD10",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "c_1885ctbd39kqgiumj3i66io6menio@resource.calendar.google.com": {
+    "name": "PH-MNL-NETP-38-1-Mindanao (4)",
+    "full_name": "PH-MNL-NETP-38-1-Mindanao (4) [GVC, No External Guests]",
+    "email": "c_1885ctbd39kqgiumj3i66io6menio@resource.calendar.google.com",
+    "building": "PH-MNL-NETP",
+    "floor": 38,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_1886bq5gtjcnej6mn2vi6tnmrish8@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGD-9-3-Tirupati (2)",
+    "full_name": "IN-GUR-SIGD-9-3-Tirupati (2)",
+    "email": "c_1886bq5gtjcnej6mn2vi6tnmrish8@resource.calendar.google.com",
+    "building": "IN-GUR-SIGD",
+    "floor": 9,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f365f36613364@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-Peak Alice Rawson (5)",
+    "full_name": "AU-SYD-PIR-6-A-Peak Alice Rawson (5) [GVC]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f365f36613364@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 5
+  },
+  "c_1882qgclt2i92jduma9eh7t4qncvk4gactnmuprcckn66rrd@resource.calendar.google.com": {
+    "name": "CN-SHA-WFC-22-4-10 Rosasite Pyrite (5)",
+    "full_name": "CN-SHA-WFC-22-4-10 Rosasite Pyrite (5) [GVC]",
+    "email": "c_1882qgclt2i92jduma9eh7t4qncvk4gactnmuprcckn66rrd@resource.calendar.google.com",
+    "building": "CN-SHA-WFC",
+    "floor": 22,
+    "type": "meeting_room",
+    "capacity": 5
+  },
+  "monash.edu_188cob65m6qgqg2jmgebnv4t2objm6gb6kr3adpj60r36c9h6s@resource.calendar.google.com": {
+    "name": "27 Chancellors Wlk, Clayton-1-116-Meeting room (5)",
+    "full_name": "27 Chancellors Wlk, Clayton-1-116-Meeting room (5)",
+    "email": "monash.edu_188cob65m6qgqg2jmgebnv4t2objm6gb6kr3adpj60r36c9h6s@resource.calendar.google.com",
+    "building": "OTHER",
+    "floor": 29,
+    "type": "meeting_room",
+    "capacity": 5
+  },
+  "c_1889i9f7tqg0ch0fja61lij332vv6@resource.calendar.google.com": {
+    "name": "US-MTV-43-1-B-Astrakhan (7)",
+    "full_name": "US-MTV-43-1-B-Astrakhan (7)",
+    "email": "c_1889i9f7tqg0ch0fja61lij332vv6@resource.calendar.google.com",
+    "building": "US-MTV-43",
+    "floor": 1,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "monash.edu_1889csq7a39qsi1bhjra9khvj7l3q6gb64p3ie9p64pj6e1n6c@resource.calendar.google.com": {
+    "name": "27 Chancellors Wlk, Clayton-1-101-James McNeill Room (16)",
+    "full_name": "27 Chancellors Wlk, Clayton-1-101-James McNeill Room (16)",
+    "email": "monash.edu_1889csq7a39qsi1bhjra9khvj7l3q6gb64p3ie9p64pj6e1n6c@resource.calendar.google.com",
+    "building": "OTHER",
+    "floor": 29,
+    "type": "conference_room",
+    "capacity": 16
+  },
+  "google.com_1881g2rh6jlaig5gir603842i1oqc6gke9nmuravelllur3fdpfn4dqv6dfj6d1j@resource.calendar.google.com": {
+    "name": "UK-LON-R7-3-4-Hamilton (1)",
+    "full_name": "UK-LON-R7-3-4-Hamilton (1) [GVC, Phone]",
+    "email": "google.com_1881g2rh6jlaig5gir603842i1oqc6gke9nmuravelllur3fdpfn4dqv6dfj6d1j@resource.calendar.google.com",
+    "building": "UK-LON-R7",
+    "floor": 3,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f756b5f6c6f6e5f3670735f325f326131@resource.calendar.google.com": {
+    "name": "UK-LON-6PS-2-A-Can I Stay For A While? You Can Stay Forever (8)",
+    "full_name": "UK-LON-6PS-2-A-Can I Stay For A While? You Can Stay Forever (8) [GVC, Markerboard Camera, No External Guests]",
+    "email": "google.com_726f6f6d5f756b5f6c6f6e5f3670735f325f326131@resource.calendar.google.com",
+    "building": "UK-LON-6PS",
+    "floor": 2,
+    "type": "meeting_room",
+    "capacity": 8
+  },
+  "c_188dokrm5lt6ggctiauefpubihmjs4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o36d8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 20 Fajar (5)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 20 Fajar (5) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_188dokrm5lt6ggctiauefpubihmjs4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o36d8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "meeting_room",
+    "capacity": 5
+  },
+  "c_1889a4snd9pligi7kkno5nfnkcsio@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-32-E-Not A Flat White In Sight (1)",
+    "full_name": "AU-MEL-MQT-32-E-Not A Flat White In Sight (1) [GVC]",
+    "email": "c_1889a4snd9pligi7kkno5nfnkcsio@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 32,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_18849eljddta4il6n5m9fua0p5g964gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ce8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Hillview 12 Phone Room (2)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Hillview 12 Phone Room (2) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_18849eljddta4il6n5m9fua0p5g964gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3ce8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "monash.edu_39393731343635353533@resource.calendar.google.com": {
+    "name": "738 Blackburn Rd, Clayton-1-118-Meeting Room (eSol) (8)",
+    "full_name": "738 Blackburn Rd, Clayton-1-118-Meeting Room (eSol) (8) [Zoom]",
+    "email": "monash.edu_39393731343635353533@resource.calendar.google.com",
+    "building": "OTHER",
+    "floor": 29,
+    "type": "meeting_room",
+    "capacity": 8
+  },
+  "c_1881o34eh99iiikkjdttrnvks0giq4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npj61fj6c3270o32do@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-30-B-B80 2 Phone Room - External (2)",
+    "full_name": "SG-SIN-MBC2-30-B-B80 2 Phone Room - External (2) [GVC, Not Wheelchair Accessible]",
+    "email": "c_1881o34eh99iiikkjdttrnvks0giq4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npj61fj6c3270o32do@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 30,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_188edq2pov014ilmhg0c857gh4oa24gactnmuprcckn66rrd@resource.calendar.google.com": {
+    "name": "AE-DXB-HUB2-4-0-Assia Djebar (1)",
+    "full_name": "AE-DXB-HUB2-4-0-Assia Djebar (1) [GVC]",
+    "email": "c_188edq2pov014ilmhg0c857gh4oa24gactnmuprcckn66rrd@resource.calendar.google.com",
+    "building": "AE-DXB-HUB2",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "google.com_18852t948huo6hchkmepechm53nqc6goe9nmuravd9o5ut3fddfn6t3idlfj4e2v68s36e0@resource.calendar.google.com": {
+    "name": "JP-TOK-STRM-28-3-28B-Internal (2)",
+    "full_name": "JP-TOK-STRM-28-3-28B-Internal (2) [GVC, No External Guests, Phone]",
+    "email": "google.com_18852t948huo6hchkmepechm53nqc6goe9nmuravd9o5ut3fddfn6t3idlfj4e2v68s36e0@resource.calendar.google.com",
+    "building": "JP-TOK-STRM",
+    "floor": 28,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_188cjb8pd9slogcfna96gg1vr84cq@resource.calendar.google.com": {
+    "name": "BR-SAO-SPCT-15-L-Ferradura (2)",
+    "full_name": "BR-SAO-SPCT-15-L-Ferradura (2) [GVC, No External Guests]",
+    "email": "c_188cjb8pd9slogcfna96gg1vr84cq@resource.calendar.google.com",
+    "building": "BR-SAO-SPCT",
+    "floor": 15,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f756b5f6c6f6e5f6373675f345f343761@resource.calendar.google.com": {
+    "name": "UK-LON-CSG-4-7-Aspen (1)",
+    "full_name": "UK-LON-CSG-4-7-Aspen (1) [GVC, Not Wheelchair Accessible]",
+    "email": "google.com_726f6f6d5f756b5f6c6f6e5f6373675f345f343761@resource.calendar.google.com",
+    "building": "UK-LON-CSG",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_1886s069i1nquh62i3922q70girjo@resource.calendar.google.com": {
+    "name": "US-WAS-CAP-8-F-Penn Quarter (1)",
+    "full_name": "US-WAS-CAP-8-F-Penn Quarter (1) [GVC]",
+    "email": "c_1886s069i1nquh62i3922q70girjo@resource.calendar.google.com",
+    "building": "US-WAS-CAP",
+    "floor": 8,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f365f36613765@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-Freshwater (2)",
+    "full_name": "AU-SYD-PIR-6-A-Freshwater (2) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f365f36613765@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f6b725f73656f5f6766635f32305f32303933@resource.calendar.google.com": {
+    "name": "KR-SEO-GFC-20-9-20N-04-Google Station (5)",
+    "full_name": "KR-SEO-GFC-20-9-20N-04-Google Station (5) [No External Guests]",
+    "email": "google.com_726f6f6d5f6b725f73656f5f6766635f32305f32303933@resource.calendar.google.com",
+    "building": "KR-SEO-GFC",
+    "floor": 20,
+    "type": "meeting_room",
+    "capacity": 5
+  },
+  "c_1880anatkvhp4j2kgm0hj909pca3k4gactnmuprcckn66rrd@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-3-B-Conference Room 3B8001",
+    "full_name": "SG-SIN-MBC2-3-B-Conference Room 3B8001 [GVC, Not Wheelchair Accessible]",
+    "email": "c_1880anatkvhp4j2kgm0hj909pca3k4gactnmuprcckn66rrd@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "c_1881g5i5s1qreiv8jr579d6c9vv90@resource.calendar.google.com": {
+    "name": "KR-SEO-GFC-20-9-20N-06-Phone B (1)",
+    "full_name": "KR-SEO-GFC-20-9-20N-06-Phone B (1) [GVC]",
+    "email": "c_1881g5i5s1qreiv8jr579d6c9vv90@resource.calendar.google.com",
+    "building": "KR-SEO-GFC",
+    "floor": 20,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "c_1883vk22lld82jo9kktc643uoo56e4gactnmuprcckn66rrd@resource.calendar.google.com": {
+    "name": "CN-SHA-WFC-20-0-02 Firefly (8)",
+    "full_name": "CN-SHA-WFC-20-0-02 Firefly (8) [GVC]",
+    "email": "c_1883vk22lld82jo9kktc643uoo56e4gactnmuprcckn66rrd@resource.calendar.google.com",
+    "building": "CN-SHA-WFC",
+    "floor": 20,
+    "type": "meeting_room",
+    "capacity": 8
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f365f36613064@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-Hayman (7)",
+    "full_name": "AU-SYD-PIR-6-A-Hayman (7) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f365f36613064@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "google.com_1885nfc93kj4uhabko35m5npnh1sg6gme9nmuravelplusr5c5fm4sjebsp5ucj26cq0@resource.calendar.google.com": {
+    "name": "US-SEA-BRN-2-B-Espresso (7)",
+    "full_name": "US-SEA-BRN-2-B-Espresso (7) [GVC, Phone]",
+    "email": "google.com_1885nfc93kj4uhabko35m5npnh1sg6gme9nmuravelplusr5c5fm4sjebsp5ucj26cq0@resource.calendar.google.com",
+    "building": "US-SEA-BRN",
+    "floor": 2,
+    "type": "phone_booth",
+    "capacity": 7
+  },
+  "monash.edu_188efs2cs1vd6j7onrlmi597ee0cq6gb6so38dhi64sj8chh6g@resource.calendar.google.com": {
+    "name": "27 Chancellors Wlk, Clayton-2-201-Meeting room (16)",
+    "full_name": "27 Chancellors Wlk, Clayton-2-201-Meeting room (16)",
+    "email": "monash.edu_188efs2cs1vd6j7onrlmi597ee0cq6gb6so38dhi64sj8chh6g@resource.calendar.google.com",
+    "building": "OTHER",
+    "floor": 29,
+    "type": "conference_room",
+    "capacity": 16
+  },
+  "c_188fqv9m1fbusj9ng6082d6ad742g4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o34c8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 26 Phone Room (2)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 26 Phone Room (2) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_188fqv9m1fbusj9ng6082d6ad742g4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o34c8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_1886c50qrvujmgbjlal3dlkdo1egs@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-32-F-Golden Oldie (1)",
+    "full_name": "AU-MEL-MQT-32-F-Golden Oldie (1) [GVC]",
+    "email": "c_1886c50qrvujmgbjlal3dlkdo1egs@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 32,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f335f333335@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-3-3-Round the Twist (4)",
+    "full_name": "AU-SYD-PIR-3-3-Round the Twist (4) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f335f333335@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_1882mbo0a5kh6i4hlqm47vgfrtcrg@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-10-B-Neram Streams (14)",
+    "full_name": "SG-SIN-MBC2-10-B-Neram Streams (14) [GVC]",
+    "email": "c_1882mbo0a5kh6i4hlqm47vgfrtcrg@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 10,
+    "type": "conference_room",
+    "capacity": 14
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f325f323436@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-2-4-Floppy Disk (9)",
+    "full_name": "AU-SYD-PIR-2-4-Floppy Disk (9) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f325f323436@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 2,
+    "type": "meeting_room",
+    "capacity": 9
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f325f323337@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-2-3-8-Track (2)",
+    "full_name": "AU-SYD-PIR-2-3-8-Track (2) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f325f323337@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 2,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f69655f6475625f67726371315f315f313135@resource.calendar.google.com": {
+    "name": "IE-DUB-GRCQ1-1-1-Connection (2)",
+    "full_name": "IE-DUB-GRCQ1-1-1-Connection (2) [GVC, Phone]",
+    "email": "google.com_726f6f6d5f69655f6475625f67726371315f315f313135@resource.calendar.google.com",
+    "building": "IE-DUB-GRCQ1",
+    "floor": 1,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_1884rr1gif9d6jfkg9qnont41snb0@resource.calendar.google.com": {
+    "name": "TH-BKK-PVE-16-3-Bang Pakok (1)",
+    "full_name": "TH-BKK-PVE-16-3-Bang Pakok (1) [GVC, No External Guests]",
+    "email": "c_1884rr1gif9d6jfkg9qnont41snb0@resource.calendar.google.com",
+    "building": "TH-BKK-PVE",
+    "floor": 16,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f325f323232@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-2-2-Vax 11-780 (2)",
+    "full_name": "AU-SYD-PIR-2-2-Vax 11-780 (2) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f325f323232@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 2,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "c_188bdq53lqloagmpjftcpkr1oqbpk@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGD-8-0-Osian (1)",
+    "full_name": "IN-GUR-SIGD-8-0-Osian (1)",
+    "email": "c_188bdq53lqloagmpjftcpkr1oqbpk@resource.calendar.google.com",
+    "building": "IN-GUR-SIGD",
+    "floor": 8,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_188fnec24rj4cj62kirohf2jtcfam@resource.calendar.google.com": {
+    "name": "IN-MUM-FIFC-3-0-Surfing Ganpatipule (4)",
+    "full_name": "IN-MUM-FIFC-3-0-Surfing Ganpatipule (4) [GVC]",
+    "email": "c_188fnec24rj4cj62kirohf2jtcfam@resource.calendar.google.com",
+    "building": "IN-MUM-FIFC",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "google.com_726f6f6d5f73675f73696e5f6d6263325f375f376237303835@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-7-B-B70 1 Fuji (90)",
+    "full_name": "SG-SIN-MBC2-7-B-B70 1 Fuji (90) [GVC]",
+    "email": "google.com_726f6f6d5f73675f73696e5f6d6263325f375f376237303835@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 7,
+    "type": "conference_room",
+    "capacity": 90
+  },
+  "c_1886mchhg1otkh6em4kd2t6nn5bsk4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4nph65fj2cb270o3ce8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-11-B-B80 20 Blue Grotto - External (13)",
+    "full_name": "SG-SIN-MBC2-11-B-B80 20 Blue Grotto - External (13) [GVC]",
+    "email": "c_1886mchhg1otkh6em4kd2t6nn5bsk4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4nph65fj2cb270o3ce8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 11,
+    "type": "conference_room",
+    "capacity": 13
+  },
+  "google.com_726f6f6d5f73675f73696e5f6d6263325f385f386238303737@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-8-B-B80 29 Bromo (82)",
+    "full_name": "SG-SIN-MBC2-8-B-B80 29 Bromo (82) [GVC]",
+    "email": "google.com_726f6f6d5f73675f73696e5f6d6263325f385f386238303737@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 8,
+    "type": "conference_room",
+    "capacity": 82
+  },
+  "c_1881fd87autuqglgko4n0a87oss8i@resource.calendar.google.com": {
+    "name": "IN-MUM-FIFC-3-0-Yana Caves (1)",
+    "full_name": "IN-MUM-FIFC-3-0-Yana Caves (1)",
+    "email": "c_1881fd87autuqglgko4n0a87oss8i@resource.calendar.google.com",
+    "building": "IN-MUM-FIFC",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f73675f73696e5f6d6263325f345f346238303238@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-4-B-B80 Promenade 19 Bayfront (5)",
+    "full_name": "SG-SIN-MBC2-4-B-B80 Promenade 19 Bayfront (5) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f73675f73696e5f6d6263325f345f346238303238@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 5
+  },
+  "c_1887rc2uf77pojn7gnai0rc0opmlu4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3aco@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Hillview 15 Phone Room (2)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Hillview 15 Phone Room (2) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_1887rc2uf77pojn7gnai0rc0opmlu4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o3aco@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_1889fg0ep812egr5lm4aoamr4qqgs@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-34-A-Look At Moi (4)",
+    "full_name": "AU-MEL-MQT-34-A-Look At Moi (4)",
+    "email": "c_1889fg0ep812egr5lm4aoamr4qqgs@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 34,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "google.com_726f6f6d5f6b725f73656f5f6766635f32305f32303834@resource.calendar.google.com": {
+    "name": "KR-SEO-GFC-20-8-20N-08-Book Store (8)",
+    "full_name": "KR-SEO-GFC-20-8-20N-08-Book Store (8) [GVC, No External Guests, Phone]",
+    "email": "google.com_726f6f6d5f6b725f73656f5f6766635f32305f32303834@resource.calendar.google.com",
+    "building": "KR-SEO-GFC",
+    "floor": 20,
+    "type": "phone_booth",
+    "capacity": 8
+  },
+  "c_188aedkou0fdeg8cm4bfkg8jh9ac0@resource.calendar.google.com": {
+    "name": "IN-MUM-FIFC-3-0-Hinterland Cycling Tour (6)",
+    "full_name": "IN-MUM-FIFC-3-0-Hinterland Cycling Tour (6) [GVC]",
+    "email": "c_188aedkou0fdeg8cm4bfkg8jh9ac0@resource.calendar.google.com",
+    "building": "IN-MUM-FIFC",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "c_188139u52f9igi5jgajkjkh5lqejk4gactnmuprcckn66rrd@resource.calendar.google.com": {
+    "name": "CN-SHA-WFC-20-3-12 Kaleidoscope (9)",
+    "full_name": "CN-SHA-WFC-20-3-12 Kaleidoscope (9) [GVC]",
+    "email": "c_188139u52f9igi5jgajkjkh5lqejk4gactnmuprcckn66rrd@resource.calendar.google.com",
+    "building": "CN-SHA-WFC",
+    "floor": 20,
+    "type": "meeting_room",
+    "capacity": 9
+  },
+  "c_188bp94k649agh5ah3r635ol3ogs84gactnmuprcckn66rrd@resource.calendar.google.com": {
+    "name": "CN-SHA-WFC-20-2-10 Phone Room (2)",
+    "full_name": "CN-SHA-WFC-20-2-10 Phone Room (2) [GVC]",
+    "email": "c_188bp94k649agh5ah3r635ol3ogs84gactnmuprcckn66rrd@resource.calendar.google.com",
+    "building": "CN-SHA-WFC",
+    "floor": 20,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_188dnrs0na4m8ggrk3rs346c82gbi4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi71fj4e3270o3ic8@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-28-B-B80 37 Terra Preta - External (7)",
+    "full_name": "SG-SIN-MBC2-28-B-B80 37 Terra Preta - External (7) [GVC, Not Wheelchair Accessible]",
+    "email": "c_188dnrs0na4m8ggrk3rs346c82gbi4gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi71fj4e3270o3ic8@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 28,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "google.com_726f6f6d5f75735f73766c5f6d70335f335f336235@resource.calendar.google.com": {
+    "name": "US-SVL-MP3-3-B-Erector Set (7)",
+    "full_name": "US-SVL-MP3-3-B-Erector Set (7) [GVC]",
+    "email": "google.com_726f6f6d5f75735f73766c5f6d70335f335f336235@resource.calendar.google.com",
+    "building": "US-SVL-MP3",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "google.com_726f6f6d5f75735f73766c5f6d70335f355f356332@resource.calendar.google.com": {
+    "name": "US-SVL-MP3-5-C-Joist (4)",
+    "full_name": "US-SVL-MP3-5-C-Joist (4) [GVC]",
+    "email": "google.com_726f6f6d5f75735f73766c5f6d70335f355f356332@resource.calendar.google.com",
+    "building": "US-SVL-MP3",
+    "floor": 5,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_188edb84jlfk4i3sgaqcsst8hkae0@resource.calendar.google.com": {
+    "name": "IN-MUM-FIFC-3-0-Karzoo Ice Hockey Rink (8)",
+    "full_name": "IN-MUM-FIFC-3-0-Karzoo Ice Hockey Rink (8) [GVC]",
+    "email": "c_188edb84jlfk4i3sgaqcsst8hkae0@resource.calendar.google.com",
+    "building": "IN-MUM-FIFC",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 8
+  },
+  "google.com_726f6f6d5f756b5f6c6f6e5f6373675f345f343432@resource.calendar.google.com": {
+    "name": "UK-LON-CSG-4-4-Willow (5)",
+    "full_name": "UK-LON-CSG-4-4-Willow (5) [GVC, Phone]",
+    "email": "google.com_726f6f6d5f756b5f6c6f6e5f6373675f345f343432@resource.calendar.google.com",
+    "building": "UK-LON-CSG",
+    "floor": 4,
+    "type": "phone_booth",
+    "capacity": 5
+  },
+  "c_188aqe040lav2h4mjsbe8p1hdikei@resource.calendar.google.com": {
+    "name": "KR-SEO-GFC-12-1-12N-06-Onboarding (6)",
+    "full_name": "KR-SEO-GFC-12-1-12N-06-Onboarding (6) [GVC]",
+    "email": "c_188aqe040lav2h4mjsbe8p1hdikei@resource.calendar.google.com",
+    "building": "KR-SEO-GFC",
+    "floor": 12,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "c_1882qn0psa3tkgsgmjvntmrenomvc@resource.calendar.google.com": {
+    "name": "IN-BLR-BCPWK-2-1-227 Believer (4)",
+    "full_name": "IN-BLR-BCPWK-2-1-227 Believer (4) [GVC]",
+    "email": "c_1882qn0psa3tkgsgmjvntmrenomvc@resource.calendar.google.com",
+    "building": "IN-BLR-BCPWK",
+    "floor": 2,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "google.com_726f6f6d5f63685f7a72685f657572675f345f34623430@resource.calendar.google.com": {
+    "name": "CH-ZRH-EURG-4-B-Rochusgasse (1)",
+    "full_name": "CH-ZRH-EURG-4-B-Rochusgasse (1) [GVC]",
+    "email": "google.com_726f6f6d5f63685f7a72685f657572675f345f34623430@resource.calendar.google.com",
+    "building": "CH-ZRH-EURG",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f69645f63676b5f7063705f34355f34353435@resource.calendar.google.com": {
+    "name": "ID-CGK-PCP-45-4-7 Gasing (8)",
+    "full_name": "ID-CGK-PCP-45-4-7 Gasing (8) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f69645f63676b5f7063705f34355f34353435@resource.calendar.google.com",
+    "building": "ID-CGK-PCP",
+    "floor": 45,
+    "type": "meeting_room",
+    "capacity": 8
+  },
+  "google.com_726f6f6d5f63685f7a72685f657572675f345f34623234@resource.calendar.google.com": {
+    "name": "CH-ZRH-EURG-4-B-Siebenhirten (1)",
+    "full_name": "CH-ZRH-EURG-4-B-Siebenhirten (1) [GVC]",
+    "email": "google.com_726f6f6d5f63685f7a72685f657572675f345f34623234@resource.calendar.google.com",
+    "building": "CH-ZRH-EURG",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_1887unicf4ve6jmlm1t5238ik4jji@resource.calendar.google.com": {
+    "name": "IN-BLR-BCPWK-4-0-406 Dynamite (4)",
+    "full_name": "IN-BLR-BCPWK-4-0-406 Dynamite (4) [GVC]",
+    "email": "c_1887unicf4ve6jmlm1t5238ik4jji@resource.calendar.google.com",
+    "building": "IN-BLR-BCPWK",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "google.com_726f6f6d5f73675f73696e5f6d6263325f345f346238303730@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-4-B-B80 34 Corallum-External (11)",
+    "full_name": "SG-SIN-MBC2-4-B-B80 34 Corallum-External (11) [GVC, Phone]",
+    "email": "google.com_726f6f6d5f73675f73696e5f6d6263325f345f346238303730@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 4,
+    "type": "phone_booth",
+    "capacity": 11
+  },
+  "c_1886herllhpfqhu4n5asohmh0l6ek@resource.calendar.google.com": {
+    "name": "PH-MNL-NETP-38-2-Dama (2)",
+    "full_name": "PH-MNL-NETP-38-2-Dama (2) [No External Guests]",
+    "email": "c_1886herllhpfqhu4n5asohmh0l6ek@resource.calendar.google.com",
+    "building": "PH-MNL-NETP",
+    "floor": 38,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f636e5f70656b5f7263625f375f373438@resource.calendar.google.com": {
+    "name": "CN-PEK-RCB-7-4-06 Red Bridge (9)",
+    "full_name": "CN-PEK-RCB-7-4-06 Red Bridge (9) [GVC]",
+    "email": "google.com_726f6f6d5f636e5f70656b5f7263625f375f373438@resource.calendar.google.com",
+    "building": "CN-PEK-RCB",
+    "floor": 7,
+    "type": "meeting_room",
+    "capacity": 9
+  },
+  "google.com_18800nap03br8iavglcd7a1mqocua6goe9nmuravd9o5ut3fddfn6t3idlfj4e2v68s3ce0@resource.calendar.google.com": {
+    "name": "JP-TOK-STRM-28-6-21 Yumihen-External (10)",
+    "full_name": "JP-TOK-STRM-28-6-21 Yumihen-External (10) [GVC]",
+    "email": "google.com_18800nap03br8iavglcd7a1mqocua6goe9nmuravd9o5ut3fddfn6t3idlfj4e2v68s3ce0@resource.calendar.google.com",
+    "building": "JP-TOK-STRM",
+    "floor": 28,
+    "type": "conference_room",
+    "capacity": 10
+  },
+  "google.com_726f6f6d5f74775f7470655f3130315f37365f37363236@resource.calendar.google.com": {
+    "name": "TW-TPE-101-76-2-07 Carnation(Internal) (7)",
+    "full_name": "TW-TPE-101-76-2-07 Carnation(Internal) (7) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f74775f7470655f3130315f37365f37363236@resource.calendar.google.com",
+    "building": "TW-TPE-101",
+    "floor": 76,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "c_1886h3ob92i3qh4jko4fij9inflk0@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-4-B-B80 Bedok 12 Laguna (7)",
+    "full_name": "SG-SIN-MBC2-4-B-B80 Bedok 12 Laguna (7)",
+    "email": "c_1886h3ob92i3qh4jko4fij9inflk0@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "c_18871ak9g8jpaid1i26jn0dlepklm@resource.calendar.google.com": {
+    "name": "VN-SGN-S1-21-A-Suite 67 (3)",
+    "full_name": "VN-SGN-S1-21-A-Suite 67 (3) [GVC]",
+    "email": "c_18871ak9g8jpaid1i26jn0dlepklm@resource.calendar.google.com",
+    "building": "VN-SGN-S1",
+    "floor": 21,
+    "type": "meeting_room",
+    "capacity": 3
+  },
+  "c_18850t3pcvdt2hbng75l4u4en1kl6@resource.calendar.google.com": {
+    "name": "TH-BKK-PVE-16-3-Bang Nam Phueng (1)",
+    "full_name": "TH-BKK-PVE-16-3-Bang Nam Phueng (1) [GVC, No External Guests]",
+    "email": "c_18850t3pcvdt2hbng75l4u4en1kl6@resource.calendar.google.com",
+    "building": "TH-BKK-PVE",
+    "floor": 16,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f696e5f6775725f7369675f365f363335@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGB-6-3-Taxi (2)",
+    "full_name": "IN-GUR-SIGB-6-3-Taxi (2) [GVC]",
+    "email": "google.com_726f6f6d5f696e5f6775725f7369675f365f363335@resource.calendar.google.com",
+    "building": "IN-GUR-SIGB",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "c_18898u6qg9nbmgu7j4lsrds660c1m@resource.calendar.google.com": {
+    "name": "IN-BLR-ANANTA-3-D-Tenga 3D (4)",
+    "full_name": "IN-BLR-ANANTA-3-D-Tenga 3D (4) [GVC]",
+    "email": "c_18898u6qg9nbmgu7j4lsrds660c1m@resource.calendar.google.com",
+    "building": "IN-BLR-ANANTA",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "google.com_188ditmhfjmhsj85m32salvo3fh6u6gne9nmuravd5n5urbldlfmcqb6cdfjcnpm60r38@resource.calendar.google.com": {
+    "name": "IN-MUM-FIFC-6-0-Bamboo Forest Bound (6)",
+    "full_name": "IN-MUM-FIFC-6-0-Bamboo Forest Bound (6) [GVC]",
+    "email": "google.com_188ditmhfjmhsj85m32salvo3fh6u6gne9nmuravd5n5urbldlfmcqb6cdfjcnpm60r38@resource.calendar.google.com",
+    "building": "IN-MUM-FIFC",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "c_1889g9oc5lna0is7mgv31knjeotr2@resource.calendar.google.com": {
+    "name": "IN-BLR-ANANTA-11-C-M S Randhawa (4)",
+    "full_name": "IN-BLR-ANANTA-11-C-M S Randhawa (4) [GVC]",
+    "email": "c_1889g9oc5lna0is7mgv31knjeotr2@resource.calendar.google.com",
+    "building": "IN-BLR-ANANTA",
+    "floor": 11,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_188dhihqh8tjui8cg50gkgobm5a4s@resource.calendar.google.com": {
+    "name": "UK-LON-P37-3-S-Nook - 3A3.29 (1)",
+    "full_name": "UK-LON-P37-3-S-Nook - 3A3.29 (1) [GVC, No External Guests]",
+    "email": "c_188dhihqh8tjui8cg50gkgobm5a4s@resource.calendar.google.com",
+    "building": "UK-LON-P37",
+    "floor": 3,
+    "type": "focus_room",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f335f333139@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-3-1-Ozzy Man (2)",
+    "full_name": "AU-SYD-PIR-3-1-Ozzy Man (2) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f335f333139@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f355f35613461@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-5-A-Whiteley (4)",
+    "full_name": "AU-SYD-PIR-5-A-Whiteley (4) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f355f35613461@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 5,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "google.com_726f6f6d5f66725f7061725f72646c5f315f31373262@resource.calendar.google.com": {
+    "name": "FR-PAR-RDL-1-7-Pasteur (2)",
+    "full_name": "FR-PAR-RDL-1-7-Pasteur (2) [GVC, Phone]",
+    "email": "google.com_726f6f6d5f66725f7061725f72646c5f315f31373262@resource.calendar.google.com",
+    "building": "FR-PAR-RDL",
+    "floor": 1,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f345f34613363@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-4-A-Voss (2)",
+    "full_name": "AU-SYD-PIR-4-A-Voss (2) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f345f34613363@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f66725f7061725f72646c5f315f313136@resource.calendar.google.com": {
+    "name": "FR-PAR-RDL-1-1-Natta (2)",
+    "full_name": "FR-PAR-RDL-1-1-Natta (2) [GVC, Phone]",
+    "email": "google.com_726f6f6d5f66725f7061725f72646c5f315f313136@resource.calendar.google.com",
+    "building": "FR-PAR-RDL",
+    "floor": 1,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f66725f7061725f72646c5f325f323632@resource.calendar.google.com": {
+    "name": "FR-PAR-RDL-2-6-St. Exupery (16)",
+    "full_name": "FR-PAR-RDL-2-6-St. Exupery (16) [GVC, Phone]",
+    "email": "google.com_726f6f6d5f66725f7061725f72646c5f325f323632@resource.calendar.google.com",
+    "building": "FR-PAR-RDL",
+    "floor": 2,
+    "type": "phone_booth",
+    "capacity": 16
+  },
+  "google.com_726f6f6d5f73675f73696e5f6d6263325f385f386238303234@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-8-B-B80 Paya Lebar 9 Nacreous (7)",
+    "full_name": "SG-SIN-MBC2-8-B-B80 Paya Lebar 9 Nacreous (7) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f73675f73696e5f6d6263325f385f386238303234@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 8,
+    "type": "meeting_room",
+    "capacity": 7
+  },
+  "c_1883cnnkqheo2ib6lav1koguikn344gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4nph65fj2cb270o3ad0@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-11-B-B80 Siglap 6 Phone Room (2)",
+    "full_name": "SG-SIN-MBC2-11-B-B80 Siglap 6 Phone Room (2) [GVC, Phone]",
+    "email": "c_1883cnnkqheo2ib6lav1koguikn344gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4nph65fj2cb270o3ad0@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 11,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "c_1883v9oeqc7tai45ibo3l0c5epvai@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGD-10-4-Udaipur (6)",
+    "full_name": "IN-GUR-SIGD-10-4-Udaipur (6)",
+    "email": "c_1883v9oeqc7tai45ibo3l0c5epvai@resource.calendar.google.com",
+    "building": "IN-GUR-SIGD",
+    "floor": 10,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f355f35613264@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-5-A-Quilty (8)",
+    "full_name": "AU-SYD-PIR-5-A-Quilty (8) [No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f355f35613264@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 5,
+    "type": "meeting_room",
+    "capacity": 8
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f325f323233@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-2-2-Workshop (11)",
+    "full_name": "AU-SYD-PIR-2-2-Workshop (11) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f325f323233@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 2,
+    "type": "conference_room",
+    "capacity": 11
+  },
+  "google.com_188at1tgmq696jcdgvpghf1d1p4eg6gme9nmuravelplusr5c5fm4sjebsp5ucj26cp0@resource.calendar.google.com": {
+    "name": "US-SEA-BRN-2-B-French Press (4)",
+    "full_name": "US-SEA-BRN-2-B-French Press (4) [GVC]",
+    "email": "google.com_188at1tgmq696jcdgvpghf1d1p4eg6gme9nmuravelplusr5c5fm4sjebsp5ucj26cp0@resource.calendar.google.com",
+    "building": "US-SEA-BRN",
+    "floor": 2,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_1884evh602cgqj10i0fo7drosge924gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o30dg@resource.calendar.google.com": {
+    "name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 29 Phone Room (2)",
+    "full_name": "SG-SIN-MBC2-29-B-B80 Bukit Panjang 29 Phone Room (2) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "c_1884evh602cgqj10i0fo7drosge924gactnmuprcckn66rrd38dn4rrfdlfn6pqvedkmsnrdc9hj4npi75fj4eb270o30dg@resource.calendar.google.com",
+    "building": "SG-SIN-MBC2",
+    "floor": 29,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f756b5f6c6f6e5f6373675f345f343637@resource.calendar.google.com": {
+    "name": "UK-LON-CSG-4-6-Alder (4)",
+    "full_name": "UK-LON-CSG-4-6-Alder (4) [GVC]",
+    "email": "google.com_726f6f6d5f756b5f6c6f6e5f6373675f345f343637@resource.calendar.google.com",
+    "building": "UK-LON-CSG",
+    "floor": 4,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_1883hi9h0aa1kg1igihunq5anj578@resource.calendar.google.com": {
+    "name": "IN-BLR-BCPWK-2-0-213 Billie Jean (1)",
+    "full_name": "IN-BLR-BCPWK-2-0-213 Billie Jean (1) [GVC]",
+    "email": "c_1883hi9h0aa1kg1igihunq5anj578@resource.calendar.google.com",
+    "building": "IN-BLR-BCPWK",
+    "floor": 2,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_188bilg7v5rkujuoj7egfhjb515fo@resource.calendar.google.com": {
+    "name": "IN-GUR-SIGD-10-5-Valsad (2)",
+    "full_name": "IN-GUR-SIGD-10-5-Valsad (2)",
+    "email": "c_188bilg7v5rkujuoj7egfhjb515fo@resource.calendar.google.com",
+    "building": "IN-GUR-SIGD",
+    "floor": 10,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "c_1886no36had7aj56ncs3od4cqe84q4gactnmuprcckn66rrd38b74rrfdlfnasqvedim2nr6e9r5uciv69j32cg@resource.calendar.google.com": {
+    "name": "US-SEA-FRV-2-F-Cable (3)",
+    "full_name": "US-SEA-FRV-2-F-Cable (3) [GVC]",
+    "email": "c_1886no36had7aj56ncs3od4cqe84q4gactnmuprcckn66rrd38b74rrfdlfnasqvedim2nr6e9r5uciv69j32cg@resource.calendar.google.com",
+    "building": "US-SEA-FRV",
+    "floor": 2,
+    "type": "meeting_room",
+    "capacity": 3
+  },
+  "google.com_726f6f6d5f75735f7365615f7761745f325f323039@resource.calendar.google.com": {
+    "name": "US-SEA-WAT-2-0-CPU (2)",
+    "full_name": "US-SEA-WAT-2-0-CPU (2) [GVC]",
+    "email": "google.com_726f6f6d5f75735f7365615f7761745f325f323039@resource.calendar.google.com",
+    "building": "US-SEA-WAT",
+    "floor": 2,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "c_18886abj554h0ipbmpvv92o07b988@resource.calendar.google.com": {
+    "name": "AU-MEL-MQT-32-H-City Circle (8)",
+    "full_name": "AU-MEL-MQT-32-H-City Circle (8) [GVC]",
+    "email": "c_18886abj554h0ipbmpvv92o07b988@resource.calendar.google.com",
+    "building": "AU-MEL-MQT",
+    "floor": 32,
+    "type": "meeting_room",
+    "capacity": 8
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f365f36613462@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-Unnamed Peak on Etheridge Ridge (4)",
+    "full_name": "AU-SYD-PIR-6-A-Unnamed Peak on Etheridge Ridge (4) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f365f36613462@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "c_188726qehgk5ais8m0g1rm5gfth5e4gactnmuprcckn66rrd38cn4rrfdlfnasqvcdk6inr3c5p70chh61fjenpn64s0@resource.calendar.google.com": {
+    "name": "US-CHI-CARP210-7-1-Crocodile (1)",
+    "full_name": "US-CHI-CARP210-7-1-Crocodile (1) [GVC, Phone]",
+    "email": "c_188726qehgk5ais8m0g1rm5gfth5e4gactnmuprcckn66rrd38cn4rrfdlfnasqvcdk6inr3c5p70chh61fjenpn64s0@resource.calendar.google.com",
+    "building": "US-CHI-CARP210",
+    "floor": 7,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "c_1885poqdsg7ikgvjkt0rlufs631ki@resource.calendar.google.com": {
+    "name": "US-AUS-601W-13-B-Eagle-Claw Cactus (1)",
+    "full_name": "US-AUS-601W-13-B-Eagle-Claw Cactus (1) [GVC]",
+    "email": "c_1885poqdsg7ikgvjkt0rlufs631ki@resource.calendar.google.com",
+    "building": "US-AUS-601W",
+    "floor": 13,
+    "type": "meeting_room",
+    "capacity": 1
+  },
+  "c_1882rp4003mr0jukgpfsurouppou4@resource.calendar.google.com": {
+    "name": "PH-MNL-NETP-38-5-Daloy (2)",
+    "full_name": "PH-MNL-NETP-38-5-Daloy (2) [GVC]",
+    "email": "c_1882rp4003mr0jukgpfsurouppou4@resource.calendar.google.com",
+    "building": "PH-MNL-NETP",
+    "floor": 38,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f686b5f686b675f7477325f32355f32353935@resource.calendar.google.com": {
+    "name": "HK-HKG-TW2-25-9-Phone Room 3 (1)",
+    "full_name": "HK-HKG-TW2-25-9-Phone Room 3 (1) [GVC, Phone]",
+    "email": "google.com_726f6f6d5f686b5f686b675f7477325f32355f32353935@resource.calendar.google.com",
+    "building": "HK-HKG-TW2",
+    "floor": 25,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "c_1883b4tgrukc0j55mh2arh0rrc5tg@resource.calendar.google.com": {
+    "name": "PH-MNL-NETP-38-5-Kwento (2)",
+    "full_name": "PH-MNL-NETP-38-5-Kwento (2) [GVC]",
+    "email": "c_1883b4tgrukc0j55mh2arh0rrc5tg@resource.calendar.google.com",
+    "building": "PH-MNL-NETP",
+    "floor": 38,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f686b5f686b675f7477325f31395f31393239@resource.calendar.google.com": {
+    "name": "HK-HKG-TW2-19-2-07 Mr. Vampire (1)",
+    "full_name": "HK-HKG-TW2-19-2-07 Mr. Vampire (1) [GVC, Phone]",
+    "email": "google.com_726f6f6d5f686b5f686b675f7477325f31395f31393239@resource.calendar.google.com",
+    "building": "HK-HKG-TW2",
+    "floor": 19,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f74775f7470655f3130315f37355f37353437@resource.calendar.google.com": {
+    "name": "TW-TPE-101-75-4-06 Adwords (2)",
+    "full_name": "TW-TPE-101-75-4-06 Adwords (2) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f74775f7470655f3130315f37355f37353437@resource.calendar.google.com",
+    "building": "TW-TPE-101",
+    "floor": 75,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f686b5f686b675f7477325f31395f31393032@resource.calendar.google.com": {
+    "name": "HK-HKG-TW2-19-0-01 Hiking (6)",
+    "full_name": "HK-HKG-TW2-19-0-01 Hiking (6) [GVC, Phone]",
+    "email": "google.com_726f6f6d5f686b5f686b675f7477325f31395f31393032@resource.calendar.google.com",
+    "building": "HK-HKG-TW2",
+    "floor": 19,
+    "type": "phone_booth",
+    "capacity": 6
+  },
+  "google.com_726f6f6d5f74775f7470655f3130315f37335f37333636@resource.calendar.google.com": {
+    "name": "TW-TPE-101-73-6-Phone Room 7366(Internal) (1)",
+    "full_name": "TW-TPE-101-73-6-Phone Room 7366(Internal) (1) [GVC, No External Guests, Not Wheelchair Accessible]",
+    "email": "google.com_726f6f6d5f74775f7470655f3130315f37335f37333636@resource.calendar.google.com",
+    "building": "TW-TPE-101",
+    "floor": 73,
+    "type": "phone_booth",
+    "capacity": 1
+  },
+  "google.com_726f6f6d5f686b5f686b675f7477325f31395f31393332@resource.calendar.google.com": {
+    "name": "HK-HKG-TW2-19-3-11 Kung Fu Hustle (6)",
+    "full_name": "HK-HKG-TW2-19-3-11 Kung Fu Hustle (6) [GVC]",
+    "email": "google.com_726f6f6d5f686b5f686b675f7477325f31395f31393332@resource.calendar.google.com",
+    "building": "HK-HKG-TW2",
+    "floor": 19,
+    "type": "meeting_room",
+    "capacity": 6
+  },
+  "google.com_726f6f6d5f74775f7470655f3130315f37355f37353234@resource.calendar.google.com": {
+    "name": "TW-TPE-101-75-2-03 go/meet (2)",
+    "full_name": "TW-TPE-101-75-2-03 go/meet (2) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f74775f7470655f3130315f37355f37353234@resource.calendar.google.com",
+    "building": "TW-TPE-101",
+    "floor": 75,
+    "type": "meeting_room",
+    "capacity": 2
+  },
+  "c_1883aa343ik42g64jge9id9c1n0ra@resource.calendar.google.com": {
+    "name": "IN-MUM-FIFC-3-0-Caving In Ratnagiri (4)",
+    "full_name": "IN-MUM-FIFC-3-0-Caving In Ratnagiri (4) [GVC]",
+    "email": "c_1883aa343ik42g64jge9id9c1n0ra@resource.calendar.google.com",
+    "building": "IN-MUM-FIFC",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "google.com_726f6f6d5f61755f7379645f7069725f365f36613368@resource.calendar.google.com": {
+    "name": "AU-SYD-PIR-6-A-Townsend (4)",
+    "full_name": "AU-SYD-PIR-6-A-Townsend (4) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f61755f7379645f7069725f365f36613368@resource.calendar.google.com",
+    "building": "AU-SYD-PIR",
+    "floor": 6,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "google.com_726f6f6d5f686b5f686b675f7477325f31395f31393330@resource.calendar.google.com": {
+    "name": "HK-HKG-TW2-19-3-09 Fist of Fury (2)",
+    "full_name": "HK-HKG-TW2-19-3-09 Fist of Fury (2) [GVC, Phone]",
+    "email": "google.com_726f6f6d5f686b5f686b675f7477325f31395f31393330@resource.calendar.google.com",
+    "building": "HK-HKG-TW2",
+    "floor": 19,
+    "type": "phone_booth",
+    "capacity": 2
+  },
+  "google.com_726f6f6d5f69645f63676b5f7063705f34355f34353032@resource.calendar.google.com": {
+    "name": "ID-CGK-PCP-45-0-10 Becak (5)",
+    "full_name": "ID-CGK-PCP-45-0-10 Becak (5) [GVC]",
+    "email": "google.com_726f6f6d5f69645f63676b5f7063705f34355f34353032@resource.calendar.google.com",
+    "building": "ID-CGK-PCP",
+    "floor": 45,
+    "type": "meeting_room",
+    "capacity": 5
+  },
+  "c_1888hdr6elc1mg6lllr9igf9e974e@resource.calendar.google.com": {
+    "name": "IN-MUM-FIFC-3-0-Kaup Light House (4)",
+    "full_name": "IN-MUM-FIFC-3-0-Kaup Light House (4) [GVC]",
+    "email": "c_1888hdr6elc1mg6lllr9igf9e974e@resource.calendar.google.com",
+    "building": "IN-MUM-FIFC",
+    "floor": 3,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "google.com_726f6f6d5f686b5f686b675f7477325f32355f32353031@resource.calendar.google.com": {
+    "name": "HK-HKG-TW2-25-0-Queen's Pier (4)",
+    "full_name": "HK-HKG-TW2-25-0-Queen's Pier (4) [GVC, Not Wheelchair Accessible]",
+    "email": "google.com_726f6f6d5f686b5f686b675f7477325f32355f32353031@resource.calendar.google.com",
+    "building": "HK-HKG-TW2",
+    "floor": 25,
+    "type": "meeting_room",
+    "capacity": 4
+  },
+  "google.com_726f6f6d5f74775f7470655f3130315f37355f37353738@resource.calendar.google.com": {
+    "name": "TW-TPE-101-75-7-10 YouTube (6)",
+    "full_name": "TW-TPE-101-75-7-10 YouTube (6) [GVC, No External Guests]",
+    "email": "google.com_726f6f6d5f74775f7470655f3130315f37355f37353738@resource.calendar.google.com",
+    "building": "TW-TPE-101",
+    "floor": 75,
+    "type": "meeting_room",
+    "capacity": 6
+  }
+}

@@ -23,14 +23,7 @@ from ..config import (
 )
 from .auth import get_gmail_service
 
-logger = logging.getLogger("agenica.gmail")
-
-SIGNATURE_TEXT = f"""
---
-{AGENT_NAME}
-Executive Assistant to {PRINCIPAL_NAME}
-Google Workspace Executive Assistant Agent
-{AGENT_EMAIL}"""
+SIGNATURE_TEXT = f"\n{AGENT_SIGNATURE}"
 
 
 def _format_body_with_signature(body: str) -> str:
@@ -360,11 +353,13 @@ def create_gmail_draft(
     Create a pending Gmail draft signed as Agenica S using Gmail API v1.
     Used for External Partners under the Draft-Delegate Protocol.
     """
+    if isinstance(to_recipients, str):
+        to_recipients = [to_recipients]
+    if cc_recipients and isinstance(cc_recipients, str):
+        cc_recipients = [cc_recipients]
+
     full_body = _format_body_with_signature(body)
     raw_encoded = _create_raw_email(to_recipients, subject, body, cc_recipients, in_reply_to_message_id)
-
-    draft_id = f"r-{int(datetime.now().timestamp())}"
-    draft_url = f"https://mail.google.com/mail/u/{PRINCIPAL_EMAIL}/#drafts/{draft_id}"
 
     try:
         service = get_gmail_service()
@@ -373,7 +368,7 @@ def create_gmail_draft(
             draft_body["message"]["threadId"] = in_reply_to_message_id
 
         created_draft = service.users().drafts().create(userId="me", body=draft_body).execute()
-        draft_id = created_draft.get("id", draft_id)
+        draft_id = created_draft.get("id", "")
         draft_url = f"https://mail.google.com/mail/u/{PRINCIPAL_EMAIL}/#drafts/{draft_id}"
 
         return json.dumps({
@@ -386,22 +381,16 @@ def create_gmail_draft(
             "cc": cc_recipients or [],
             "subject": subject,
             "body_preview": full_body[:200] + "..." if len(full_body) > 200 else full_body,
-            "instructions_for_agent": f"Notify Abhi Sethi in Google Chat with the draft summary and the direct review link: {draft_url}"
+            "message": f"Draft created in Gmail for {', '.join(to_recipients)} with subject '{subject}'. Review or send when ready: {draft_url}"
         }, indent=2)
     except Exception as e:
-        logger.warning("Gmail API drafts.create note: %s", e)
+        logger.error("Gmail API drafts.create error: %s", e)
         return json.dumps({
-            "status": "DRAFT_CREATED",
-            "protocol": "DRAFT_DELEGATE_PROTOCOL",
-            "sender": f"{AGENT_NAME} <{AGENT_EMAIL}>",
-            "draft_id": draft_id,
-            "draft_url": draft_url,
+            "status": "ERROR",
+            "error": str(e),
+            "message": f"Failed to create Gmail draft due to API error: {e}",
             "to": to_recipients,
-            "cc": cc_recipients or [],
-            "subject": subject,
-            "body_preview": full_body[:200] + "..." if len(full_body) > 200 else full_body,
-            "note": f"Live draft creation note: {e}. Generated direct review link.",
-            "instructions_for_agent": f"Notify Abhi Sethi in Google Chat with the draft summary and the direct review link: {draft_url}"
+            "subject": subject
         }, indent=2)
 
 
@@ -416,6 +405,11 @@ def send_email_response(
     Send an email response directly using Gmail API v1 or native sendgmr.
     Dispatched by Agenica S on behalf of Abhi Sethi.
     """
+    if isinstance(to_recipients, str):
+        to_recipients = [to_recipients]
+    if cc_recipients and isinstance(cc_recipients, str):
+        cc_recipients = [cc_recipients]
+
     full_body = _format_body_with_signature(body)
 
     # If native sendgmr is available on Cloudtop, use it directly
@@ -460,12 +454,11 @@ def send_email_response(
             "message": f"Email successfully sent from {AGENT_NAME} to {', '.join(to_recipients)}."
         }, indent=2)
     except Exception as e:
-        logger.warning("Gmail API messages.send note: %s", e)
+        logger.error("Gmail API messages.send error: %s", e)
         return json.dumps({
-            "status": "SENT",
-            "sender": f"{AGENT_NAME} <{AGENT_EMAIL}>",
+            "status": "ERROR",
+            "error": str(e),
             "to": to_recipients,
             "subject": subject,
-            "note": f"Live send note: {e}. Message queued for delivery.",
-            "message": f"Email response sent from {AGENT_NAME}."
+            "message": f"Failed to send email due to Gmail API error: {e}"
         }, indent=2)

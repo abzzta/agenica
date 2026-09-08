@@ -28,7 +28,6 @@ BUILDING_CODE = "SIN-MBC2"
 AGENT_SIGNATURE = f"""--
 {AGENT_NAME}
 Executive Assistant to {PRINCIPAL_NAME}
-Google Workspace Executive Assistant Agent
 {AGENT_EMAIL}"""
 
 # Default Model (gemini-3.7-flash for reliable high quota, or gemini-3.7-flash)
@@ -40,6 +39,11 @@ GCP_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
 os.environ["GOOGLE_CLOUD_PROJECT"] = GCP_PROJECT
 os.environ["GOOGLE_CLOUD_LOCATION"] = GCP_LOCATION
 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "TRUE"
+
+# Security & Access Hardening
+AGENICA_ACCESS_KEY = os.environ.get("AGENICA_ACCESS_KEY", "")
+MAX_CONCURRENT_SESSIONS = int(os.environ.get("MAX_CONCURRENT_SESSIONS", "3"))
+SESSION_TIMEOUT_SECONDS = int(os.environ.get("SESSION_TIMEOUT_SECONDS", "900"))  # 15 minutes
 
 
 @dataclass(frozen=True)

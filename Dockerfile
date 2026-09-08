@@ -2,7 +2,10 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-ENV PYTHONUNBUFFERED=1     PORT=8080     GOOGLE_CLOUD_PROJECT=ag-test-1310     GOOGLE_CLOUD_LOCATION=global
+ENV PYTHONUNBUFFERED=1 \
+    PORT=8080 \
+    GOOGLE_CLOUD_PROJECT=ag-test-1310 \
+    GOOGLE_CLOUD_LOCATION=us-central1
 
 COPY requirements.txt .
 COPY agent/requirements.txt agent_reqs.txt

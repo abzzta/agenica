@@ -1101,16 +1101,27 @@ async def websocket_live_stream(websocket: WebSocket):
     await websocket.accept()
     logger.info("Client connected to /ws/live WebSocket.")
 
-    # Explicit quota project cowork-aset-6tnf0w
+    # Configurable project and location (defaults to ag-test-1310 / us-central1)
+    project_id = os.environ.get("GOOGLE_CLOUD_PROJECT", "ag-test-1310")
+    location = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
+    quota_proj = os.environ.get("GOOGLE_CLOUD_QUOTA_PROJECT", project_id)
+
     creds, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
-    creds = creds.with_quota_project("cowork-aset-6tnf0w")
+    if hasattr(creds, "with_quota_project") and quota_proj:
+        try:
+            creds = creds.with_quota_project(quota_proj)
+        except Exception as e:
+            logger.warning("Could not set quota project %s: %s", quota_proj, e)
     if hasattr(creds, "refresh") and not creds.valid:
-        creds.refresh(AuthRequest())
+        try:
+            creds.refresh(AuthRequest())
+        except Exception as e:
+            logger.warning("Credentials refresh warning: %s", e)
 
     client = genai.Client(
         vertexai=True,
-        project="cowork-aset-6tnf0w",
-        location="us-central1",
+        project=project_id,
+        location=location,
         credentials=creds,
     )
 
@@ -1302,6 +1313,8 @@ async def websocket_live_stream(websocket: WebSocket):
 
 
 @app.get("/healthz")
+@app.get("/health")
+@app.get("/status")
 def healthz():
     return {
         "status": "ok",

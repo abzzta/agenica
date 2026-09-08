@@ -1,4 +1,4 @@
-# Ms. Agenica S — Enterprise Executive Assistant (EA) & Gemini Multimodal Live Voice Portal
+# Agenica — Enterprise Executive Assistant (EA) & Gemini Multimodal Live Voice Portal
 
 [![Cloud Run](https://img.shields.io/badge/Google%20Cloud-Cloud%20Run-blue?logo=googlecloud)](https://agenica-assistant-537097709161.us-central1.run.app)
 [![Gemini Live API](https://img.shields.io/badge/Gemini%20Live-2.5%20Flash%20Native%20Audio-orange?logo=google)](https://cloud.google.com/vertex-ai)

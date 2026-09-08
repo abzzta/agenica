@@ -104,11 +104,11 @@ flowchart TD
 
 | Tool Name | Purpose | Parameters |
 | :--- | :--- | :--- |
-| `get_current_datetime` | Grounds relative time references in Asia/Singapore (SGT) timezone. | `timezone_name` (optional) |
-| `list_upcoming_events` | Fetches upcoming appointments from Abhi Sethi's calendar. | `max_results`, `days_ahead` |
-| `check_calendar_availability` | Checks free/busy intervals on `aset@google.com` to prevent clashes. | `start_time`, `end_time` |
-| `create_calendar_event` | Books a calendar event with attendees, description, and Google Meet. | `summary`, `start_time`, `end_time`, `attendees`, `location` |
-| `book_singapore_room` | Checks availability and books an MBC2 Level 28/29/30 room resource. | `summary`, `start_time`, `end_time`, `room_name`, `floor`, `attendees` |
+| `list_upcoming_events` | Fetches real upcoming appointments from Abhi Sethi's calendar. | `days` |
+| `check_calendar_availability` | Checks real-time free/busy intervals on `aset@google.com` to prevent clashes. | `date_str`, `start_time`, `end_time` |
+| `check_room_availability` | Checks live availability of MBC2 Singapore meeting & phone rooms (Level 28/29/30). | `date_str`, `start_time`, `end_time`, `floor`, `room_type` |
+| `book_singapore_room` | Directly books a verified MBC2 room resource onto Abhi Sethi's calendar. | `date_str`, `start_time`, `end_time`, `floor`, `room_type` |
+| `create_calendar_event` | Schedules an event with attendees, description, and Google Meet conferencing. | `summary`, `date_str`, `start_time`, `end_time`, `attendees`, `description`, `add_meet` |
 
 ---
 
@@ -170,7 +170,7 @@ Expected response:
 
 ## ☁️ Cloud Run Deployment Guide
 
-To deploy updates to Google Cloud Run:
+To deploy updates to Google Cloud Run with Secret Manager Workspace authentication:
 
 ```bash
 gcloud run deploy agenica-assistant \
@@ -181,10 +181,12 @@ gcloud run deploy agenica-assistant \
   --timeout 3600 \
   --memory 1Gi \
   --cpu 1 \
-  --set-env-vars="GOOGLE_CLOUD_PROJECT=ag-test-1310,GOOGLE_CLOUD_LOCATION=us-central1"
+  --set-secrets="/secrets/token.json=agenica-workspace-credentials:latest,WORKSPACE_CREDENTIALS_JSON=agenica-workspace-credentials:latest" \
+  --update-env-vars="WORKSPACE_TOKEN_PATH=/secrets/token.json,GOOGLE_CLOUD_PROJECT=ag-test-1310,GOOGLE_CLOUD_LOCATION=us-central1"
 ```
 
 ### Configuration Options:
+* `--set-secrets`: Securely injects `agenica-workspace-credentials` from Google Secret Manager as both a file mount (`/secrets/token.json`) and an environment variable (`WORKSPACE_CREDENTIALS_JSON`).
 * `--timeout=3600`: Cloud Run allows up to 3600 seconds (60 minutes) for long-lived WebSocket sessions.
 * `--memory=1Gi`: Allocates sufficient memory for high-frequency audio buffer queuing.
 * `--allow-unauthenticated`: Enables direct web portal access for authenticated users.
@@ -193,8 +195,8 @@ gcloud run deploy agenica-assistant \
 
 ## 🔒 Security & Authentication Architecture
 
-1. **User Credentials (Local / Workspace)**: Reads tokens from `~/.config/agenica/token.json` or active `gcloud auth` credentials to interact with Google Workspace APIs on behalf of `aset@google.com`.
-2. **Cloud Run Service Account**: The Cloud Run instance runs under `537097709161-compute@developer.gserviceaccount.com` with `roles/aiplatform.user` permission to access Vertex AI Gemini Live API.
+1. **User Credentials & Secret Manager**: Secret `agenica-workspace-credentials` contains OAuth tokens for `aset@google.com` to query and manage Google Calendar and Singapore MBC2 room resources directly.
+2. **Cloud Run Service Account**: The Cloud Run compute service account (`537097709161-compute@developer.gserviceaccount.com`) has `roles/secretmanager.secretAccessor` and `roles/aiplatform.user` to access Vertex AI Gemini Live API.
 3. **Sensitive Email Safeguards**: Executive triage includes deterministic confidential topic masking for privacy-sensitive subjects.
 
 ---

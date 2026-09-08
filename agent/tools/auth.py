@@ -67,48 +67,77 @@ def get_workspace_credentials(
     scopes = scopes or ALL_WORKSPACE_SCOPES
     subject = subject or DEFAULT_PRINCIPAL
 
-    # 1. User OAuth Token file
-    token_candidates = [
+    # 0. Raw JSON credentials from environment variable (Secret Manager)
+    raw_json = os.environ.get("WORKSPACE_CREDENTIALS_JSON")
+    if raw_json:
+        try:
+            info = json.loads(raw_json)
+            c_type = info.get("type")
+            if c_type == "authorized_user":
+                # Important: Do NOT pass scopes for authorized_user info, as gcloud/ADC refresh tokens
+                # reject scope renegotiation during refresh with ('invalid_scope: Bad Request').
+                creds = user_credentials.Credentials.from_authorized_user_info(info)
+                if hasattr(creds, "refresh") and not creds.valid:
+                    creds.refresh(Request())
+                if creds and creds.valid:
+                    logger.info("Loaded valid User OAuth credentials from WORKSPACE_CREDENTIALS_JSON")
+                    return creds, "env:WORKSPACE_CREDENTIALS_JSON"
+            elif c_type == "service_account":
+                creds = service_account.Credentials.from_service_account_info(info, scopes=scopes)
+                if subject:
+                    try:
+                        creds = creds.with_subject(subject)
+                    except Exception as ex:
+                        logger.warning("Domain delegation failed: %s", ex)
+                if hasattr(creds, "refresh") and not creds.valid:
+                    creds.refresh(Request())
+                if creds:
+                    logger.info("Loaded Service Account credentials from WORKSPACE_CREDENTIALS_JSON")
+                    return creds, "env:WORKSPACE_CREDENTIALS_JSON:service_account"
+        except Exception as e:
+            logger.warning("Failed loading credentials from WORKSPACE_CREDENTIALS_JSON: %s", e)
+
+    # 1. User OAuth Token or Service Account file candidates
+    file_candidates = [
         os.environ.get("WORKSPACE_TOKEN_PATH"),
+        "/secrets/token.json",
+        "/secrets/workspace_token.json",
+        os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"),
+        os.environ.get("SERVICE_ACCOUNT_FILE"),
+        os.path.expanduser("~/.config/gcloud/application_default_credentials.json"),
         os.path.expanduser("~/.config/agenica/token.json"),
         os.path.expanduser("~/.config/google/token.json"),
         os.path.expanduser("~/agenica/token.json"),
     ]
-    for path in token_candidates:
+    for path in file_candidates:
         if path and os.path.isfile(path):
             try:
-                creds = user_credentials.Credentials.from_authorized_user_file(path, scopes=scopes)
-                if creds and creds.expired and creds.refresh_token:
-                    creds.refresh(Request())
-                if creds and creds.valid:
-                    logger.info("Loaded valid User OAuth credentials from %s", path)
-                    return creds, f"user_token_file:{path}"
-            except Exception as e:
-                logger.warning("Failed loading user token from %s: %s", path, e)
-
-    # 2. Service Account Key file
-    sa_candidates = [
-        os.environ.get("SERVICE_ACCOUNT_FILE"),
-        os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"),
-        os.path.expanduser("~/.config/agenica/service_account.json"),
-    ]
-    for sa_path in sa_candidates:
-        if sa_path and os.path.isfile(sa_path):
-            try:
-                with open(sa_path, "r", encoding="utf-8") as f:
-                    sa_info = json.load(f)
-                if sa_info.get("type") == "service_account":
-                    creds = service_account.Credentials.from_service_account_info(sa_info, scopes=scopes)
+                with open(path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                c_type = data.get("type")
+                if c_type == "authorized_user":
+                    # Important: Do NOT pass scopes for authorized_user info, as gcloud/ADC refresh tokens
+                    # reject scope renegotiation during refresh with ('invalid_scope: Bad Request').
+                    creds = user_credentials.Credentials.from_authorized_user_info(data)
+                    if hasattr(creds, "refresh") and not creds.valid:
+                        creds.refresh(Request())
+                    if creds and creds.valid:
+                        logger.info("Loaded valid User OAuth credentials from %s", path)
+                        return creds, f"authorized_user_file:{path}"
+                elif c_type == "service_account":
+                    creds = service_account.Credentials.from_service_account_info(data, scopes=scopes)
                     if subject:
                         try:
                             creds = creds.with_subject(subject)
                         except Exception as ex:
                             logger.warning("Domain-wide delegation subject %s failed: %s", subject, ex)
+                    if hasattr(creds, "refresh") and not creds.valid:
+                        creds.refresh(Request())
                     if creds:
-                        logger.info("Loaded Service Account credentials from %s (subject=%s)", sa_path, subject)
-                        return creds, f"service_account:{sa_path}"
+                        logger.info("Loaded Service Account credentials from %s (subject=%s)", path, subject)
+                        return creds, f"service_account:{path}"
             except Exception as e:
-                logger.warning("Failed loading service account from %s: %s", sa_path, e)
+                logger.warning("Failed loading credentials from %s: %s", path, e)
 
     # 3. Direct Access Token (Environment variable or gcloud CLI)
     env_token = os.environ.get("WORKSPACE_ACCESS_TOKEN") or os.environ.get("GOOGLE_OAUTH_ACCESS_TOKEN")

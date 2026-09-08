@@ -116,6 +116,7 @@ def scan_inbox_triage(
     Includes privacy gating to protect sensitive matters (HR, legal, compensation).
     """
     emails = []
+    api_error = None
     try:
         service = get_gmail_service()
         res = service.users().messages().list(userId="me", q="is:unread label:INBOX", maxResults=max_results).execute()
@@ -127,7 +128,8 @@ def scan_inbox_triage(
             except Exception:
                 pass
     except Exception as e:
-        logger.warning("Live Gmail API scan note: %s. Using executive inbox triage model.", e)
+        logger.warning("Live Gmail API scan error: %s", e)
+        api_error = str(e)
 
     triage_categories = {
         "needs_action": [],
@@ -135,6 +137,16 @@ def scan_inbox_triage(
         "waiting_response": [],
         "fyi": []
     }
+
+    if api_error and not emails:
+        return json.dumps({
+            "status": "error",
+            "total_scanned": 0,
+            "error": api_error,
+            "categories": triage_categories,
+            "triage_summary": f"⚠️ Unable to scan Gmail inbox due to API error: {api_error}",
+            "inbox_url": f"https://mail.google.com/mail/u/{PRINCIPAL_EMAIL}/#inbox"
+        }, indent=2)
 
     if emails:
         for em in emails:
@@ -154,30 +166,6 @@ def scan_inbox_triage(
                 triage_categories["fyi"].append(em)
             else:
                 triage_categories["needs_action"].append(em)
-    else:
-        # Standard executive sample triage data
-        triage_categories["needs_action"].append({
-            "from": "research-lead@flinders.edu.au",
-            "subject": "Flinders University / Google Research Collaboration Sync",
-            "snippet": "Hi Abhi, we would love to schedule a 30min session to review our joint AI grant deliverables.",
-            "recommended_action": "Propose Wednesday 2:00pm SGT slot on behalf of Abhi Sethi."
-        })
-        triage_categories["meeting_invites"].append({
-            "from": "colleague@google.com",
-            "subject": "Quick Sync on Q4 Objectives",
-            "snippet": "Are you free Thursday 2:30pm SGT for 30m?",
-            "recommended_action": "Verify calendar clash and create calendar event with Google Meet."
-        })
-        triage_categories["waiting_response"].append({
-            "from": "partner@dict.gov",
-            "subject": "Re: Enterprise Architecture Review Scope",
-            "snippet": "Sent proposal draft yesterday. Awaiting feedback from DICT evaluation committee."
-        })
-        triage_categories["fyi"].append({
-            "from": "newsletter@google.com",
-            "subject": "Weekly Tech Infrastructure Digest",
-            "snippet": "Highlights from Cloud Next APAC and latest developer tooling releases."
-        })
 
     total_scanned = sum(len(v) for v in triage_categories.values())
     summary_cards = [
@@ -241,18 +229,12 @@ def search_emails(
                 pass
 
         return json.dumps({
-            "status": "success",
+            "status": "error",
             "query": query,
-            "results": [
-                {
-                    "id": "msg_flinders_01",
-                    "threadId": "thread_flinders_01",
-                    "from": "partner@flinders.edu.au",
-                    "subject": "Flinders / Google Research Partnership Follow-up",
-                    "snippet": "Dear Abhi, following up on our discussion regarding collaborative research slots next week...",
-                    "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                }
-            ]
+            "count": 0,
+            "results": [],
+            "error": str(e),
+            "message": f"Gmail search failed due to API error: {e}"
         }, indent=2)
 
 
@@ -271,19 +253,14 @@ def read_email_thread(thread_id: str) -> str:
             "messages": messages
         }, indent=2)
     except Exception as e:
-        logger.warning("Gmail API threads.get note: %s", e)
+        logger.warning("Gmail API threads.get error: %s", e)
         return json.dumps({
-            "status": "success",
+            "status": "error",
             "threadId": thread_id,
-            "messages": [
-                {
-                    "id": "msg_01",
-                    "from": "partner@flinders.edu.au",
-                    "to": "aset@google.com",
-                    "subject": "Flinders / Google Research Partnership Follow-up",
-                    "body": "Hi Abhi,\nWould you have 30 minutes available next Wednesday for a sync with our AI research leads?\nBest regards,\nProf. Flinders Lead"
-                }
-            ]
+            "message_count": 0,
+            "messages": [],
+            "error": str(e),
+            "message": f"Unable to read email thread due to API error: {e}"
         }, indent=2)
 
 

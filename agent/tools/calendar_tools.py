@@ -142,13 +142,15 @@ def check_calendar_availability(
             "calendar_view_url": f"https://calendar.google.com/calendar/u/{PRINCIPAL_EMAIL}/r/day/{start_iso[:10].replace('-', '/')}"
         }, indent=2)
     except Exception as e:
-        logger.warning("Google Calendar FreeBusy query note: %s. Using executive fallback schedule.", e)
-        # Safe fallback: return open calendar view
+        logger.warning("Google Calendar FreeBusy query error: %s", e)
         return json.dumps({
-            "target_calendar": CALENDAR_TARGET,
-            "timezone": DEFAULT_TIMEZONE,
+            "status": "error",
+            "email": email,
+            "is_available": False,
             "busy_intervals": [],
-            "note": f"Live freebusy query diagnostic note: {e}. Defaulting to open business hours window.",
+            "error": str(e),
+            "message": f"Unable to check calendar availability due to Google Calendar API error: {e}",
+            "timezone": DEFAULT_TIMEZONE,
             "calendar_view_url": f"https://calendar.google.com/calendar/u/{PRINCIPAL_EMAIL}/r"
         }, indent=2)
 
@@ -309,29 +311,13 @@ def list_upcoming_events(
             "timezone": "Asia/Singapore (SGT, UTC+8)"
         }, indent=2)
     except Exception as e:
-        logger.warning("Google Calendar API events.list note: %s", e)
-        # Sample structured output
+        logger.warning("Google Calendar API events.list error: %s", e)
         return json.dumps({
-            "status": "success",
-            "total_events": 2,
-            "events": [
-                {
-                    "summary": "Google APAC AI Strategy Executive Review",
-                    "start": f"{now.strftime('%Y-%m-%d')}T10:00:00+08:00",
-                    "end": f"{now.strftime('%Y-%m-%d')}T11:00:00+08:00",
-                    "location": "Google Singapore MBC2, Level 29",
-                    "hangout_link": "https://meet.google.com/abc-defg-hij",
-                    "attendees": ["aset@google.com", "stakeholder@google.com"]
-                },
-                {
-                    "summary": "1:1 Sync: Partnership Milestones",
-                    "start": f"{(now + timedelta(days=1)).strftime('%Y-%m-%d')}T14:30:00+08:00",
-                    "end": f"{(now + timedelta(days=1)).strftime('%Y-%m-%d')}T15:00:00+08:00",
-                    "location": "Google Meet",
-                    "hangout_link": "https://meet.google.com/klm-nopq-rst",
-                    "attendees": ["aset@google.com", "partner@flinders.edu.au"]
-                }
-            ],
+            "status": "error",
+            "total_events": 0,
+            "events": [],
+            "error": str(e),
+            "message": f"Unable to retrieve calendar events due to API error: {e}",
             "timezone": "Asia/Singapore (SGT, UTC+8)"
         }, indent=2)
 
@@ -372,16 +358,17 @@ def check_calendar_clash(
             "message": f"Schedule has a conflict at {target_time} SGT." if has_clash else f"Schedule is completely open at {target_time} SGT."
         }, indent=2)
     except Exception as e:
-        logger.warning("Calendar clash check note: %s", e)
+        logger.warning("Calendar clash check error: %s", e)
         return json.dumps({
             "target_date": target_date,
             "target_time": target_time,
             "start_iso": start_iso,
             "end_iso": end_iso,
-            "has_clash": False,
-            "conflicting_event": "None",
-            "status": "AVAILABLE",
-            "message": f"Schedule is completely open at {target_time} SGT."
+            "has_clash": None,
+            "conflicting_event": "Unknown",
+            "status": "ERROR",
+            "error": str(e),
+            "message": f"Unable to verify calendar clash due to API error: {e}"
         }, indent=2)
 
 

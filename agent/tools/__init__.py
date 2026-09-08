@@ -20,6 +20,7 @@ from .room_booking_tools import (
     find_daily_focus_chunks,
     book_mbc_room_for_chunk,
     reserve_daily_focus_rooms,
+    check_floor_room_availability,
 )
 from .gmail_tools import (
     scan_inbox_triage,

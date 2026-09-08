@@ -204,8 +204,8 @@ def find_daily_focus_chunks(
         res = service.freebusy().query(body=fb_query).execute()
         busy_spans = res.get("calendars", {}).get(email, {}).get("busy", [])
     except Exception as e:
-        logger.warning("Live freebusy check note: %s. Using standard daily focus windows.", e)
-        busy_spans = []
+        logger.error("Live freebusy check error: %s", e)
+        return []
 
     # Parse busy spans
     parsed_busy = []
@@ -247,25 +247,92 @@ def find_daily_focus_chunks(
                 "end_iso": work_end.isoformat()
             })
 
-    if not free_chunks:
-        free_chunks = [
-            {
-                "start": "09:30",
-                "end": "12:30",
-                "duration_minutes": 180,
-                "start_iso": f"{target_date}T09:30:00+08:00",
-                "end_iso": f"{target_date}T12:30:00+08:00"
-            },
-            {
-                "start": "14:00",
-                "end": "17:30",
-                "duration_minutes": 210,
-                "start_iso": f"{target_date}T14:00:00+08:00",
-                "end_iso": f"{target_date}T17:30:00+08:00"
-            }
-        ]
-
     return free_chunks
+
+
+def check_floor_room_availability(
+    date_str: str,
+    start_time: str,
+    end_time: str,
+    floor: int = OFFICE_PRIMARY_FLOOR,
+    room_type: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Query real-time availability for all MBC2 rooms on a given floor for a requested time window.
+    """
+    if not date_str or str(date_str).lower() in ("today", "now"):
+        date_str = datetime.now(SGT_TZ).strftime("%Y-%m-%d")
+    elif str(date_str).lower() == "tomorrow":
+        date_str = (datetime.now(SGT_TZ) + timedelta(days=1)).strftime("%Y-%m-%d")
+
+    st_norm = normalize_time_str(start_time)
+    et_norm = normalize_time_str(end_time)
+    try:
+        st_h = int(st_norm.split(":")[0])
+        et_h = int(et_norm.split(":")[0])
+        if 1 <= st_h <= 6 and "am" not in str(start_time).lower():
+            st_norm = f"{st_h + 12:02d}:{st_norm.split(':')[1]}"
+        if 1 <= et_h <= 6 and "am" not in str(end_time).lower():
+            et_norm = f"{et_h + 12:02d}:{et_norm.split(':')[1]}"
+    except Exception:
+        pass
+
+    start_iso = f"{date_str}T{st_norm}:00+08:00"
+    end_iso = f"{date_str}T{et_norm}:00+08:00"
+
+    rooms = list(MBC2_ROOM_CATALOG.get(floor, []))
+    if room_type and room_type.lower() != "all":
+        rooms = [r for r in rooms if r.get("type") == room_type.lower()]
+
+    try:
+        service = get_calendar_service()
+        body = {
+            "timeMin": start_iso,
+            "timeMax": end_iso,
+            "items": [{"id": r["email"]} for r in rooms]
+        }
+        res = service.freebusy().query(body=body).execute()
+        avail = []
+        occupied = []
+        for r in rooms:
+            busy = res.get("calendars", {}).get(r["email"], {}).get("busy", [])
+            item = {
+                "name": r["name"],
+                "type": r["type"],
+                "capacity": r["capacity"]
+            }
+            if not busy:
+                avail.append(item)
+            else:
+                occupied.append(item)
+
+        avail_names = [r["name"].replace("SG-SIN-MBC2-29-B-B80 ", "").replace("SG-SIN-MBC2-28-B-B80 ", "").replace("SG-SIN-MBC2-30-B-B80 ", "") for r in avail]
+        summary = (
+            f"On Level {floor} for {st_norm} – {et_norm} SGT on {date_str}: "
+            f"{len(avail)} available ({', '.join(avail_names) if avail_names else 'none'}), "
+            f"{len(occupied)} occupied."
+        )
+        return {
+            "status": "SUCCESS",
+            "floor": floor,
+            "date": date_str,
+            "time_window": f"{st_norm} – {et_norm} SGT",
+            "available_count": len(avail),
+            "available_rooms": avail,
+            "occupied_rooms": occupied,
+            "summary": summary
+        }
+    except Exception as e:
+        logger.error("Error querying floor room availability: %s", e)
+        return {
+            "status": "ERROR",
+            "floor": floor,
+            "date": date_str,
+            "error": str(e),
+            "available_rooms": [],
+            "occupied_rooms": [],
+            "summary": f"Unable to retrieve room availability due to Google Calendar API error: {e}"
+        }
 
 
 def book_mbc_room_for_chunk(

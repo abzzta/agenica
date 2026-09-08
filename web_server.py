@@ -62,6 +62,7 @@ from agent.tools.room_booking_tools import (
     MBC2_ROOM_CATALOG,
     book_mbc_room_for_chunk,
     find_available_mbc_room,
+    check_floor_room_availability,
 )
 from agent.tools.hitl_tools import normalize_time_str
 
@@ -109,7 +110,7 @@ def get_cached_singapore_rooms() -> str:
         return _room_cache["status"]
     except Exception as e:
         logger.error("Error in batch freebusy query: %s", e)
-        return "- SG-SIN-MBC2-29 Hillview 6 Emerald (Focus Room, Capacity 5): AVAILABLE\n- Hillview 1-3, 11-15 Phone Rooms: Occupied"
+        return "Singapore room status: Call check_room_availability for live room status."
 
 
 LIVE_TOOLS = [
@@ -214,6 +215,39 @@ LIVE_TOOLS = [
                 },
             },
             {
+                "name": "check_room_availability",
+                "description": (
+                    "Check real-time availability of Google Singapore MBC2 meeting rooms and phone booths "
+                    "(Level 28, 29, or 30) for a given date and time window."
+                ),
+                "parameters": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "date_str": {
+                            "type": "STRING",
+                            "description": "Date in YYYY-MM-DD format, or 'today', 'tomorrow'.",
+                        },
+                        "start_time": {
+                            "type": "STRING",
+                            "description": "Start time in Singapore SGT (e.g. '10:00', '10:00 AM', '14:00').",
+                        },
+                        "end_time": {
+                            "type": "STRING",
+                            "description": "End time in Singapore SGT (e.g. '11:00', '11:00 AM', '15:00').",
+                        },
+                        "floor": {
+                            "type": "INTEGER",
+                            "description": "Floor in MBC2: 28, 29, or 30 (default 29).",
+                        },
+                        "room_type": {
+                            "type": "STRING",
+                            "description": "Optional filter: 'phone_booth', 'focus_room', or 'all' (default 'all').",
+                        },
+                    },
+                    "required": ["date_str", "start_time", "end_time"],
+                },
+            },
+            {
                 "name": "list_upcoming_events",
                 "description": "List upcoming events from Abhi Sethi's real Google Calendar.",
                 "parameters": {
@@ -244,7 +278,21 @@ def execute_live_tool(name: str, args: Dict[str, Any]) -> Dict[str, Any]:
         return str(d)
 
     try:
-        if name == "book_singapore_room":
+        if name == "check_room_availability":
+            date_str = resolve_date(args.get("date_str"))
+            start_time = str(args.get("start_time", "10:00"))
+            end_time = str(args.get("end_time", "11:00"))
+            floor = int(args.get("floor", 29))
+            room_type = str(args.get("room_type", "all"))
+            return check_floor_room_availability(
+                date_str=date_str,
+                start_time=start_time,
+                end_time=end_time,
+                floor=floor,
+                room_type=room_type,
+            )
+
+        elif name == "book_singapore_room":
             date_str = resolve_date(args.get("date_str"))
             start_time = str(args.get("start_time", "13:30"))
             end_time = str(args.get("end_time", "14:30"))
@@ -363,18 +411,15 @@ ABHI'S REAL LIVE SCHEDULE (TODAY & UPCOMING):
 GOOGLE SINGAPORE MBC2 LEVEL 29 ROOM STATUS (TOMORROW 10:00 AM – 12:00 PM):
 {rooms_str}
 
-Key Highlights for Singapore Rooms:
-- Tomorrow 10:00 AM to 12:00 PM: Hillview 6 Emerald (Focus Room, Capacity 5) on Level 29 is AVAILABLE. Phone booths (Hillview 1 to 3, 11 to 15) and Ann Siang/Dempsey are currently booked.
-- Level 28 & 30 phone rooms (29 Phone Room External & 1 Phone Room External) are also available as fallbacks.
-
 CRITICAL TOOL CALLING RULES:
-- You have access to real tools:
-  1. `book_singapore_room`: Call this whenever Abhi asks to book a room or phone booth in Google Singapore MBC2 (Level 28, 29, or 30).
-  2. `create_calendar_event`: Call this whenever Abhi asks to schedule a meeting or send a calendar invite.
-  3. `check_calendar_availability`: Call this to check Abhi's free/busy intervals.
-  4. `list_upcoming_events`: Call this to inspect upcoming calendar events.
-- MANDATORY: When Abhi asks you to book a room or schedule an event, YOU MUST INVOKE THE APPROPRIATE TOOL! NEVER claim or pretend that a room is booked or an invite is sent without calling the tool first!
-- When the tool returns with the reservation confirmation, speak the real confirmation naturally to Abhi, stating the booked room name and time block.
+- You have access to real Google Calendar and Singapore MBC2 office tools:
+  1. `check_room_availability`: Call this whenever Abhi asks what rooms, phone booths, or focus rooms are available or free on Level 28, 29, or 30 in MBC2.
+  2. `book_singapore_room`: Call this whenever Abhi asks to book a room or phone booth in Google Singapore MBC2 (Level 28, 29, or 30).
+  3. `create_calendar_event`: Call this whenever Abhi asks to schedule a meeting or send a calendar invite.
+  4. `check_calendar_availability`: Call this to check Abhi's personal free/busy intervals.
+  5. `list_upcoming_events`: Call this to inspect upcoming calendar events.
+- MANDATORY: When Abhi asks you to check room availability, book a room, or schedule an event, YOU MUST INVOKE THE APPROPRIATE TOOL! NEVER claim or pretend that a room is booked, an invite is sent, or a room is available without calling the tool first!
+- When a tool returns data, speak the real result naturally to Abhi.
 """
 
 

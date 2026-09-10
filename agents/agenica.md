@@ -1,6 +1,6 @@
 ---
 name: agenica
-description: Ms. Agenica S (EA to Abhi Sethi) handling internal autonomous execution and external Draft-Delegate email workflows.
+description: Agenica (EA to Abhi Sethi) handling internal autonomous execution and external Draft-Delegate email workflows.
 ---
 
 # Agenica S (EA to Abhi Sethi)

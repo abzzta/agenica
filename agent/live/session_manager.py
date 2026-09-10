@@ -15,7 +15,7 @@ from google.auth.transport.requests import Request as AuthRequest
 from google import genai
 from google.genai import types
 
-from ..config import MAX_CONCURRENT_SESSIONS, SESSION_TIMEOUT_SECONDS
+from ..config import MAX_CONCURRENT_SESSIONS, SESSION_TIMEOUT_SECONDS, LIVE_MODEL, GEMINI_API_KEY
 from .prompt_builder import build_live_instructions
 from .tool_registry import LIVE_TOOLS
 from .tool_executor import execute_live_tool, format_action_card
@@ -30,12 +30,16 @@ class LiveSessionManager:
         self.project_id = os.environ.get("GOOGLE_CLOUD_PROJECT", "ag-test-1310")
         self.location = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
         self.quota_proj = os.environ.get("GOOGLE_CLOUD_QUOTA_PROJECT", self.project_id)
-        self.model_name = "gemini-live-2.5-flash-native-audio"
+        self.api_key = os.environ.get("GEMINI_API_KEY", GEMINI_API_KEY)
+        self.model_name = os.environ.get("LIVE_MODEL", LIVE_MODEL)
         self.active_sessions: int = 0
         self._lock = asyncio.Lock()
 
     def _get_authenticated_client(self) -> genai.Client:
-        """Initialize Google GenAI client with cloud-platform scopes and quota project."""
+        """Initialize Google GenAI client either via AI Studio API key or Vertex AI ADC."""
+        if self.api_key:
+            return genai.Client(api_key=self.api_key, vertexai=False)
+
         creds, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
         if hasattr(creds, "with_quota_project") and self.quota_proj:
             try:
@@ -69,6 +73,11 @@ class LiveSessionManager:
             client = self._get_authenticated_client()
             instructions = build_live_instructions()
 
+            # Thinking config is supported on Gemini 3.1 models
+            thinking_config = None
+            if "3.1" in self.model_name or "3." in self.model_name:
+                thinking_config = types.ThinkingConfig(thinking_level="minimal")
+
             config = types.LiveConnectConfig(
                 response_modalities=["AUDIO"],
                 speech_config=types.SpeechConfig(
@@ -80,6 +89,7 @@ class LiveSessionManager:
                 ),
                 input_audio_transcription=types.AudioTranscriptionConfig(),
                 output_audio_transcription=types.AudioTranscriptionConfig(),
+                thinking_config=thinking_config,
                 system_instruction=types.Content(
                     parts=[types.Part(text=instructions)]
                 ),
@@ -107,10 +117,8 @@ class LiveSessionManager:
                                     elif msg_type == "text":
                                         text_val = parsed.get("text", "")
                                         if text_val:
-                                            await session.send_client_content(
-                                                turns=[types.Content(role="user", parts=[types.Part(text=text_val)])],
-                                                turn_complete=True,
-                                            )
+                                            # Using send_realtime_input (required in 3.1 Live and backward-compatible with 2.5)
+                                            await session.send_realtime_input(text=text_val)
                                 except Exception:
                                     pass
                     except WebSocketDisconnect:

@@ -33,6 +33,13 @@ Executive Assistant to {PRINCIPAL_NAME}
 # Default Model (gemini-3.7-flash for reliable high quota, or gemini-3.7-flash)
 DEFAULT_MODEL = os.environ.get("ADK_MODEL", "gemini-3.7-flash")
 
+# Gemini Live Model & Endpoint Settings
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+LIVE_MODEL = os.environ.get(
+    "LIVE_MODEL",
+    "gemini-3.1-flash-live-preview" if GEMINI_API_KEY else "gemini-live-2.5-flash-native-audio"
+)
+
 # Google Cloud Settings
 GCP_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "ag-test-1310")
 GCP_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")

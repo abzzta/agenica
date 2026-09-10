@@ -390,13 +390,15 @@ class RoomService:
             return {"available": [], "busy": [], "total_checked": 0}
 
         try:
-            service = self.auth_service.get_calendar_service()
             body = {
                 "timeMin": start_iso,
                 "timeMax": end_iso,
                 "items": [{"id": r.email} for r in rooms],
             }
-            res = service.freebusy().query(body=body).execute()
+            res = self.auth_service.execute_call(
+                "calendar", "v3",
+                lambda s: s.freebusy().query(body=body).execute()
+            )
             calendars = res.get("calendars", {})
 
             available: List[RoomResource] = []

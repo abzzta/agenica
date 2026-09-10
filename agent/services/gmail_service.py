@@ -47,23 +47,28 @@ class GmailService:
         Scan unread messages in user's INBOX and categorize by urgency.
         """
         try:
-            service = self.auth_service.get_gmail_service()
-            res = service.users().messages().list(
-                userId="me",
-                q="is:unread label:INBOX",
-                maxResults=max_results,
-            ).execute()
+            res = self.auth_service.execute_call(
+                "gmail", "v1",
+                lambda s: s.users().messages().list(
+                    userId="me",
+                    q="is:unread label:INBOX",
+                    maxResults=max_results,
+                ).execute()
+            )
 
             messages = res.get("messages", [])
             unread_items: List[Dict[str, Any]] = []
 
             for m in messages:
-                msg_data = service.users().messages().get(
-                    userId="me",
-                    id=m["id"],
-                    format="metadata",
-                    metadataHeaders=["From", "Subject", "Date"],
-                ).execute()
+                msg_data = self.auth_service.execute_call(
+                    "gmail", "v1",
+                    lambda s, mid=m["id"]: s.users().messages().get(
+                        userId="me",
+                        id=mid,
+                        format="metadata",
+                        metadataHeaders=["From", "Subject", "Date"],
+                    ).execute()
+                )
 
                 headers = {h["name"]: h["value"] for h in msg_data.get("payload", {}).get("headers", [])}
                 snippet = msg_data.get("snippet", "")
@@ -106,22 +111,27 @@ class GmailService:
     def search_emails(self, query: str, max_results: int = 10) -> Dict[str, Any]:
         """Search user's Gmail using standard Gmail query syntax."""
         try:
-            service = self.auth_service.get_gmail_service()
-            res = service.users().messages().list(
-                userId="me",
-                q=query,
-                maxResults=max_results,
-            ).execute()
+            res = self.auth_service.execute_call(
+                "gmail", "v1",
+                lambda s: s.users().messages().list(
+                    userId="me",
+                    q=query,
+                    maxResults=max_results,
+                ).execute()
+            )
 
             messages = res.get("messages", [])
             results = []
             for m in messages:
-                msg_data = service.users().messages().get(
-                    userId="me",
-                    id=m["id"],
-                    format="metadata",
-                    metadataHeaders=["From", "Subject", "Date"],
-                ).execute()
+                msg_data = self.auth_service.execute_call(
+                    "gmail", "v1",
+                    lambda s, mid=m["id"]: s.users().messages().get(
+                        userId="me",
+                        id=mid,
+                        format="metadata",
+                        metadataHeaders=["From", "Subject", "Date"],
+                    ).execute()
+                )
                 headers = {h["name"]: h["value"] for h in msg_data.get("payload", {}).get("headers", [])}
                 results.append({
                     "id": m["id"],
@@ -157,7 +167,6 @@ class GmailService:
         Never touches the Google Calendar API.
         """
         try:
-            service = self.auth_service.get_gmail_service()
             full_body = f"{body.strip()}\n\n{OFFICIAL_SIGNATURE}"
 
             mime_msg = MIMEMultipart()
@@ -170,7 +179,10 @@ class GmailService:
             if thread_id:
                 draft_body["message"]["threadId"] = thread_id
 
-            draft = service.users().drafts().create(userId="me", body=draft_body).execute()
+            draft = self.auth_service.execute_call(
+                "gmail", "v1",
+                lambda s: s.users().drafts().create(userId="me", body=draft_body).execute()
+            )
             draft_id = draft.get("id")
             draft_url = f"https://mail.google.com/mail/u/{PRINCIPAL_EMAIL}/#drafts"
 
@@ -237,7 +249,6 @@ class GmailService:
             }
 
         try:
-            service = self.auth_service.get_gmail_service()
             full_body = f"{body.strip()}\n\n{OFFICIAL_SIGNATURE}"
 
             mime_msg = MIMEMultipart()
@@ -250,7 +261,10 @@ class GmailService:
             if thread_id:
                 msg_body["threadId"] = thread_id
 
-            sent = service.users().messages().send(userId="me", body=msg_body).execute()
+            sent = self.auth_service.execute_call(
+                "gmail", "v1",
+                lambda s: s.users().messages().send(userId="me", body=msg_body).execute()
+            )
             sent_url = f"https://mail.google.com/mail/u/{PRINCIPAL_EMAIL}/#sent"
 
             return {

@@ -199,7 +199,6 @@ class CalendarService:
         )
 
         try:
-            service = self.auth_service.get_calendar_service()
             list_params: Dict[str, Any] = {
                 "calendarId": "primary",
                 "timeMin": time_min,
@@ -211,7 +210,10 @@ class CalendarService:
             if query:
                 list_params["q"] = query
 
-            events_result = service.events().list(**list_params).execute()
+            events_result = self.auth_service.execute_call(
+                "calendar", "v3",
+                lambda s: s.events().list(**list_params).execute()
+            )
             items = events_result.get("items", [])
 
             processed_events = []
@@ -302,13 +304,15 @@ class CalendarService:
             s_dt = datetime.strptime(f"{target_date} {start_time}", "%Y-%m-%d %H:%M").replace(tzinfo=SGT_TZ)
             e_dt = datetime.strptime(f"{target_date} {end_time}", "%Y-%m-%d %H:%M").replace(tzinfo=SGT_TZ)
 
-            service = self.auth_service.get_calendar_service()
             body = {
                 "timeMin": self.to_rfc3339(s_dt),
                 "timeMax": self.to_rfc3339(e_dt),
                 "items": [{"id": PRINCIPAL_EMAIL}],
             }
-            res = service.freebusy().query(body=body).execute()
+            res = self.auth_service.execute_call(
+                "calendar", "v3",
+                lambda s: s.freebusy().query(body=body).execute()
+            )
             busy_slots = res.get("calendars", {}).get(PRINCIPAL_EMAIL, {}).get("busy", [])
 
             is_free = len(busy_slots) == 0
@@ -339,7 +343,6 @@ class CalendarService:
     ) -> Dict[str, Any]:
         """Create a new Google Calendar event with Google Meet conferencing and notifications."""
         try:
-            service = self.auth_service.get_calendar_service()
             attendee_list = [{"email": PRINCIPAL_EMAIL, "responseStatus": "accepted"}]
             if attendees:
                 for a in attendees:
@@ -363,12 +366,15 @@ class CalendarService:
                     }
                 }
 
-            created = service.events().insert(
-                calendarId="primary",
-                body=event_body,
-                conferenceDataVersion=1 if include_meet else 0,
-                sendUpdates="all",
-            ).execute()
+            created = self.auth_service.execute_call(
+                "calendar", "v3",
+                lambda s: s.events().insert(
+                    calendarId="primary",
+                    body=event_body,
+                    conferenceDataVersion=1 if include_meet else 0,
+                    sendUpdates="all",
+                ).execute()
+            )
 
             meet_link = created.get("hangoutLink", "")
             cal_link = created.get("htmlLink", f"https://calendar.google.com/calendar/u/{PRINCIPAL_EMAIL}/r")
